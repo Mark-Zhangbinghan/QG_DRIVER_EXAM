@@ -19,7 +19,6 @@ cars = [
 
 def cars_to_json(cars_list):
     car_list_json = []
-
     for car in cars_list:
         car_dict = {
             "car_num": car.car_num,
@@ -29,20 +28,13 @@ def cars_to_json(cars_list):
             "next_point": car.next_point
         }
         car_list_json.append(car_dict)
+    # 转成json
+    json_output = json.dumps({"CarList": car_list_json}, indent=2)
 
-    # 将车辆列表字典转换为JSON字符串
-    return json.dumps({"CarList": car_list_json}, indent=2)
-
-
-# 使用函数将车辆列表转换为JSON
-json_output = cars_to_json(cars)
-print(json_output)
-
-
-filename = 'cars_data.json'
-
-# 打开文件，准备写入
-with open(filename, 'w', encoding='utf-8') as file:
-    file.write(json_output)
-
-print(f'JSON数据已成功写入到文件：{filename}')
+    print(json_output)
+    filename = 'cars_data.json'
+    # 打开文件，准备写入
+    with open(filename, 'w', encoding='utf-8') as file:
+        file.write(json_output)
+    print(f'JSON数据已成功写入到文件：{filename}')
+    return json_output
