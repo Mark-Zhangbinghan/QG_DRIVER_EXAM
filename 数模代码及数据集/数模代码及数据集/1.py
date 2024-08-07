@@ -17,7 +17,7 @@ Edges = [
 
 
 # 初始化图
-def initialize_graph():
+def initialize_graph(Vertices):
     G = nx.Graph()
     # 添加节点
     for node, pos in Vertices.items():
@@ -192,8 +192,8 @@ weights = {
 
 
 # 开始模拟
-def start_simulation(num_cars):
-    G = initialize_graph()
+def start_simulation(num_cars, Vertices, Edges):
+    G = initialize_graph(Vertices)
     pagerank_values, betweenness_centrality_values = compute_centrality(G)
     attract_rank_values = attract_rank(G)
 
@@ -203,10 +203,10 @@ def start_simulation(num_cars):
     # 模拟移动
     simulate_movement(cars, G, attract_rank_values, weights, Vertices)
 
-    return cars, Vertices
+    return cars
 
 
 # 主程序
 num_cars = 10
-cars, Vertices = start_simulation(num_cars)
+cars= start_simulation(num_cars, Vertices, Edges)
 print_results(cars)
