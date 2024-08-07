@@ -2,18 +2,12 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import random
-
+from Vertices_Weight_create.create_Vertices import edges,Vertices
 # 节点及其坐标
-Vertices = {
-    'A': (4, 4), 'B': (18, 4), 'C': (32, 4), 'D': (4, 16), 'E': (16, 14),
-    'F': (28, 12), 'G': (4, 22), 'H': (34, 38), 'I': (60, 34)
-}
+Vertices =Vertices
 
 # 边的连接关系
-Edges = [
-    ('A', 'B'), ('A', 'D'), ('B', 'C'), ('B', 'E'), ('C', 'F'), ('D', 'E'),
-    ('D', 'G'), ('E', 'F'), ('E', 'H'), ('F', 'I'), ('G', 'H'), ('H', 'I')
-]
+Edges = edges
 
 
 # 初始化图
