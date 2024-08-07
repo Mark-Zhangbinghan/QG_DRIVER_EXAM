@@ -131,7 +131,7 @@ class Car:
 
         # 更新车辆状态
         travel_time = (G[self.current_position][next_node]['length'] / self.speed) * (
-                    1 + G.nodes[next_node]['cars'] / 10.0)  # 考虑拥挤度影响
+                1 + G.nodes[next_node]['cars'] / 10.0)  # 考虑拥挤度影响
         self.relative_time += travel_time
 
         self.path.append(Vertices[next_node])  # 使用坐标存储路径
@@ -205,8 +205,7 @@ def start_simulation(num_cars, Vertices, Edges):
 
     return cars
 
-
 # 主程序
-num_cars = 10
-cars= start_simulation(num_cars, Vertices, Edges)
-print_results(cars)
+# num_cars = 10
+# cars= start_simulation(num_cars, Vertices, Edges)
+# print_results(cars)
