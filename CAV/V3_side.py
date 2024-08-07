@@ -1,70 +1,48 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def get_data( side, path ):
-    r = 0
-    with open( path, 'r') as file:
+    with open( path, 'r' ) as file:
         info = file.readlines()
+
     n = len(info) - 1
     if n == 0 or n == -1:
         print("文件为空！")
         return
-    xL = []
-    vL = []
-    xM = []
-    vM = []
-    xR = []
-    vR = []
-    rL = []
-    L, M, R = 0, 0, 0
-    flag = 0
-    for line in info:
-        if flag == 0:
-            rr = float(line)  # 记录车辆的数量
-            flag = 1
-        else:
-            data = line.split()
-            if data[4] == 'L':
-                xp = [float(data[0]), float(data[1])]
-                vp = [float(data[2]), float(data[3])]
-                xL.append(xp)
-                vL.append(vp)
-                L += 1
-            elif data[4] == 'M':
-                xp = [float(data[0]), float(data[1])]
-                vp = [float(data[2]), float(data[3])]
-                xM.append(xp)
-                vM.append(vp)
-                M += 1
-            elif data[4] == 'R':
-                xp = [float(data[0]), float(data[1])]
-                vp = [float(data[2]), float(data[3])]
-                xR.append(xp)
-                vR.append(vp)
-                R += 1
+
+    xL, vL, xM, vM, xR, vR, rL = [], [], [], [], [], [], []
+    L = M = R = 0
+    rr = len( info[0] )
+
+    for line in info[1:]:
+        data = line.split()
+        xp = [float(data[0]), float(data[1])]
+        vp = [float(data[2]), float(data[3])]
+        if data[4] == 'L':
+            xL.append(xp)
+            vL.append(vp)
+            L += 1
+        elif data[4] == 'M':
+            xM.append(xp)
+            vM.append(vp)
+            M += 1
+        elif data[4] == 'R':
+            xR.append(xp)
+            vR.append(vp)
+            R += 1
+
     if side == '-':
         ehp = 1
     else:
         ehp = -1
+
     for i in range(n):
-        if i == 0:
-            rL.append([0.0, 0.0])
-        r += rr
-        rL.append([ ehp * r, 0.0 ])
+        rL.append( [ ehp * rr * i, 0.0 ] )
 
-    xL = np.array(xL)
-    vL = np.array(vL)
-    xM = np.array(xM)
-    vM = np.array(vM)
-    xR = np.array(xR)
-    vR = np.array(vR)
-    rL = np.array(rL)
-    r = rr
-    return L, M, R, xL, vL, xM, vM, xR, vR, rL, r
+    return L, M, R, np.array(xL), np.array(vL), np.array(xM), np.array(vM), np.array(xR), np.array(vR), np.array(rL), rr
 
 
-def createA(n, x, v, rL, side ):
+def createA(n, x, v, rL, side, direction ):
     A = np.ones((n, n))
     if n > 3:
         for i in range(n):
@@ -73,14 +51,13 @@ def createA(n, x, v, rL, side ):
                     A[i][j] = 0
                 if i >= 3 and i - 3 - j >= 0:
                     A[i][j] = 0
-        if side == '-':
-            srt = np.argsort(x[:, 0])
-        else:
-            srt = np.argsort(x[:, 0])[::-1]
-        x = x[srt]
-        v = v[srt]
-    rsrt = np.argsort(rL[:, 0])[::-1]
-    rL = rL[rsrt]
+
+        if direction == 'hor':
+            srt = np.argsort( x[ :, 0 ] ) if side == '-' else np.argsort( x[ :, 0 ] )[ ::-1 ]
+        elif direction == 'ver':
+            srt = np.argsort( x[ :, 0 ] )[ ::-1 ] if side == '-' else np.argsort( x[ :, 0 ] )
+        x, v = x[srt], v[srt]
+    rL = rL[ np.argsort( rL[:, 0] )[::-1] ]
     return A, x, v, rL
 
 
@@ -115,30 +92,25 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side ):
         last = -1
     else:
         last = 0
-    flaglo = 0
-    flagla = 0
-    cnt = 0
-    posV = [x.copy()]  # 用于记录车辆位置更新
-    velV = [v.copy()]  # 用于记录车辆速度更新
-    posL = [xL.copy()]  # 用于放领导者位置，先存入领导者初始位置
-    xp = x.copy()  # 用于放车辆位置，先存入车辆初始位置
-    vp = v.copy()  # 用于放车辆速度，先存入车辆初始速度
-    lp = xL.copy()
-    R = np.zeros((n, n, 2))  # 用车辆与领导者之间的理想距离计算车辆之间的相对理想距离
+    flaglo = flagla = cnt = 0
+    posV, velV, posL = [ x.copy() ], [ v.copy() ], [ xL.copy() ]     # 用于记录车辆位置更新、速度更新、领导者的位置更新
+
+    xp, vp, lp = x.copy(), v.copy(), xL.copy()                       # 用于放车辆位置、速度、领导者的位置，先存入车辆初始位置
+    R = np.zeros( ( n, n, 2 ) )                                      # 用车辆与领导者之间的理想距离计算车辆之间的相对理想距离
     for i in range(n):
         for j in range(n):
             R[i][j] = rL[i] - rL[j]
     threshold = 1.0
     for ts in range(t):
-        if np.all(np.abs(posV[-1][last] - r_turn) < threshold):
-            print(posV[-1][last])
+        if np.all( np.abs( posV[-1][last] - r_turn ) < threshold ):
             break
-        dot_v = np.zeros_like(vp)  # 领导者速度不变，所有加速度为0
+        dot_v = np.zeros_like( vp )  # 领导者速度不变，所有加速度为0
         for i in range(n):
             s = xp[i] - lp - rL[i]
             for j in range(n):
-                if i != j:  # 当相比较的智能体不是自己时，对应的a不为0，两智能体间的关系参与调整考虑
-                    dot_v[i] -= A[i][j] * (xp[i] - xp[j] - R[i][j] + b * (vp[i] - vp[j]))
+                if not ( flagla == 1 and flaglo == 1 ):
+                    if i != j:  # 当相比较的智能体不是自己时，对应的a不为0，两智能体间的关系参与调整考虑
+                        dot_v[i] -= A[i][j] * (xp[i] - xp[j] - R[i][j] + b * (vp[i] - vp[j]))
                 dot_v[i] -= k[i] * (s + g * (vp[i] - vL))  # 与智能体相关联时，与领导者之间的关系参与调整考虑
 
         vp += a * dot_v  # 更新车辆速度位置与领导者位置
@@ -147,37 +119,29 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side ):
         # 检查是否收敛
         cnt, flagla, flaglo = check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, a, r)
 
-        posV.append(xp.copy())
-        velV.append(vp.copy())
-        posL.append(lp.copy())
+        posV.append( xp.copy() )
+        velV.append( vp.copy() )
+        posL.append( lp.copy() )
 
-    posV = np.array(posV)
-    velV = np.array(velV)
-    posL = np.array(posL)
-    return posV, velV, posL, t
+
+    return np.array( posV ), np.array( velV ), np.array( posL )
 
 
 def create_vehicles(direction, x, v, r_side, rL, n, side ):
     if direction == 'hor':
-        if side == '-':
-            x_leader = np.array([float(np.min(x[:, 0])), r_side])
-        else:
-            x_leader = np.array([float(np.max(x[:, 0])), r_side])
-        vL = np.array([float(round(np.mean(v[:, 0]), 1)), 0.0])
-        A, x, v, rLeader = createA(n, x, v, rL, side )
+        x_leader = np.array( [float( np.min( x[:, 0] ) if side == '-' else np.max( x[:, 0] ) ), r_side] )
+        vL = np.array( [ float( round( np.mean( v[:, 0] ), 1 ) ), 0.0 ] )
     elif direction == 'ver':
-        if side == '-':
-            x_leader = np.array([r_side, float(np.min(x[:, 0]))])
-        else:
-            x_leader = np.array([r_side, float(np.max(x[:, 0]))])
-        vL = np.array( [0.0, float(round(np.mean(v[:, 0]), 1))])
-        A, x, v, rLeader = createA(n, x, v, rL, side )
+        x_leader = np.array( [ r_side, float( np.min( x[:, 1] ) if side == '-' else np.max( x[:, 1] ) ) ] )
+        vL = np.array( [ 0.0, float( round( np.mean( v[:, 1] ), 1) ) ] )
+
+    A, x, v, rLeader = createA( n, x, v, rL, side, direction )
     return x_leader, x, v, vL, rLeader, A
 
 
 def create_k(n, x, x_leader, A ):
-    dd = np.mean(np.diff(x[:, 1]))
-    k = np.zeros((n, 1))
+    dd = np.mean( np.diff(x[:, 1]) )
+    k = np.zeros( (n, 1) )
     if dd != 0:
         k[0] = abs(np.round((x[0, 1] - x_leader[1]) / dd, 1))
         if n > 1:
@@ -196,7 +160,7 @@ def run( side, path, info ):
     g = 1
     a = 0.001
     tt = 100
-    t = int(tt / a)
+    t = int( tt / a )
     L, M, R, xL, vL, xM, vM, xR, vR, rL, r = get_data( side, path )
 
     # 道路信息 -> 道路中心线坐标 & 路口位置
@@ -232,13 +196,13 @@ def run( side, path, info ):
         ])
         rL = rL.copy()
         rL[:, [0, 1]] = rL[:, [1, 0]]
-        print( r_turn_before, r_turn_after )
-        print( rL )
+
 
     # 创建车辆信息
     xL_leader, xL, vL, vLL, rLeaderL, AL = create_vehicles(starting_direction, xL, vL, r_left, rL, L, side )
     xM_leader, xM, vM, vLM, rLeaderM, AM = create_vehicles(starting_direction, xM, vM, r_middle, rL, M, side )
     xR_leader, xR, vR, vLR, rLeaderR, AR = create_vehicles(starting_direction, xR, vR, r_right, rL, R, side )
+
 
     AL, ddL, kL = create_k(L, xL, xL_leader, AL )
     AM, ddM, kM = create_k(M, xM, xM_leader, AM )
@@ -247,32 +211,32 @@ def run( side, path, info ):
     rLt = rL.copy()
     rLt[:, [0, 1]] = rLt[:, [1, 0]]
 
-    LposV, LvelV, LposL, Lnt = update_data(kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rL, 'M', r_turn_before[0], side )
+    LposV, LvelV, LposL = update_data(kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rL, 'M', r_turn_before[0], side )
     xL_leader = LposL[-1]
     xL = LposV[-1]
     vL = LvelV[-1]
     vLL[0], vLL[1] = vLL[1], vLL[0]
-    nLposV, nLvelV, nLposL, nLnt = update_data(kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rLt, 'L', r_turn_after[0], side )
-    print('1')
+    nLposV, nLvelV, nLposL = update_data(kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rLt, 'L', r_turn_after[0], side )
+    # print('1')
 
 
-    MposV, MvelV, MposL, Mnt = update_data(kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_before[1], side )
+    MposV, MvelV, MposL = update_data(kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_before[1], side )
     xM_leader = MposL[-1]
-    xM = MposV[-1] 
+    xM = MposV[-1]
     vM = MvelV[-1]
-    nMposV, nMvelV, nMposL, nMnt = update_data(kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_after[1], side )
-    print('2')
+    nMposV, nMvelV, nMposL = update_data(kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_after[1], side )
+    # print('2')
 
 
-    RposV, RvelV, RposL, Rnt = update_data(kR, R, xR_leader, xR, vLR, vR, b, g, a, t, AR, r, rL, 'M', r_turn_before[2], side )
+    RposV, RvelV, RposL = update_data(kR, R, xR_leader, xR, vLR, vR, b, g, a, t, AR, r, rL, 'M', r_turn_before[2], side )
     xR_leader = RposL[-1]
     xR = RposV[-1]
     vR = RvelV[-1]
     vLR[0], vLR[1] = vLR[1], vLR[0]
     vLRt = -vLR
     rLtt = -rLt
-    nRposV, nRvelV, nRposL, nRnt = update_data(kR, R, xR_leader, xR, vLRt, vR, b, g, a, t, AR, r, rLtt, 'R', r_turn_after[2], side )
-    print('3')
+    nRposV, nRvelV, nRposL = update_data(kR, R, xR_leader, xR, vLRt, vR, b, g, a, t, AR, r, rLtt, 'R', r_turn_after[2], side )
+    # print('3')
 
     LposV = np.concatenate((LposV, nLposV), axis=0)
     # LvelV = np.concatenate((LvelV, nLvelV), axis=0)
@@ -280,6 +244,8 @@ def run( side, path, info ):
     # MvelV = np.concatenate((MvelV, nMvelV), axis=0)
     RposV = np.concatenate((RposV, nRposV), axis=0)
     # RvelV = np.concatenate((RvelV, nRvelV), axis=0)
+
+
     return LposV, MposV, RposV, L, M, R
 
 def draw():
