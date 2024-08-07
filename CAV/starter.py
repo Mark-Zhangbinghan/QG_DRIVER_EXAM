@@ -17,7 +17,7 @@ path_left2right = '../data/test4.txt'
 side_left2right = '+'
 LposV2, MposV2, RposV2, L2, M2, R2 = run( side_left2right, path_left2right, info_left2right )
 '''
-'''
+
 # 由上到下
 info_up2down = [ 590.0, 580.0, 570.0, 40.0, 10.0, 'ver', 'UpLeft' ]
 path_up2down = '../data/test5.txt'
@@ -29,7 +29,7 @@ info_down2up = [ 600.0, 610.0, 620.0, 50.0, 10.0, 'ver', 'RightDown' ]
 path_down2up = '../data/test6.txt'
 side_down2up = '+'
 LposV4, MposV4, RposV4, L4, M4, R4 = run( side_down2up, path_down2up, info_down2up )
-
+'''
 
 plt.figure(figsize=(10, 6))
 '''
@@ -53,6 +53,7 @@ for i in range(R2):
     plt.plot(RposV2[:, i, 0], RposV2[:, i, 1], label=f'Vehicle {i + 1}')
     plt.scatter(RposV2[::5000, i, 0], RposV2[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
 
+'''
 for i in range(L3):
     plt.plot(LposV3[:, i, 0], LposV3[:, i, 1], label=f'Vehicle {i + 1}')
     plt.scatter(LposV3[::5000, i, 0], LposV3[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
@@ -73,7 +74,7 @@ for i in range(M4):
 for i in range(R4):
     plt.plot(RposV4[:, i, 0], RposV4[:, i, 1], label=f'Vehicle {i + 1}')
     plt.scatter(RposV4[::5000, i, 0], RposV4[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-
+'''
 
 
 plt.xlabel('X Position(m)')

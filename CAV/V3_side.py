@@ -64,7 +64,7 @@ def get_data( side, path ):
     return L, M, R, xL, vL, xM, vM, xR, vR, rL, r
 
 
-def createA(n, x, v, rL, side ):
+def createA(n, x, v, rL, side, direction ):
     A = np.ones((n, n))
     if n > 3:
         for i in range(n):
@@ -73,10 +73,16 @@ def createA(n, x, v, rL, side ):
                     A[i][j] = 0
                 if i >= 3 and i - 3 - j >= 0:
                     A[i][j] = 0
-        if side == '-':
-            srt = np.argsort(x[:, 0])
-        else:
-            srt = np.argsort(x[:, 0])[::-1]
+        if direction == 'hor':
+            if side == '-':
+                srt = np.argsort(x[:, 0])
+            else:
+                srt = np.argsort(x[:, 0])[::-1]
+        elif direction == 'ver':
+            if side == '-':
+                srt = np.argsort(x[:, 0])[::-1]
+            else:
+                srt = np.argsort(x[:, 0])
         x = x[srt]
         v = v[srt]
     rsrt = np.argsort(rL[:, 0])[::-1]
@@ -158,20 +164,23 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side ):
 
 
 def create_vehicles(direction, x, v, r_side, rL, n, side ):
+    print( x, r_side )
     if direction == 'hor':
         if side == '-':
             x_leader = np.array([float(np.min(x[:, 0])), r_side])
         else:
             x_leader = np.array([float(np.max(x[:, 0])), r_side])
         vL = np.array([float(round(np.mean(v[:, 0]), 1)), 0.0])
-        A, x, v, rLeader = createA(n, x, v, rL, side )
+        A, x, v, rLeader = createA(n, x, v, rL, side, direction )
     elif direction == 'ver':
         if side == '-':
-            x_leader = np.array([r_side, float(np.min(x[:, 0]))])
+            x_leader = np.array([r_side, float(np.min(x[:, 1]))])
         else:
-            x_leader = np.array([r_side, float(np.max(x[:, 0]))])
-        vL = np.array( [0.0, float(round(np.mean(v[:, 0]), 1))])
-        A, x, v, rLeader = createA(n, x, v, rL, side )
+            x_leader = np.array([r_side, float(np.max(x[:, 1]))])
+            print( x_leader, side )
+        vL = np.array( [0.0, float(round(np.mean(v[:, 1]), 1))])
+        A, x, v, rLeader = createA(n, x, v, rL, side, direction )
+        print( vL )
     return x_leader, x, v, vL, rLeader, A
 
 
@@ -240,6 +249,8 @@ def run( side, path, info ):
     xM_leader, xM, vM, vLM, rLeaderM, AM = create_vehicles(starting_direction, xM, vM, r_middle, rL, M, side )
     xR_leader, xR, vR, vLR, rLeaderR, AR = create_vehicles(starting_direction, xR, vR, r_right, rL, R, side )
 
+    print( xM_leader, xL_leader, xR_leader )
+
     AL, ddL, kL = create_k(L, xL, xL_leader, AL )
     AM, ddM, kM = create_k(M, xM, xM_leader, AM )
     AR, ddR, kR = create_k(R, xR, xR_leader, AR )
@@ -280,6 +291,8 @@ def run( side, path, info ):
     # MvelV = np.concatenate((MvelV, nMvelV), axis=0)
     RposV = np.concatenate((RposV, nRposV), axis=0)
     # RvelV = np.concatenate((RvelV, nRvelV), axis=0)
+
+
     return LposV, MposV, RposV, L, M, R
 
 def draw():
