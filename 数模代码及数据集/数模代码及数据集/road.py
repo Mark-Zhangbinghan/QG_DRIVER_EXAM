@@ -2,25 +2,26 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import random
-from Vertices_Weight_create.create_Vertices import edges,Vertices
+from Vertices_Weight_create.create_Vertices import Edges, Vertices
+
 # 节点及其坐标
-Vertices =Vertices
+vertices = Vertices
 
 # 边的连接关系
-Edges = edges
+edges = Edges
 
 
 # 初始化图
-def initialize_graph(Vertices, Edges):
+def initialize_graph(vertices, edges):
     G = nx.Graph()
     # 添加节点
-    for node, pos in Vertices.items():
+    for node, pos in vertices.items():
         G.add_node(node, pos=pos, cars=0)  # 初始化每个节点上的车辆数量为 0
     # 添加边并计算边的长度
-    for edge in Edges:
+    for edge in edges:
         node1, node2 = edge
-        pos1 = Vertices[node1]
-        pos2 = Vertices[node2]
+        pos1 = vertices[node1]
+        pos2 = vertices[node2]
         length = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
         G.add_edge(node1, node2, length=length)
 
