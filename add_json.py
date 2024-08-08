@@ -2,17 +2,13 @@ import json
 #
 from 数模代码及数据集.数模代码及数据集.road import Car
 from 数模代码及数据集.数模代码及数据集.road import start_simulation
+from Vertices_Weight_create.create_Vertices import edges, vertices
 
-Vertices = {
-    'A': (4, 4), 'B': (18, 4), 'C': (32, 4), 'D': (4, 16), 'E': (16, 14),
-    'F': (28, 12), 'G': (4, 22), 'H': (34, 38), 'I': (60, 34)
-}
+# 节点及其坐标
+vertices = vertices
 
-# 边连接关系
-Edges = [
-    ('A', 'B'), ('A', 'D'), ('B', 'C'), ('B', 'E'), ('C', 'F'), ('D', 'E'),
-    ('D', 'G'), ('E', 'F'), ('E', 'H'), ('F', 'I'), ('G', 'H'), ('H', 'I')
-]
+# 边的连接关系
+edges = edges
 
 # class Car:
 #     def __init__(self, car_num, speed, start_position, end_position):
@@ -23,7 +19,7 @@ Edges = [
 #         self.path = []
 #         self.relative_time = 0.0
 
-cars = start_simulation(10, Vertices, Edges)
+cars = start_simulation(10, vertices, edges)
 
 for car in cars:
     print(car.car_num)
@@ -32,15 +28,8 @@ for car in cars:
     print(car.path)
 
 
-# 假设这是你的车辆列表
-# cars = [
-#     Car(1, 8, 'A', 'C'),
-#     Car(2, 8, 'B', 'I')
-# ]
-# cars[0].path = [(4, 4), (18, 4), (32, 4)]
-# cars[1].path = []
 def get_vertex_position(vertex_key):
-    return Vertices[vertex_key]
+    return vertices[vertex_key]
 
 
 def cars_to_json(cars_list):
