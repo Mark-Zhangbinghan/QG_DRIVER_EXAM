@@ -2,32 +2,27 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 import random
+from Vertices_Weight_create.create_Vertices import Edges, Vertices
 
 # 节点及其坐标
-Vertices = {
-    'A': (4, 4), 'B': (18, 4), 'C': (32, 4), 'D': (4, 16), 'E': (16, 14),
-    'F': (28, 12), 'G': (4, 22), 'H': (34, 38), 'I': (60, 34)
-}
+vertices = Vertices
 
 # 边的连接关系
-Edges = [
-    ('A', 'B'), ('A', 'D'), ('B', 'C'), ('B', 'E'), ('C', 'F'), ('D', 'E'),
-    ('D', 'G'), ('E', 'F'), ('E', 'H'), ('F', 'I'), ('G', 'H'), ('H', 'I')
-]
+edges = Edges
 
 
 # 初始化图
-def initialize_graph(Vertices, Edges):
+def initialize_graph(vertices, edges):
     G = nx.Graph()
     # 添加节点
-    for node, pos in Vertices.items():
+    for node, pos in vertices.items():
         G.add_node(node, pos=pos, cars=0)  # 初始化每个节点上的车辆数量为 0
     # 添加边并计算边的长度
-    for edge in Edges:
+    for edge in edges:
         node1, node2 = edge
-        pos1 = Vertices[node1]
-        pos2 = Vertices[node2]
-        length = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
+        pos1 = vertices[node1]
+        pos2 = vertices[node2]
+        length = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos2[1] - pos2[1]) ** 2)
         G.add_edge(node1, node2, length=length)
 
     return G
@@ -70,11 +65,12 @@ def heuristic(node, end_node, pos):
 
 
 # 归一化处理
-def normalize(value, min_value, max_value):
+def normalize(value, min_value, max_value, reverse=False):
     """归一化函数"""
     if max_value == min_value:
         return 0  # 如果最小值等于最大值，避免除零错误
-    return (value - min_value) / (max_value - min_value)
+    norm_value = (value - min_value) / (max_value - min_value)
+    return 1 - norm_value if reverse else norm_value
 
 
 # 车辆类
@@ -114,7 +110,7 @@ class Car:
             edge_cost = normalize(edge_length, 0, max(nx.get_edge_attributes(G, 'length').values()))
             congestion_cost = normalize(cars_on_node, 0, max(car_counts))
             heuristic_cost = normalize(heuristic(neighbor, self.end_position, pos), 0, max(heuristics))
-            attract_rank_cost = normalize(attract_rank, min(attract_ranks.values()), max(attract_ranks.values()))
+            attract_rank_cost = normalize(attract_rank, min(attract_ranks.values()), max(attract_ranks.values()), reverse=True)
 
             # 计算总成本（加权和）
             total_cost = (weights['edge'] * edge_cost +
@@ -205,7 +201,8 @@ def start_simulation(num_cars, Vertices, Edges):
 
     return cars
 
+
 # 主程序
 # num_cars = 10
-# cars= start_simulation(num_cars, Vertices, Edges)
+# cars = start_simulation(num_cars, Vertices, Edges)
 # print_results(cars)
