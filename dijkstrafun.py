@@ -6,6 +6,15 @@ import time
 # 定义车辆类
 class Car:
     def __init__(self, car_num, speed, start_position, end_position, path):
+        """
+        初始化车辆对象
+        参数:
+        - car_num (int): 车辆编号
+        - speed (float): 车辆速度
+        - start_position (tuple): 起始位置的坐标 (x, y)
+        - end_position (tuple): 结束位置的坐标 (x, y)
+        - path (list): 行驶路径的列表
+        """
         self.car_num = car_num  # 车辆编号
         self.speed = speed  # 车辆速度
         self.start_position = start_position  # 起始位置
@@ -15,6 +24,12 @@ class Car:
 
     # 添加路径点
     def add_path_point(self, coords, travel_time):
+        """
+        添加路径点并更新相对时间和时间戳
+        参数:
+        - coords (tuple): 当前坐标 (x, y)
+        - travel_time (float): 从上一个点到当前点的行驶时间
+        """
         self.relative_time += travel_time  # 更新相对时间
         self.path.append({
             'coords': coords,  # 当前坐标
@@ -25,14 +40,35 @@ class Car:
 
     # 定义小于（<）运算符，用于车辆之间的比较
     def __lt__(self, other):
+        """
+        比较两个车辆对象的最后一个路径点的时间戳
+        用于在队列中排序
+        """
         return self.path[-1]['timestamp'] < other.path[-1]['timestamp']
 
 # 基于吸引力计算停留时间的函数
 def calculate_stay_time(attractiveness):
+    """
+    根据吸引力计算车辆在节点的停留时间
+    参数:
+    - attractiveness (float): 节点的吸引力分数
+    返回:
+    - float: 停留时间，最小值为 0.1 小时
+    """
     return max(0.1, attractiveness * 0.1)  # 最小停留时间为0.1小时
 
 # 定义 AttractRank 算法
 def attract_rank(G, alpha=0.5, beta=0.3, gamma=0.2):
+    """
+    计算每个节点的 AttractRank 分数
+    参数:
+    - G (networkx.Graph): 图对象
+    - alpha (float): PageRank 分数的权重因子
+    - beta (float): 中介中心性分数的权重因子
+    - gamma (float): 节点权重的权重因子
+    返回:
+    - dict: 每个节点的 AttractRank 分数
+    """
     attractiveness = {}
     for node in G.nodes:
         pagerank_score = G.nodes[node]['pagerank']  # PageRank 分数
@@ -44,10 +80,30 @@ def attract_rank(G, alpha=0.5, beta=0.3, gamma=0.2):
 
 # 根据道路长度和吸引力分数自定义权重计算
 def custom_weight(u, v, d, G):
+    """
+    计算道路边的自定义权重
+    参数:
+    - u (node): 边的起点
+    - v (node): 边的终点
+    - d (dict): 边的属性字典，包括长度
+    - G (networkx.Graph): 图对象
+    返回:
+    - float: 自定义权重，考虑道路长度和终点的 AttractRank 分数
+    """
     return d['length'] / (G.nodes[v]['attract_rank'] + 1e-6)
 
 # 模拟车辆行驶路径
 def simulate_vehicle_path(G, road_data, pos, car_num, output_queue, cars_info):
+    """
+    模拟单辆车的行驶路径，并将结果存储在队列和 cars_info 列表中
+    参数:
+    - G (networkx.Graph): 图对象
+    - road_data (pandas.DataFrame): 包含道路信息的数据框
+    - pos (dict): 节点的坐标字典
+    - car_num (int): 车辆编号
+    - output_queue (queue.PriorityQueue): 用于存储输出结果的优先队列
+    - cars_info (list): 用于存储车辆信息的列表
+    """
     uniform_speed = np.random.uniform(0.3, 0.7)  # 车辆速度
     round_num = 0  # 回合计数
     while round_num < 5:  # 循环五次
@@ -124,6 +180,11 @@ def simulate_vehicle_path(G, road_data, pos, car_num, output_queue, cars_info):
 
 # 打印输出队列中的结果
 def print_results(output_queue):
+    """
+    从输出队列中获取并打印结果
+    参数:
+    - output_queue (queue.PriorityQueue): 包含车辆行驶结果的优先队列
+    """
     while True:
         timestamp, car, round_num = output_queue.get()
         if car is None:  # 结束信号
