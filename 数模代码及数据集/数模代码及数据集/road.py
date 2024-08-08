@@ -22,7 +22,7 @@ def initialize_graph(vertices, edges):
         node1, node2 = edge
         pos1 = vertices[node1]
         pos2 = vertices[node2]
-        length = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
+        length = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos2[1] - pos2[1]) ** 2)
         G.add_edge(node1, node2, length=length)
 
     return G
@@ -65,11 +65,12 @@ def heuristic(node, end_node, pos):
 
 
 # 归一化处理
-def normalize(value, min_value, max_value):
+def normalize(value, min_value, max_value, reverse=False):
     """归一化函数"""
     if max_value == min_value:
         return 0  # 如果最小值等于最大值，避免除零错误
-    return (value - min_value) / (max_value - min_value)
+    norm_value = (value - min_value) / (max_value - min_value)
+    return 1 - norm_value if reverse else norm_value
 
 
 # 车辆类
@@ -109,7 +110,7 @@ class Car:
             edge_cost = normalize(edge_length, 0, max(nx.get_edge_attributes(G, 'length').values()))
             congestion_cost = normalize(cars_on_node, 0, max(car_counts))
             heuristic_cost = normalize(heuristic(neighbor, self.end_position, pos), 0, max(heuristics))
-            attract_rank_cost = normalize(attract_rank, min(attract_ranks.values()), max(attract_ranks.values()))
+            attract_rank_cost = normalize(attract_rank, min(attract_ranks.values()), max(attract_ranks.values()), reverse=True)
 
             # 计算总成本（加权和）
             total_cost = (weights['edge'] * edge_cost +
@@ -200,7 +201,8 @@ def start_simulation(num_cars, Vertices, Edges):
 
     return cars
 
+
 # 主程序
 # num_cars = 10
-# cars= start_simulation(num_cars, Vertices, Edges)
+# cars = start_simulation(num_cars, Vertices, Edges)
 # print_results(cars)
