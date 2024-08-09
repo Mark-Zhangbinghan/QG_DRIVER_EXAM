@@ -1,13 +1,13 @@
 import json
 #
-from 数模代码及数据集.数模代码及数据集.road import Car
-from 数模代码及数据集.数模代码及数据集.road import start_simulation
 from Vertices_Weight_create.create_Vertices import edges, vertices
+from jicheng_fun import run_simulation
+from jicheng_fun import G
 
 # 节点及其坐标
 vertices = vertices
 
-# 边的连接关系
+# 边连接关系
 edges = edges
 
 # class Car:
@@ -19,35 +19,22 @@ edges = edges
 #         self.path = []
 #         self.relative_time = 0.0
 
-cars = start_simulation(10, vertices, edges)
-
+# cars = start_simulation(10, vertices, edges)
+cars = run_simulation(G=G, total_cars=10, round_num=1, speed=0.5)
 for car in cars:
-    print(car.car_num)
-    print(car.start_position)
-    print(car.end_position)
-    print(car.path)
-
-
-def get_vertex_position(vertex_key):
-    return vertices[vertex_key]
+    print(car['car_num'])
 
 
 def cars_to_json(cars_list):
     car_list_json = []
     for car in cars_list:
-        # 使用辅助函数获取起始点和终点的坐标
-        start_pos = get_vertex_position(car.start_position)
-        end_pos = get_vertex_position(car.end_position)
-
         # 转换路径为所需的格式
-        path_list = [{"x": point[0], "y": point[1]} for point in car.path]
+        path_list = [{"x": point['coords'][0], "y": point['coords'][1]} for point in car['path']]
 
         # 构建车辆的字典
         car_dict = {
-            "car_num": car.car_num,
-            "speed": car.speed,
-            "start_point": {"x": start_pos[0], "y": start_pos[1]},
-            "end_point": {"x": end_pos[0], "y": end_pos[1]},
+            "car_num": car['car_num'],
+            "speed": car['speed'],
             "path": path_list
         }
         car_list_json.append(car_dict)
@@ -62,5 +49,4 @@ def cars_to_json(cars_list):
     print(f'JSON数据已成功写入到文件：{filename}')
     return json_output
 
-
-cars_to_json(cars)
+# cars_to_json(cars)
