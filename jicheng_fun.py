@@ -185,6 +185,6 @@ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
 
 
 # 使用示例
-cars_info = run_simulation(G, total_cars=10, round_num=5, speed=0.5)
-print(f"总共保存了 {len(cars_info)} 辆车的信息:")
-print(cars_info)
+# cars_info = run_simulation(G, total_cars=10, round_num=5, speed=0.5)
+# print(f"总共保存了 {len(cars_info)} 辆车的信息:")
+# print(cars_info)
