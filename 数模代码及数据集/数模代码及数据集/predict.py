@@ -95,7 +95,7 @@ for epoch in range(num_epochs):
         print(f'Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}')
 
 
-# 6. 定义标签生成函数
+# 6. 定义标签生成函数*
 def get_label(traffic_index):
     if 0 <= traffic_index < 2:
         return "畅通"
