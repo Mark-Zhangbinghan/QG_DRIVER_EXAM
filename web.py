@@ -1,10 +1,13 @@
-from fastapi import FastAPI, File, UploadFile
+import asyncio
+
+from fastapi import FastAPI, File, UploadFile, WebSocket
 from fastapi import Request
 import uvicorn
 import json
+
 # 自定函数
-from jicheng_fun import run_simulation
-from Vertices_Weight_create.create_Vertices import G, dot
+from end_dijkstra import run_simulation
+from Vertices_Weight_create.create_Vertices import G
 from add_json import cars_to_json
 from add_json import cars_to_file
 from add_json import mat_hot_point
@@ -12,6 +15,7 @@ from add_json import mat_hot_point
 app = FastAPI()
 car_cnt = 0  # 车辆计数器
 cars = []  # 全局列表cars
+weights = []  # 全局列表weight
 
 
 # 判断连接是否成功路由
@@ -27,6 +31,7 @@ async def read_root():
 @app.put('/put_car')
 async def put_car(get_params: Request):  # 要在url中写参数而不是请求体
     global cars
+    global weights
     car_num = 10  # 预设被运算车辆的数量
     params = get_params.query_params
     car_num = params.get('car_num')
@@ -40,9 +45,11 @@ async def put_car(get_params: Request):  # 要在url中写参数而不是请求�
         return {"need int"}
     else:
         # 根据接受到的car_num先计算宏观路径
-        cars = run_simulation(G=G, total_cars=car_num, round_num=1, speed=0.5)  # 直接计算path然后存成字典列表
+        cars, weights = run_simulation(G=G, total_cars=car_num, round_num=1, speed=0.5)  # 直接计算path然后存成字典列表
         # 存成文件方便检查
         cars_to_file(cars)
+        for weight in weights:
+            print(weight)
         return {"put succeed"}
 
 
@@ -51,7 +58,6 @@ async def put_car(get_params: Request):  # 要在url中写参数而不是请求�
 async def get_path():  # 要在body中写参数
     global car_cnt
     car_list = cars_to_json(cars, add_z=-3)
-    car_data = car_list[car_cnt]
     print(car_cnt)
     print(len(car_list))
     if car_cnt < len(car_list) - 1:
@@ -59,16 +65,39 @@ async def get_path():  # 要在body中写参数
         car_cnt += 1
         return car_data  # 直接返回字典
     else:
-        car_cnt -= len(car_list)  # 超出就减回1
+        car_cnt = 0  # 超出就变回0
         car_data = car_list[car_cnt]
         car_cnt += 1
         return car_data
 
 
-@app.get("/get_dot")
-async def get_dot():
-    dot_json = mat_hot_point(dot)
-    return dot_json
+def get_json_data():
+    # 这里可以是任何逻辑来获取或生成你的 JSON 数据
+    data = {"key": "value", "data": "your data here"}
+    return json.dumps(data)
+
+
+@app.websocket("/ws_weights")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    weight_cnt = 0
+    try:
+        while True:
+            print(weight_cnt)
+            print(len(weights))
+            if weight_cnt >= len(weights):
+                weight_cnt = 0  # 重置索引
+            # 提取一次列表
+            weight_data = weights[weight_cnt]
+            # 转成json
+            dot_json = mat_hot_point(weight_data)
+            json_data = json.dumps(dot_json)
+            await websocket.send_text(json_data)
+            weight_cnt += 1
+            await asyncio.sleep(0.5)
+    except Exception as e:
+        # 处理异常，例如连接关闭
+        print(f"Websocket closed: {e}")
 
 
 # 主监听函数
