@@ -1,136 +1,48 @@
 import pandas as pd
-import torch
-import torch.nn as nn
-import torch.optim as optim
 import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+import matplotlib.font_manager as fm
 
-# 1. 读取数据
-file_path = './广州市交通指数.txt'
-data = pd.read_csv(file_path, delimiter='\t', encoding='utf-8')
+# 读取数据
+data = pd.read_csv('广州市交通指数.txt', parse_dates=['统计时间'], date_format='%Y年%m月')
+data.set_index('统计时间', inplace=True)
 
-# 2. 数据预处理
-data['交通指数'] = data['交通指数,拥堵级别,统计时间'].apply(lambda x: float(x.split(',')[0]))
-data['统计时间'] = data['交通指数,拥堵级别,统计时间'].apply(
-    lambda x: pd.to_datetime(x.split(',')[2], format='%Y年%m月'))
+# 分离数值列和非数值列
+numeric_data = data[['交通指数']]
+non_numeric_data = data[['拥堵级别']]
 
-# 按时间排序
-data = data.sort_values(by='统计时间').reset_index(drop=True)
+# 填补缺失值（使用线性插值）
+numeric_data = numeric_data.resample('ME').mean().interpolate(method='linear')
 
-# 将数据划分为训练集和验证集
-train_data = data[data['统计时间'] < '2024-05']
-val_data = data[data['统计时间'] == '2024-05']
+# 如果有必要，填补非数值列的缺失值
+non_numeric_data = non_numeric_data.resample('ME').ffill()
 
-# 提取特征和标签
-X_train = train_data['交通指数'].values.reshape(-1, 1)
-y_train = X_train.copy()  # 因为我们是用前一时间步预测下一时间步，直接复制即可
-X_val = val_data['交通指数'].values.reshape(-1, 1)
-y_val = X_val.copy()
+# 将数值列和非数值列重新合并
+data = pd.concat([numeric_data, non_numeric_data], axis=1)
 
+# 训练SARIMA模型
+model = SARIMAX(data['交通指数'], order=(1, 1, 1), seasonal_order=(1, 1, 1, 12))
+results = model.fit()
 
-# 改进的数据归一化函数，防止除以零的情况
-def min_max_scaler(data):
-    min_val = np.min(data)
-    max_val = np.max(data)
-    if max_val == min_val:
-        return np.zeros_like(data)  # 如果最大值和最小值相等，返回全零数组
-    return (data - min_val) / (max_val - min_val)
+# 预测2024年全年
+forecast = results.get_forecast(steps=12)
+forecast_index = pd.date_range(start='2024-01-01', periods=12, freq='M')
+forecast_values = forecast.predicted_mean
+forecast_conf_int = forecast.conf_int()
 
+# 设置matplotlib显示中文
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体字体
+plt.rcParams['axes.unicode_minus'] = False    # 正常显示负号
 
-# 应用归一化
-X_train_scaled = min_max_scaler(X_train)
-X_val_scaled = min_max_scaler(X_val)
-
-# 将数据转换为LSTM的输入格式 (samples, time_steps, features)
-X_train_lstm = X_train_scaled.reshape(X_train_scaled.shape[0], 1, 1)
-X_val_lstm = X_val_scaled.reshape(X_val_scaled.shape[0], 1, 1)
-
-# 转换为PyTorch张量
-X_train_tensor = torch.Tensor(X_train_lstm)
-y_train_tensor = torch.Tensor(y_train)
-X_val_tensor = torch.Tensor(X_val_lstm)
-y_val_tensor = torch.Tensor(y_val)
-
-
-# 3. 定义LSTM模型
-class TrafficLSTM(nn.Module):
-    def __init__(self, input_size=1, hidden_size=50, num_layers=2):
-        super(TrafficLSTM, self).__init__()
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, 1)
-
-    def forward(self, x):
-        h_0 = torch.zeros(2, x.size(0), 50).to(x.device)
-        c_0 = torch.zeros(2, x.size(0), 50).to(x.device)
-
-        out, _ = self.lstm(x, (h_0, c_0))
-        out = self.fc(out[:, -1, :])
-        return out
-
-
-# 4. 初始化模型、损失函数和优化器
-model = TrafficLSTM()
-criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
-
-# 5. 训练模型
-num_epochs = 100
-train_losses = []
-
-for epoch in range(num_epochs):
-    model.train()
-    optimizer.zero_grad()
-
-    # 前向传播
-    outputs = model(X_train_tensor)
-    loss = criterion(outputs, y_train_tensor)
-
-    # 反向传播和优化
-    loss.backward()
-    optimizer.step()
-
-    train_losses.append(loss.item())
-
-    # 打印损失值
-    if (epoch + 1) % 10 == 0:
-        print(f'Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}')
-
-
-# 6. 定义标签生成函数*
-def get_label(traffic_index):
-    if 0 <= traffic_index < 2:
-        return "畅通"
-    elif 2 <= traffic_index < 4:
-        return "基本畅通"
-    elif 4 <= traffic_index < 6:
-        return "轻度拥堵"
-    elif 6 <= traffic_index < 8:
-        return "中度拥堵"
-    elif 8 <= traffic_index <= 10:
-        return "严重拥堵"
-    else:
-        return "无效值"
-
-
-# 7. 模型评估
-model.eval()
-with torch.no_grad():
-    predictions = model(X_val_tensor)
-    val_loss = criterion(predictions, y_val_tensor)
-    print(f'Validation Loss: {val_loss.item():.4f}')
-
-    # 反归一化预测值
-    predictions = predictions.numpy()
-    y_val_tensor = y_val_tensor.numpy()
-
-    predictions_denorm = predictions * (np.max(X_val) - np.min(X_val)) + np.min(X_val)
-    y_val_denorm = y_val_tensor * (np.max(X_val) - np.min(X_val)) + np.min(X_val)
-
-    # 打印预测结果和标签
-    print("验证集预测结果和标签:")
-    for i in range(len(predictions_denorm)):
-        predicted_value = predictions_denorm[i][0]
-        actual_value = y_val_denorm[i][0]
-        predicted_label = get_label(predicted_value)
-        actual_label = get_label(actual_value)
-        print(
-            f"预测值: {predicted_value:.2f}, 预测标签: {predicted_label}, 实际值: {actual_value:.2f}, 实际标签: {actual_label}")
+# 绘制图像
+plt.figure(figsize=(12, 6))
+plt.plot(data.index, data['交通指数'], label='历史数据')
+plt.plot(forecast_index, forecast_values, label='预测数据', color='red')
+plt.fill_between(forecast_index, forecast_conf_int.iloc[:, 0], forecast_conf_int.iloc[:, 1], color='red', alpha=0.3)
+plt.xlabel('时间')
+plt.ylabel('交通指数')
+plt.title('2024年交通指数预测')
+plt.legend()
+plt.grid(True)
+plt.show()
