@@ -26,12 +26,15 @@ for edge in Edges:
 
 def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
     # 初始化图和其他相关参数
-
-
     road_data = [
-        {'道路名称': edge[2], '实际距离': G.edges[edge[0], edge[1]]['length']}
-        for edge in Edges
+        {'道路名称': G.edges[edge]['road'], '实际距离': G.edges[edge]['length']}
+        for edge in G.edges
     ]
+
+    # road_data = [
+    #     {'道路名称': edge[2], '实际距离': G.edges[edge[0], edge[1]]['length']}
+    #     for edge in Edges
+    # ]
 
     pos = nx.get_node_attributes(G, 'pos')
 
@@ -153,20 +156,6 @@ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
 
             time.sleep(np.random.uniform(0.1, 0.3))
 
-    # def print_results(output_queue):
-    #     while True:
-    #         try:
-    #             timestamp, car = output_queue.get_nowait()
-    #             print(f"车辆 {car.car_num} 到达终点:")
-    #             print(f"  起始点位置: {car.start_position}")
-    #             print(f"  结束点位置: {car.end_position}")
-    #             for path_point in car.path:
-    #                 timestamp_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(path_point['timestamp']))
-    #                 print(
-    #                     f"  到达坐标: {path_point['coords']}, 相对时间: {path_point['relative_time']:.2f}小时, 行驶时间: {path_point['travel_time']:.2f}小时, 时间戳: {timestamp_str}")
-    #             print()
-    #         except queue.Empty:
-    #             break
 
     output_queue = queue.PriorityQueue()
 
@@ -179,12 +168,11 @@ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
     for t in threads:
         t.join()
 
-    # print_results(output_queue)
 
     return cars_info
 
 
 # # 使用示例
 # cars_info = run_simulation(G, total_cars=10, round_num=5, speed=0.5)
-# print(f"总共保存了 {len(cars_info)} 辆车的信息:")
+# # print(f"总共保存了 {len(cars_info)} 辆车的信息:")
 # print(cars_info)
