@@ -1,29 +1,30 @@
 import networkx as nx
 import math
 import numpy as np
-import create_Vertices
-
-G = nx.Graph()
-for edge in create_Vertices.Edges:
-    G.add_edge(*edge)
-
-alpha = 0.1
-
-# 计算 Katz Centrality
-try:
-    katz_centrality = nx.katz_centrality(G, alpha=alpha, max_iter=10000)
-except nx.exception.PowerIterationFailedConvergence as e:
-    print("Power iteration failed to converge:", e)
-# 计算pagerank
-pagerank = nx.pagerank(G)
-
-# 两种算法开始结合
-combined_centrality = {node: 0.5 * katz_centrality[node] + 0.5 * pagerank[node] for node in G.nodes()}
-# 输出结合后的效果
-for node, cent in sorted(combined_centrality.items(), key=lambda item: item[1], reverse=True):
-    print(f"{node} {cent:.4f}")
+import draw_map
 
 
+# 计算每个结点对于全局的影响度
+def hot_spot(G):
+    alpha = 0.1
+
+    # 计算 Katz Centrality
+    try:
+        katz_centrality = nx.katz_centrality(G, alpha=alpha, max_iter=10000)
+    except nx.exception.PowerIterationFailedConvergence as e:
+        print("Power iteration failed to converge:", e)
+    # 计算pagerank
+    pagerank = nx.pagerank(G)
+
+    # 两种算法开始结合
+    combined_centrality = {node: 0.5 * katz_centrality[node] + 0.5 * pagerank[node] for node in G.nodes()}
+    # 输出结合后的效果
+    for node, cent in sorted(combined_centrality.items(), key=lambda item: item[1], reverse=True):
+        print(f"{node} {cent:.4f}")
+
+
+
+"""
 # 建立马尔可夫矩阵
 def create_markof(G):
     n = len(G.nodes())  # 图结点的个数(矩阵的边长)
@@ -34,8 +35,10 @@ def create_markof(G):
     # 建立马尔可夫矩阵
     markof = np.zeros((n, n))
     for edge in create_Vertices.Edges:
-        markof[list(create_Vertices.Vertices.keys()).index(edge[0]), list(create_Vertices.Vertices.keys()).index(edge[1])] = 1
-        markof[list(create_Vertices.Vertices.keys()).index(edge[1]), list(create_Vertices.Vertices.keys()).index(edge[0])] = 1
+        markof[list(create_Vertices.Vertices.keys()).index(edge[0]), 
+        list(create_Vertices.Vertices.keys()).index(edge[1])] = 1
+        markof[list(create_Vertices.Vertices.keys()).index(edge[1]), 
+        list(create_Vertices.Vertices.keys()).index(edge[0])] = 1
 
     for i in range(n):
         if degrees[list(create_Vertices.Vertices.keys())[i]] != 0:
@@ -43,7 +46,6 @@ def create_markof(G):
     return markof
 
 
-"""
 # 建立邻接矩阵
 def make_adjacency(Vertices, Edges):
     # 计算顶点的数量
