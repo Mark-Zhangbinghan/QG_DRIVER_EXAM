@@ -103,6 +103,7 @@ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
             car = Car(car_num, speed, pos[start_edge[0]], pos[end_edge[1]], [])
             car.add_path_point(car.start_position, start_position / car.speed)
 
+            v = 0
             for i in range(len(path) - 1):
                 u = path[i]
                 v = path[i + 1]
