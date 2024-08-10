@@ -79,12 +79,9 @@ def create_vertices(data_path):
                 near.append(edge[0])
         dot.append(Vertex(node, node_weights[node], G.nodes[node]['pos'], near))
 
-    for i in range(len(dot)):
-        print(dot[i].name, dot[i].dot_weight, dot[i].dot_place, dot[i].near_dot)
-
-    return G
+    return G, dot
 
 
 if __name__ == '__main__':
     data_path = 'node_data.xlsx'
-    G = create_vertices(data_path)
+    G, dot = create_vertices(data_path)  # G为集成的图像信息 dot是由结点类组成的数组
