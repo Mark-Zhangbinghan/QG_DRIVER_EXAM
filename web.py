@@ -4,9 +4,10 @@ import uvicorn
 import json
 # 自定函数
 from jicheng_fun import run_simulation
-from jicheng_fun import G
+from Vertices_Weight_create.create_Vertices import G, dot
 from add_json import cars_to_json
 from add_json import cars_to_file
+from add_json import mat_hot_point
 
 app = FastAPI()
 car_cnt = 0  # 车辆计数器
@@ -62,6 +63,12 @@ async def get_path():  # 要在body中写参数
         car_data = car_list[car_cnt]
         car_cnt += 1
         return car_data
+
+
+@app.get("/get_dot")
+async def get_dot():
+    dot_json = mat_hot_point(dot)
+    return dot_json
 
 
 # 主监听函数

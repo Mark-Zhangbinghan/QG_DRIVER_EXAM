@@ -1,14 +1,4 @@
 import json
-#
-from Vertices_Weight_create.create_Vertices import edges, vertices
-from jicheng_fun import run_simulation
-from jicheng_fun import G
-
-# 节点及其坐标
-vertices = vertices
-
-# 边连接关系
-edges = edges
 
 
 # class Car:
@@ -57,8 +47,20 @@ def cars_to_json(cars_list, add_z=-3):
             "path": path_list
         }
         car_list_json.append(car_dict)
-    # 转成json
     return car_list_json
+
 
 # cars = run_simulation(G=G, total_cars=10, round_num=1, speed=0.5)
 # cars_to_json(cars)
+
+def mat_hot_point(dot):
+    dot_list_json = []
+    for the_dot in dot:
+        # dot字典
+        dot_dict = {
+            "x": the_dot.dot_place[0],
+            "y": the_dot.dot_place[1],
+            "weight": the_dot.dot_weight
+        }
+        dot_list_json.append(dot_dict)
+    return dot_list_json
