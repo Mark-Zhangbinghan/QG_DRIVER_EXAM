@@ -60,15 +60,11 @@ async def get_path():  # 要在body中写参数
     car_list = cars_to_json(cars, add_z=-3)
     print(car_cnt)
     print(len(car_list))
-    if car_cnt < len(car_list) - 1:
-        car_data = car_list[car_cnt]
-        car_cnt += 1
-        return car_data  # 直接返回字典
-    else:
-        car_cnt = 0  # 超出就变回0
-        car_data = car_list[car_cnt]
-        car_cnt += 1
-        return car_data
+    if car_cnt >= len(car_list):
+        car_cnt = 0
+    car_data = car_list[car_cnt]
+    car_cnt += 1
+    return car_data  # 直接返回字典
 
 
 def get_json_data():
