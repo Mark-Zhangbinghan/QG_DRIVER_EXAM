@@ -1,4 +1,3 @@
-from create_Vertices import get_graph_and_vertices
 import networkx as nx
 import numpy as np
 import random
