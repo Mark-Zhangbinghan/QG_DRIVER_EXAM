@@ -82,6 +82,5 @@ def create_vertices(data_path):
     return G, dot
 
 
-if __name__ == '__main__':
-    data_path = 'node_data.xlsx'
-    G, dot = create_vertices(data_path)  # G为集成的图像信息 dot是由结点类组成的数组
+data_path = 'node_data.xlsx'
+G, dot = create_vertices(data_path)  # G为集成的图像信息 dot是由结点类组成的数组
