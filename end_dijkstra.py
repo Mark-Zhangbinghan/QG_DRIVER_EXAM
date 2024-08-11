@@ -4,6 +4,7 @@ import random
 import time
 import queue
 import threading
+
 # data_path = 'node_data.xlsx'
 # G, dot = get_graph_and_vertices(data_path)
 def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
