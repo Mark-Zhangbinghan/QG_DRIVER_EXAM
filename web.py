@@ -4,7 +4,7 @@ from fastapi import FastAPI, File, UploadFile, WebSocket
 from fastapi import Request
 import uvicorn
 import json
-
+import requests
 # 自定函数
 from end_dijkstra import run_simulation
 from Vertices_Weight_create.create_Vertices import G
@@ -64,7 +64,10 @@ async def put_path_num(get_params: Request):  # 要在url中写参数而不是�
     else:
         path_num = -1  # 表示转换失败
     print(path_num)
-    return {"put succeed"}
+    if path_num == -1:
+        return {"need int"}
+    else:
+        return {"put succeed"}
 
 
 # 获取车辆路径路由
