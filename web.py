@@ -84,12 +84,6 @@ async def get_path():  # 要在body中写参数
     return car_data  # 直接返回字典
 
 
-def get_json_data():
-    # 这里可以是任何逻辑来获取或生成你的 JSON 数据
-    data = {"key": "value", "data": "your data here"}
-    return json.dumps(data)
-
-
 @app.websocket("/ws_weights")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
