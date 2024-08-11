@@ -53,6 +53,20 @@ async def put_car(get_params: Request):  # 要在url中写参数而不是请求�
         return {"put succeed"}
 
 
+# 获得微观图路口数量
+@app.put('/put_path_num')
+async def put_path_num(get_params: Request):  # 要在url中写参数而不是请求体
+    path_num = 4  # 预设岔路的数量
+    params = get_params.query_params
+    path_num = params.get('path_num')
+    if path_num and path_num.isdigit():  # 判断能否转换成整数
+        path_num = int(path_num)  # 将字符串转换为整数
+    else:
+        path_num = -1  # 表示转换失败
+    print(path_num)
+    return {"put succeed"}
+
+
 # 获取车辆路径路由
 @app.get("/get_path")
 async def get_path():  # 要在body中写参数
