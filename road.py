@@ -60,6 +60,10 @@ class Car:
         self.relative_time = 0
         self.speed = speed
 
+        # 如果起点和终点相同，则立即标记为完成
+        if self.start_position == self.end_position:
+            self.finished = True
+
     def move(self, G, current_time, heuristics, car_counts, attract_ranks, weights, pos):
         """模拟车辆移动"""
         if self.finished:
