@@ -14,6 +14,7 @@ from add_json import mat_hot_point
 
 app = FastAPI()
 car_cnt = 0  # 车辆计数器
+weights_cnt = 0
 cars = []  # 全局列表cars
 weights = []  # 全局列表weight
 
@@ -84,8 +85,19 @@ async def get_path():  # 要在body中写参数
     return car_data  # 直接返回字典
 
 
+@app.get("/get_weights")
+async def get_weights():
+    global weights_cnt
+    if weights_cnt >= len(weights):
+        weights_cnt = 0
+    weight_data = weights[weights_cnt]
+    dot_json = mat_hot_point(weight_data)
+    weights_cnt += 1
+    return dot_json  # 直接返回字典
+
+
 @app.websocket("/ws_weights")
-async def websocket_endpoint(websocket: WebSocket):
+async def ws_weights(websocket: WebSocket):
     await websocket.accept()
     weight_cnt = 0
     try:
