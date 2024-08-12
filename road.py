@@ -135,10 +135,10 @@ def user_defined_path_selection(data_path, weights):
     path = simulate_specified_car(start_node, end_node, G, weights)
     return path
 
-# 示例数据，如何调用
-# data_path = 'Vertices_Weight_create/node_data.xlsx'
-# weights = {'edge': 0.5, 'congestion': 0.2, 'heuristic': 0.2, 'attract_rank': 0.1}
-#
-# # 执行用户输入选择，并打印结果
-# path = user_defined_path_selection(data_path, weights)
+# 示例数据
+data_path = 'Vertices_Weight_create/node_data.xlsx'
+weights = {'edge': 0.4, 'congestion': 0.1, 'heuristic': 0.3, 'attract_rank': 0.2}
 
+# 执行用户输入选择，并打印结果
+path = user_defined_path_selection(data_path, weights)
+print("车辆行驶路径:", path)
