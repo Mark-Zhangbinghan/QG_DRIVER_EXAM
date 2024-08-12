@@ -8,9 +8,10 @@ import requests
 # 自定函数
 from end_dijkstra import run_simulation
 from Vertices_Weight_create.create_Vertices import G
-from add_json import cars_to_json
-from add_json import cars_to_file
-from add_json import mat_hot_point
+from add_json import cars_to_json, cars_to_file, mat_hot_point
+# import e自带data_path,weights
+from road import data_path, e_weights
+from road import user_defined_path_selection
 
 app = FastAPI()
 car_cnt = 0  # 车辆计数器
@@ -124,6 +125,27 @@ async def ws_weights(websocket: WebSocket):
     except Exception as e:
         # 处理异常，例如连接关闭
         print(f"Websocket closed: {e}")
+
+
+@app.put("/put_path")
+async def put_path(path_request: Request):
+    path_json = await path_request.json()
+    start_point = int(path_json["start_point"])
+    end_point = int(path_json["end_point"])
+    is_driving = path_json["is_driving"]
+    # if is_driving ==0:
+
+    user_path = user_defined_path_selection(data_path=data_path, weights=e_weights, start_node=start_point,
+                                            end_node=end_point)
+    path_nodes = []
+    for node in user_path:
+        node_dict = {
+            "x": node[0],
+            "y": node[1]
+        }
+        path_nodes.append(node_dict)
+
+    return path_nodes
 
 
 # 主监听函数

@@ -3,6 +3,7 @@ import networkx as nx
 import numpy as np
 from Vertices_Weight_create.create_Vertices import create_vertices  # 引入第二段代码
 
+
 def initialize_graph_from_dot(dot):
     """初始化图"""
     G = nx.Graph()
@@ -16,6 +17,7 @@ def initialize_graph_from_dot(dot):
             G.add_edge(vertex.name, neighbor, length=length)
     return G
 
+
 def compute_centrality(G):
     """计算 PageRank 和中介中心性"""
     pagerank_values = nx.pagerank(G, weight='length')
@@ -23,6 +25,7 @@ def compute_centrality(G):
     nx.set_node_attributes(G, pagerank_values, 'pagerank')
     nx.set_node_attributes(G, betweenness_centrality_values, 'betweenness')
     return pagerank_values, betweenness_centrality_values
+
 
 def attract_rank(G, alpha=0.5, beta=0.5):
     """计算 AttractRank 值"""
@@ -35,11 +38,13 @@ def attract_rank(G, alpha=0.5, beta=0.5):
     nx.set_node_attributes(G, attractiveness, 'attract_rank')
     return attractiveness
 
+
 def heuristic(node, end_node, pos):
     """计算启发式估计值（欧氏距离）"""
     x1, y1 = pos[node]
     x2, y2 = pos[end_node]
     return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
 
 def normalize(value, min_value, max_value, reverse=False):
     """归一化处理"""
@@ -47,6 +52,7 @@ def normalize(value, min_value, max_value, reverse=False):
         return 0
     norm_value = (value - min_value) / (max_value - min_value)
     return 1 - norm_value if reverse else norm_value
+
 
 class Car:
     def __init__(self, car_num, speed, start_position, end_position):
@@ -87,7 +93,8 @@ class Car:
             edge_cost = normalize(edge_length, 0, max(nx.get_edge_attributes(G, 'length').values()))
             congestion_cost = normalize(cars_on_node, 0, max(car_counts))
             heuristic_cost = normalize(heuristic(neighbor, self.end_position, pos), 0, max(heuristics))
-            attract_rank_cost = normalize(attract_rank, min(attract_ranks.values()), max(attract_ranks.values()), reverse=True)
+            attract_rank_cost = normalize(attract_rank, min(attract_ranks.values()), max(attract_ranks.values()),
+                                          reverse=True)
 
             total_cost = (weights['edge'] * edge_cost +
                           weights['congestion'] * congestion_cost +
@@ -108,6 +115,7 @@ class Car:
         if self.current_position == self.end_position:
             self.finished = True
 
+
 def simulate_specified_car(start_node, end_node, G, weights):
     """模拟指定车辆的路径"""
     pos = nx.get_node_attributes(G, 'pos')
@@ -126,25 +134,19 @@ def simulate_specified_car(start_node, end_node, G, weights):
     path_coordinates = [pos[node] for node in car.path]
     return path_coordinates
 
-def user_defined_path_selection(data_path, weights):
+
+def user_defined_path_selection(data_path, weights, start_node, end_node):
     """让用户选择起点和终点并模拟车辆路径"""
     # 从文件创建图
     G, dot = create_vertices(data_path)
     G = initialize_graph_from_dot(dot)
     compute_centrality(G)
 
-    # 用户输入起点和终点
-    start_node = int(input("请输入起点节点编号: "))
-    end_node = int(input("请输入终点节点编号: "))
-
     # 模拟车辆并返回路径坐标
     path_coordinates = simulate_specified_car(start_node, end_node, G, weights)
     return path_coordinates
 
+
 # 示例数据
 data_path = 'Vertices_Weight_create/node_data.xlsx'
-weights = {'edge': 0.4, 'congestion': 0.1, 'heuristic': 0.3, 'attract_rank': 0.2}
-
-# 执行用户输入选择，并打印结果
-path_coordinates = user_defined_path_selection(data_path, weights)
-print("车辆行驶路径坐标:", path_coordinates)
+e_weights = {'edge': 0.4, 'congestion': 0.1, 'heuristic': 0.3, 'attract_rank': 0.2}

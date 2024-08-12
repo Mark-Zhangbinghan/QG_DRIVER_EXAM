@@ -64,3 +64,5 @@ def mat_hot_point(weights):
         }
         dot_list_json.append(dot_dict)
     return dot_list_json
+
+
