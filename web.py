@@ -76,8 +76,9 @@ async def put_path_num(get_params: Request):  # 要在url中写参数而不是�
 async def get_path():  # 要在body中写参数
     global car_cnt
     car_list = cars_to_json(cars, add_z=-3)
-    print(car_cnt)
-    print(len(car_list))
+    print("car:")
+    print("cnt/len")
+    print(car_cnt, "/", len(car_list))
     if car_cnt >= len(car_list):
         car_cnt = 0
     car_data = car_list[car_cnt]
@@ -91,6 +92,9 @@ async def get_weights():
     if weights_cnt >= len(weights):
         weights_cnt = 0
     weight_data = weights[weights_cnt]
+    print("weights:")
+    print("cnt/len")
+    print(weights_cnt, "/", len(weights))
     dot_json = mat_hot_point(weight_data)
     weights_cnt += 1
     return dot_json  # 直接返回字典
