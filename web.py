@@ -97,7 +97,7 @@ async def get_weights():
     print(weights_cnt, "/", len(weights))
     dot_json = mat_hot_point(weight_data)
     weight_pos = {
-        "PosWeights": dot_json  # 修改成图形要的格式
+        "PosWeight": dot_json  # 修改成图形要的格式
     }
     weights_cnt += 1
     return weight_pos  # 直接返回字典
