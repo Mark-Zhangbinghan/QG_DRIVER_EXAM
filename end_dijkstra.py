@@ -1,13 +1,12 @@
-from create_Vertices import get_graph_and_vertices
 import networkx as nx
 import numpy as np
 import random
 import time
 import queue
 import threading
-data_path = 'node_data.xlsx'
-G, dot = get_graph_and_vertices(data_path)
 
+# data_path = 'node_data.xlsx'
+# G, dot = get_graph_and_vertices(data_path)
 def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
     # 初始化图和其他相关参数
     road_data = [
@@ -87,11 +86,11 @@ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
             start_position = np.random.uniform(0, start_road['实际距离'])  # 随机生成起始位置
             end_position = np.random.uniform(0, end_road['实际距离'])  # 随机生成终点位置
 
-            start_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == start_road['道路名称']]  # 与起始道路名称匹配的边列表
-            end_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == end_road['道路名称']]  #与终点道路名称匹配的边列表
+            start_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == start_road['道路名称']]  # 包含所有与起始道路名称匹配的边的列表
+            end_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == end_road['道路名称']]  # 包含所有与终点道路名称匹配的边的列表
 
             if not start_connected_edges or not end_connected_edges:
-                continue  # 如果没有找到匹配的边则跳过当前轮次
+                continue  # 如果没有找到相连的边则跳过当前轮次
 
             start_edge = random.choice(start_connected_edges)  # 随机选择起始边
             end_edge = random.choice(end_connected_edges)  # 随机选择终点边
@@ -108,7 +107,6 @@ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
 
             car = Car(car_num, speed, pos[start_edge[0]], pos[end_edge[1]], [])  # 创建 Car 对象
             car.add_path_point(car.start_position, start_position / car.speed)  # 添加路径起点
-
             v = 0
             for i in range(len(path) - 1):
                 u = path[i]
@@ -164,8 +162,9 @@ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
     return cars_info, vertex_weight  # 返回车辆信息和节点权重变化信息
 
 
-cars_info, vertex_weight = run_simulation(G, total_cars=10, round_num=5, speed=0.5)
-print(cars_info)
-print(vertex_weight)
+
+# cars_info, vertex_weight = run_simulation(G, total_cars=10, round_num=5, speed=0.5)
+# print(cars_info)
+# print(vertex_weight
 # print(len(cars_info))
 # print(len(vertex_weight))

@@ -82,5 +82,5 @@ def create_vertices(data_path):
     return G, dot
 
 
-data_path = 'node_data.xlsx'
+data_path = 'Vertices_Weight_create/node_data.xlsx'
 G, dot = create_vertices(data_path)  # G为集成的图像信息 dot是由结点类组成的数组

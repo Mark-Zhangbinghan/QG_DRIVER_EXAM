@@ -53,14 +53,14 @@ def cars_to_json(cars_list, add_z=-3):
 # cars = run_simulation(G=G, total_cars=10, round_num=1, speed=0.5)
 # cars_to_json(cars)
 
-def mat_hot_point(dot):
+def mat_hot_point(weights):
     dot_list_json = []
-    for the_dot in dot:
-        # dot字典
+    for weight_key, weight_value in weights.items():
+        # 这里的权重列表中的每个条目是一个字典
         dot_dict = {
-            "x": the_dot.dot_place[0],
-            "y": the_dot.dot_place[1],
-            "weight": the_dot.dot_weight
+            "x": weight_value['pos'][0],
+            "y": weight_value['pos'][1],
+            "weight": weight_value['weight']
         }
         dot_list_json.append(dot_dict)
     return dot_list_json
