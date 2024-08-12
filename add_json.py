@@ -60,7 +60,7 @@ def mat_hot_point(weights):
         dot_dict = {
             "x": weight_value['pos'][0],
             "y": weight_value['pos'][1],
-            "z": weight_value['weight']
+            "weight": weight_value['weight']
         }
         dot_list_json.append(dot_dict)
     return dot_list_json
