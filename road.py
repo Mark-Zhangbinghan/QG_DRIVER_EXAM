@@ -122,7 +122,9 @@ def simulate_specified_car(start_node, end_node, G, weights):
         car.move(G, current_time, heuristics, car_counts, attract_ranks, weights, pos)
         current_time += 1
 
-    return car.path
+    # 将路径从节点名称转换为坐标
+    path_coordinates = [pos[node] for node in car.path]
+    return path_coordinates
 
 def user_defined_path_selection(data_path, weights):
     """让用户选择起点和终点并模拟车辆路径"""
@@ -135,14 +137,14 @@ def user_defined_path_selection(data_path, weights):
     start_node = int(input("请输入起点节点编号: "))
     end_node = int(input("请输入终点节点编号: "))
 
-    # 模拟车辆并返回路径
-    path = simulate_specified_car(start_node, end_node, G, weights)
-    return path
+    # 模拟车辆并返回路径坐标
+    path_coordinates = simulate_specified_car(start_node, end_node, G, weights)
+    return path_coordinates
 
 # 示例数据
 data_path = 'Vertices_Weight_create/node_data.xlsx'
 weights = {'edge': 0.4, 'congestion': 0.1, 'heuristic': 0.3, 'attract_rank': 0.2}
 
 # 执行用户输入选择，并打印结果
-path = user_defined_path_selection(data_path, weights)
-print("车辆行驶路径:", path)
+path_coordinates = user_defined_path_selection(data_path, weights)
+print("车辆行驶路径坐标:", path_coordinates)
