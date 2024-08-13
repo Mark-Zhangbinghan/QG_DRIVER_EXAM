@@ -4,9 +4,10 @@ import random
 import time
 import queue
 import threading
-from create_Vertices import create_vertices
+# from create_Vertices import create_vertices
 # data_path = 'node_data.xlsx'
 # G, dot = create_vertices(data_path)
+
 
 def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
     # 初始化图和其他相关参数
@@ -201,7 +202,6 @@ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
         t.join()
 
     return cars_info, vertex_weight
-
 
 
 # cars_info, vertex_weight = run_simulation(G, total_cars=10, round_num=5, speed=0.5)
