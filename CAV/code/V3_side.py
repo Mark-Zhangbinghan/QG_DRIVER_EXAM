@@ -68,7 +68,10 @@ def adjustA(A, x, n, dd):
     return A
 
 def create_k(n, x, x_leader, A ):
-    dd = np.mean( np.diff(x[:, 1]) )
+    if len( x ) == 1:
+        dd = 0
+    else:
+        dd = np.mean( np.diff(x[:, 1]) )
     k = np.zeros( (n, 1) )
     if dd != 0:
         k[0] = abs(np.round((x[0, 1] - x_leader[1]) / dd, 1))
@@ -230,10 +233,10 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
     if round == 1:
         posV, velV, posL, keep, stay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, 'M', turning_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round )
         print( 'stay::::::::::', stay )
-        x_leader = np.array( turning_point )
-
         x = posV[-1]
         v = velV[-1]
+
+    x_leader = np.array(turning_point)
     if (turn == 'R' and starting_direction == 'ver') or (turn == 'L' and starting_direction == 'hor'):
         vL[0], vL[1] = vL[1], vL[0]
         rL = rLt
@@ -243,7 +246,7 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
         rL = -rLt
         right_turn = 1
 
-
+    # x_leader = np.array(arriving_point)
     nposV, nvelV, nLpos, nkeep, nstay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, turn, arriving_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round )
     if round == 1:
         posV = np.concatenate((posV, nposV), axis=0)
