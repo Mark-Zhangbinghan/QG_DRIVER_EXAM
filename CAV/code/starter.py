@@ -71,19 +71,17 @@ def read( split, single, round, stay ):
                 continue
             print( 'round', i )
             posV, n, ret_stay = method( int( i ), single[k], round, stay[k] )
-            print( stay, 'check1' )
         elif round == 1:
             posV, n, ret_stay = method(int(i), single[k], round, stay )
         # posV -> 轨迹点
         draw( posV, int( n ) )
 
         ret_list.append( ret_stay )
-        print( ret_list, 'check2')
     plt.xlabel('X Position(m)')
     plt.ylabel('Y Position(m)')
     plt.legend()
     plt.show()
-    return ret_list
+    return ret_list, posV
 
 
 
@@ -92,76 +90,76 @@ def read( split, single, round, stay ):
 def main():
     round = 1
     stay = []
-    # # stage1
-    # split = [ 3, 4 ]
-    # single = ['M', 'M']
-    # list1 = read( split, single, round, stay )
-    # # print( '#################', list1 )
-
-    # stage2
-    split = [1, 2]
+    # stage1
+    split = [ 3, 4 ]
     single = ['M', 'M']
-    list2 = read( split, single, round, stay )
+    list1, posV1 = read( split, single, round, stay )
+
+
+    # # stage2
+    # split = [1, 2]
+    # single = ['M', 'M']
+    # list2, posV2 = read( split, single, round, stay )
 
     # # stage3
     # split = [4]
     # single = ['L']
-    # list3 = read( split, single, round, stay )
+    # list3, posV3 = read( split, single, round, stay )
     #
     # # stage4
     # split = [3]
     # single = ['L']
-    # list4 = read( split, single, round, stay )
+    # list4, posV4 = read( split, single, round, stay )
     #
     # # stage5
     # split = [1]
     # single = ['L']
-    # list5 = read( split, single, round, stay )
+    # list5, posV5 = read( split, single, round, stay )
     #
     #
     # # stage6
     # split = [2]
     # single = ['L']
-    # list6 = read( split, single, round, stay )
+    # list6, posV6 = read( split, single, round, stay )
     #
     #
     # # right_turn
     # split = [ 1, 2, 3, 4 ]
     # single = [ 'R', 'R', 'R', 'R' ]
-    # list0 = read( split, single, round, stay )
+    # list0, posV0 = read( split, single, round, stay )
 
     ###################################################################################
     round = 2
 
-    # # stage1
-    # split = [3, 4]
-    # single = ['M', 'M']
-    # nlist1 = read( split, single, round, list1 )
+    # stage1
+    split = [3, 4]
+    single = ['M', 'M']
+    nlist1, posV1n = read( split, single, round, list1 )
 
     # # stage2
-    split = [1, 2]
-    single = ['M', 'M']
-    nlist2 = read( split, single, round, list2 )
+    # split = [1, 2]
+    # single = ['M', 'M']
+    # nlist2, posV2n = read( split, single, round, list2 )
 
     # # stage3
     # split = [4]
     # single = ['L']
-    # nlist3 = read( split, single, round, list3 )
+    # nlist3, posV3n = read( split, single, round, list3 )
     #
     # # stage4
     # split = [3]
     # single = ['L']
-    # nlist4 = read( split, single, round, list4 )
+    # nlist4, posV4n = read( split, single, round, list4 )
     #
     # # stage5
     # split = [1]
     # single = ['L']
-    # nlist5 = read( split, single, round, list5 )
+    # nlist5, posV5n = read( split, single, round, list5 )
     #
     # # stage6
     # split = [2]
     # single = ['L']
-    # nlist6 = read( split, single, round, list6 )
+    # nlist6, posV6n = read( split, single, round, list6 )
 
 
 

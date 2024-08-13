@@ -1,8 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
-
-
 
 def get_data( side, path ):
     with open( path, 'r' ) as file:
@@ -100,7 +96,7 @@ def create_vehicles(direction, x, v, r_side, rL, n, side ):
     A, x, v, rLeader = createA( n, x, v, rL, side, direction )
     return x_leader, x, v, vL, rLeader, A
 
-def check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, a, r):
+def check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r):
     if turn == 'M':
         x, y = 1, 0
     else:
@@ -120,10 +116,14 @@ def check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, a, r
 
 def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, status, road, direction, right_turn, keep, round ):
     stay = []
-    if (side == '-' and direction == 'hor') or (side == '+' and direction == 'ver'):
-        last = -1
-    elif (side == '+' and direction == 'hor') or (side == '-' and direction == 'ver'):
-        last = 0
+    # if (side == '-' and direction == 'hor') or (side == '+' and direction == 'ver'):
+    #     last = -1
+    # elif (side == '+' and direction == 'hor') or (side == '-' and direction == 'ver'):
+    #     last = 0
+    if direction == 'ver':
+        idx = 1
+    elif direction == 'hor':
+        idx = 0
     flaglo = flagla = cnt = 0
     posV, velV, posL = [ x.copy() ], [ v.copy() ], [ xL.copy() ]     # 用于记录车辆位置更新、速度更新、领导者的位置更新
 
@@ -139,15 +139,19 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
         # if posV[-1][3][0] <= 565.0 and posV[-1][3][0] >= 564.5:
         #     print(ts)
         # 上下
-        # if ts == 22300 and keep == 0 and round == 1:
+        if ts == 22300 and keep == 0 and round == 1:
         # 左右
-        if ts == 20172 and keep == 0 and round == 1:
+        # if ts == 20172 and keep == 0 and round == 1:
             light = 1
-        if np.all( np.abs( posV[-1][last] - r_turn ) < threshold ):
-            break
+        if side == '-':
+            min = np.argmin(posV[-1][:, idx])
+            if np.all( np.abs( posV[-1][min] - r_turn ) < threshold ):
+                break
+        else:
+            max = np.argmax(posV[-1][:, idx])
+            if np.all( np.abs( posV[-1][max] - r_turn ) < threshold ):
+                break
         dot_v = np.zeros_like( vp )
-        # 领导者速度不变，所有加速度为0
-        # if keep == 0:
         for i in range(n):
             s = xp[i] - lp - rL[i]
             for j in range(n):
@@ -191,7 +195,7 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
         xp += a * vp
         lp += a * vL
         # 检查是否收敛
-        cnt, flagla, flaglo = check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, a, r)
+        cnt, flagla, flaglo = check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r)
 
         posV.append( xp.copy() )
         velV.append( vp.copy() )
@@ -275,7 +279,6 @@ def run( side, path, info, i, single, round, stay ):
             x, v = xR, vR
     elif round == 2:
         tmp = len( stay )
-        print( tmp, 'len of round2' )
         if single ==  'L':
             right_turn = 0
             road = r_left
@@ -286,10 +289,8 @@ def run( side, path, info, i, single, round, stay ):
             right_turn = 1
             road = r_right
         x = np.array( stay )
-        print( x )
         n = tmp
         v = np.zeros_like( x )
-        print( v )
         r = 10
         ehp = 1 if side == '-' else -1
         rL = []
