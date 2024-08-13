@@ -66,3 +66,24 @@ def mat_hot_point(weights):
     return dot_list_json
 
 
+# 创建user_path的空json
+def user_null_json():
+    path_nodes = []
+    node_dict = {
+        "x": None,
+        "y": None,
+        "z": None
+    }
+    path_nodes.append(node_dict)  # 创建空json
+    path_pos = {
+        "PathNodes": path_nodes  # 修改成图形要的格式
+    }
+    return path_pos
+
+
+# 存储json文件
+def json_to_file(filename, json_dict):
+    json_output = json.dumps(json_dict, indent=2)
+    with open(filename, 'w', encoding='utf-8') as file:
+        file.write(json_output)
+    print(f'path_json数据已成功写入到文件：{filename}')

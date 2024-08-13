@@ -8,7 +8,7 @@ import requests
 # 自定函数
 from end_dijkstra import run_simulation
 from Vertices_Weight_create.create_Vertices import G
-from add_json import cars_to_json, cars_to_file, mat_hot_point
+from add_json import cars_to_json, cars_to_file, mat_hot_point, user_null_json, json_to_file
 # import e自带data_path,weights
 from road import data_path, e_weights
 from road import user_defined_path_selection
@@ -18,6 +18,11 @@ car_cnt = 0  # 车辆计数器
 weights_cnt = 0
 cars = []  # 全局列表cars
 weights = []  # 全局列表weight
+# 初始化user_path.json
+origin_path = user_null_json()  # 创建空json
+origin_filename = 'user_path.json'
+json_to_file(filename=origin_filename, json_dict=origin_path)  # 调用函数写进文件
+print("初始化user_path.json成功")
 
 
 # 判断连接是否成功路由
@@ -127,28 +132,50 @@ async def ws_weights(websocket: WebSocket):
         print(f"Websocket closed: {e}")
 
 
-@app.put("/put_path")
+# 前端发请求和json运行用户自设路径
+@app.put("/put_user_path")
 async def put_path(path_request: Request):
     path_json = await path_request.json()
     start_point = int(path_json["start_point"])
     end_point = int(path_json["end_point"])
-    is_driving = path_json["is_driving"]
-    # if is_driving ==0:
-
-    user_path = user_defined_path_selection(data_path=data_path, weights=e_weights, start_node=start_point,
-                                            end_node=end_point)
-    path_nodes = []
-    for node in user_path:
-        node_dict = {
-            "x": node[0],
-            "y": node[1]
+    is_driving = path_json["is_driving"]  # 判断是否运行flag
+    if is_driving == 1:
+        user_path = user_defined_path_selection(data_path=data_path, weights=e_weights, start_node=start_point,
+                                                end_node=end_point)  # 调用e函数求路径
+        path_nodes = []
+        for node in user_path:
+            node_dict = {
+                "x": node[0],
+                "y": node[1],
+                "z": 0
+            }
+            path_nodes.append(node_dict)
+        path_pos = {
+            "PathNodes": path_nodes  # 修改成图形要的格式
         }
-        path_nodes.append(node_dict)
+    else:
+        path_pos = user_null_json()  # 调用函数求空json
+    filename = 'user_path.json'
+    json_to_file(filename=filename, json_dict=path_pos)  # 调用函数写进文件
+    if is_driving == 1:
+        return {"running successfully"}
+    else:
+        return {"stopped successfully"}
 
-    return path_nodes
+
+# 图形重复发请求获取
+@app.get("/get_user_path")
+async def get_user_path():
+    filename = 'user_path.json'
+    with open(filename, 'r', encoding='utf-8') as file:
+        path_data = file.read()
+        path_json = json.loads(path_data)
+    return path_json
 
 
 # 主监听函数
+
+
 if __name__ == "__main__":
     # uvicorn.run(app="web:app", host="192.168.0.92", port=8080, reload=False)
     uvicorn.run(app="web:app", host="127.0.0.1", port=8080, reload=False)
