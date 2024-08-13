@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 def get_data( side, path ):
     with open( path, 'r' ) as file:
@@ -116,6 +117,7 @@ def check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r):
 
 def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, status, road, direction, right_turn, keep, round ):
     stay = []
+    start_time = time.time()
     # if (side == '-' and direction == 'hor') or (side == '+' and direction == 'ver'):
     #     last = -1
     # elif (side == '+' and direction == 'hor') or (side == '-' and direction == 'ver'):
@@ -134,12 +136,16 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
             R[i][j] = rL[i] - rL[j]
     threshold = 0.5
     light = 0
+    target_time = 4.39
 
     for ts in range(t):
+        now_time = time.time()
         # if posV[-1][3][0] <= 565.0 and posV[-1][3][0] >= 564.5:
         #     print(ts)
         # 上下
-        if ts == 22300 and keep == 0 and round == 1:
+        if now_time - start_time >= target_time and keep == 0 and round == 1:
+            end_time = time.time()
+            print(end_time - start_time)
         # 左右
         # if ts == 20172 and keep == 0 and round == 1:
             light = 1
