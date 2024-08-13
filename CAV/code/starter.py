@@ -63,7 +63,8 @@ def draw( posV, n ):
 def read( split, single, round, stay ):
     plt.figure(figsize=(10, 6))
     ret_list = []
-    posV_all= []
+    posV_list1= []
+    posV_list2= []
     for k, i in enumerate( split ):
         if round == 2:
             if len( stay ) == 0:
@@ -75,14 +76,17 @@ def read( split, single, round, stay ):
         elif round == 1:
             posV, n, ret_stay = method(int(i), single[k], round, stay )
         draw(posV, int(n))
-        posV_all.append( posV )
+        if k == 0:
+            posV_list1 = posV
+        elif k == 1:
+            posV_list2 = posV
         # posV -> 轨迹点
         ret_list.append( ret_stay )
     plt.xlabel('X Position(m)')
     plt.ylabel('Y Position(m)')
     plt.legend()
     plt.show()
-    return ret_list, posV_all
+    return ret_list, posV_list1, posV_list2
 
 
 
@@ -95,7 +99,7 @@ def main():
     # stage1
     split = [ 3, 4 ]
     single = ['M', 'M']
-    list1, posV1 = read( split, single, round, stay )
+    list1, posV11, posV12 = read( split, single, round, stay )
 
 
     # # stage2
@@ -138,7 +142,7 @@ def main():
     # stage1
     split = [3, 4]
     single = ['M', 'M']
-    nlist1, posV1n = read( split, single, round, list1 )
+    nlist1, posV11n, posV12n = read( split, single, round, list1 )
 
     # # stage2
     # split = [1, 2]
@@ -172,7 +176,7 @@ def main():
     # nlist6, posV6n = read( split, single, round, list6 )
     # car_num6n = posV1.shape[1]
 
-    return posV1, posV1n
+    return posV11, posV12, posV11n, posV12n
 
 
 
