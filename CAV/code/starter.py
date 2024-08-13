@@ -63,8 +63,7 @@ def draw( posV, n ):
 def read( split, single, round, stay ):
     plt.figure(figsize=(10, 6))
     ret_list = []
-    posV_list1= []
-    posV_list2 = []
+    posV_all= []
     for k, i in enumerate( split ):
         if round == 2:
             if len( stay ) == 0:
@@ -76,17 +75,15 @@ def read( split, single, round, stay ):
         elif round == 1:
             posV, n, ret_stay = method(int(i), single[k], round, stay )
         draw(posV, int(n))
-        if k == 0:
-            posV_list1 = posV
-        elif k == 1:
-            posV_list2 = posV
+        posV_all.append( posV )
         # posV -> 轨迹点
         ret_list.append( ret_stay )
     plt.xlabel('X Position(m)')
     plt.ylabel('Y Position(m)')
     plt.legend()
     plt.show()
-    return ret_list, posV_list1, posV_list2
+    return ret_list, posV_all
+
 
 
 
@@ -98,44 +95,37 @@ def main():
     # stage1
     split = [ 3, 4 ]
     single = ['M', 'M']
-    list1, posV11, posV12 = read( split, single, round, stay )
-    print( posV11.shape, posV12.shape )
-    car_num1 = posV11.shape[1] + posV12.shape[1]
+    list1, posV1 = read( split, single, round, stay )
 
 
     # # stage2
     # split = [1, 2]
     # single = ['M', 'M']
     # list2, posV2 = read( split, single, round, stay )
-    # car_num2 = posV1.shape[1]
 
 
     # # stage3
     # split = [4]
     # single = ['L']
     # list3, posV3 = read( split, single, round, stay )
-    # car_num3 = posV1.shape[1]
 
 
     # # stage4
     # split = [3]
     # single = ['L']
     # list4, posV4 = read( split, single, round, stay )
-    # car_num4 = posV1.shape[1]
 
 
     # # stage5
     # split = [1]
     # single = ['L']
-    # list5, posV5 = read( split, single, round, stay )
-    # car_num5 = posV1.shape[1]
+    # list5, posV5, posV22 = read( split, single, round, stay )
 
 
     # # stage6
     # split = [2]
     # single = ['L']
     # list6, posV6 = read( split, single, round, stay )
-    # car_num6 = posV1.shape[1]
 
     # # right_turn
     # split = [ 1, 2, 3, 4 ]
@@ -148,9 +138,7 @@ def main():
     # stage1
     split = [3, 4]
     single = ['M', 'M']
-    nlist1, posV11n, posV12n = read( split, single, round, list1 )
-    car_num1n = posV11n.shape[1] + posV12n.shape[1]
-    print( '$$$$$$$$$$$$', car_num1, car_num1n )
+    nlist1, posV1n = read( split, single, round, list1 )
 
     # # stage2
     # split = [1, 2]
@@ -183,6 +171,8 @@ def main():
     # single = ['L']
     # nlist6, posV6n = read( split, single, round, list6 )
     # car_num6n = posV1.shape[1]
+
+    return posV1, posV1n
 
 
 
