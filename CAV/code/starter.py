@@ -3,7 +3,29 @@ import matplotlib.pyplot as plt
 from V3_side import run
 
 
+def method( i, single, round, stay ):
+    # 1 -> left2right
+    # 2 -> right2left
+    # 3 -> up2down
+    # 4 -> down2up
+    info_list = [
+        [40.0, 30.0, 20.0, 600.0, 10.0, 'hor', 'LeftDown'],
+        [50.0, 60.0, 70.0, 600.0, 10.0, 'hor', 'RightUp'],
+        [590.0, 580.0, 570.0, 40.0, 10.0, 'ver', 'UpLeft' ],
+        [600.0, 610.0, 620.0, 50.0, 10.0, 'ver', 'DownRight']
+    ]
+    path_list = [
+        '../data/test4.txt',
+        '../data/test2.txt',
+        '../data/test5.txt',
+        '../data/test6.txt'
+    ]
+    side_list = [
+        '+', '-', '-', '+'
+    ]
+    return run(side_list[i-1], path_list[i-1], info_list[i-1], i, single, round, stay )
 
+'''
 def left2right( i, single ):
     info_left2right = [ 40.0, 30.0, 20.0, 600.0, 10.0, 'hor', 'LeftDown' ]
     path_left2right = '../data/test4.txt'
@@ -29,7 +51,7 @@ def down2up( i, single ):
     path_down2up = '../data/test6.txt'
     side_down2up = '+'
     return run( side_down2up, path_down2up, info_down2up, i, single )
-
+'''
 
 
 def draw( posV, n ):
@@ -38,112 +60,109 @@ def draw( posV, n ):
         plt.scatter(posV[::5000, i, 0], posV[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
 
 
-def read( split, single ):
+def read( split, single, round, stay ):
     plt.figure(figsize=(10, 6))
+    ret_list = []
     for k, i in enumerate( split ):
-        i = int( i )
-        if i == 1:
-            posV, n = left2right( i, single[k] )
-            draw( posV, n )
-        elif i == 2:
-            posV, n = right2left( i, single[k] )
-            draw( posV, n )
-        elif i == 3:
-            posV, n = up2down( i,  single[k] )
-            draw( posV, n )
-        elif i == 4:
-            posV, n = down2up( i, single[k] )
-            draw( posV, n )
+        if round == 2:
+            if len( stay ) == 0:
+                continue
+            if stay and stay[k].size == 0:
+                continue
+            print( 'round', i )
+            posV, n, ret_stay = method( int( i ), single[k], round, stay[k] )
+            print( stay, 'check1' )
+        elif round == 1:
+            posV, n, ret_stay = method(int(i), single[k], round, stay )
+        # posV -> 轨迹点
+        draw( posV, int( n ) )
 
+        ret_list.append( ret_stay )
+        print( ret_list, 'check2')
     plt.xlabel('X Position(m)')
     plt.ylabel('Y Position(m)')
     plt.legend()
     plt.show()
-
-
-
-    '''
-    for i in range(L):
-        plt.plot(LposV[:, i, 0], LposV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(LposV[::5000, i, 0], LposV[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    for i in range(M):
-        plt.plot(MposV[:, i, 0], MposV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(MposV[::5000, i, 0], MposV[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    for i in range(R):
-        plt.plot(RposV[:, i, 0], RposV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(RposV[::5000, i, 0], RposV[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    
-    for i in range(L2):
-        plt.plot(LposV2[:, i, 0], LposV2[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(LposV2[::5000, i, 0], LposV2[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
-    for i in range(M2):
-        plt.plot(MposV2[:, i, 0], MposV2[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(MposV2[::5000, i, 0], MposV2[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
-    for i in range(R2):
-        plt.plot(RposV2[:, i, 0], RposV2[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(RposV2[::5000, i, 0], RposV2[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
-    
-
-    for i in range(L3):
-        plt.plot(LposV3[:, i, 0], LposV3[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(LposV3[::5000, i, 0], LposV3[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    for i in range(M3):
-        plt.plot(MposV3[:, i, 0], MposV3[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(MposV3[::5000, i, 0], MposV3[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    for i in range(R3):
-        plt.plot(RposV3[:, i, 0], RposV3[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(RposV3[::5000, i, 0], RposV3[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    
-    for i in range(L4):
-        plt.plot(LposV4[:, i, 0], LposV4[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(LposV4[::5000, i, 0], LposV4[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    for i in range(M4):
-        plt.plot(MposV4[:, i, 0], MposV4[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(MposV4[::5000, i, 0], MposV4[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    for i in range(R4):
-        plt.plot(RposV4[:, i, 0], RposV4[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(RposV4[::5000, i, 0], RposV4[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
-    '''
+    return ret_list
 
 
 
 
 
 def main():
-    '''
-    # stage1
-    split = [ 3, 4 ]
-    single = ['M', 'M']
+    round = 1
+    stay = []
+    # # stage1
+    # split = [ 3, 4 ]
+    # single = ['M', 'M']
+    # list1 = read( split, single, round, stay )
+    # # print( '#################', list1 )
 
     # stage2
     split = [1, 2]
     single = ['M', 'M']
+    list2 = read( split, single, round, stay )
 
-
-    # stage3
-    split = [4]
-    single = ['L']
-
-    # stage4
-    split = [3]
-    single = ['L']
-    '''
-
-    # stage5
+    # # stage3
+    # split = [4]
+    # single = ['L']
+    # list3 = read( split, single, round, stay )
+    #
+    # # stage4
+    # split = [3]
+    # single = ['L']
+    # list4 = read( split, single, round, stay )
+    #
+    # # stage5
     # split = [1]
     # single = ['L']
-
-    # stage6
+    # list5 = read( split, single, round, stay )
+    #
+    #
+    # # stage6
     # split = [2]
     # single = ['L']
+    # list6 = read( split, single, round, stay )
+    #
+    #
+    # # right_turn
+    # split = [ 1, 2, 3, 4 ]
+    # single = [ 'R', 'R', 'R', 'R' ]
+    # list0 = read( split, single, round, stay )
 
+    ###################################################################################
+    round = 2
 
-    # right_turn
-    split = [ 1, 2, 3, 4 ]
-    single = [ 'R', 'R', 'R', 'R' ]
+    # # stage1
+    # split = [3, 4]
+    # single = ['M', 'M']
+    # nlist1 = read( split, single, round, list1 )
 
+    # # stage2
+    split = [1, 2]
+    single = ['M', 'M']
+    nlist2 = read( split, single, round, list2 )
 
-    read( split, single )
+    # # stage3
+    # split = [4]
+    # single = ['L']
+    # nlist3 = read( split, single, round, list3 )
+    #
+    # # stage4
+    # split = [3]
+    # single = ['L']
+    # nlist4 = read( split, single, round, list4 )
+    #
+    # # stage5
+    # split = [1]
+    # single = ['L']
+    # nlist5 = read( split, single, round, list5 )
+    #
+    # # stage6
+    # split = [2]
+    # single = ['L']
+    # nlist6 = read( split, single, round, list6 )
+
 
 
 if __name__ == '__main__':
