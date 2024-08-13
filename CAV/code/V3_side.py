@@ -118,7 +118,7 @@ def check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r):
     return cnt, flagla, flaglo
 
 
-def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, status, road, direction, right_turn, keep, round ):
+def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, status, road, direction, right_turn, keep, round, stage ):
     stay = []
     start_time = time.time()
     # if (side == '-' and direction == 'hor') or (side == '+' and direction == 'ver'):
@@ -139,14 +139,15 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
             R[i][j] = rL[i] - rL[j]
     threshold = 0.5
     light = 0
-    target_time = 4.39
+    if stage != 0:
+        target_time = 4.39 * stage
 
     for ts in range(t):
         now_time = time.time()
         # if posV[-1][3][0] <= 565.0 and posV[-1][3][0] >= 564.5:
         #     print(ts)
         # 上下
-        if now_time - start_time >= target_time and keep == 0 and round == 1:
+        if stage != 0 and now_time - start_time >= target_time and keep == 0 and round == 1:
             end_time = time.time()
             print(end_time - start_time)
         # 左右
@@ -220,7 +221,7 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
 
 
 
-def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, status, right_turn, b, g, a, t, road, x, v, turn, round ):
+def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, status, right_turn, b, g, a, t, road, x, v, turn, round, stage ):
     keep = 1 if round == 2 else 0
     x = x.reshape(-1, 2)
     v = v.reshape(-1, 2)
@@ -231,7 +232,7 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
     rLt[:, [0, 1]] = rLt[:, [1, 0]]
 
     if round == 1:
-        posV, velV, posL, keep, stay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, 'M', turning_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round )
+        posV, velV, posL, keep, stay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, 'M', turning_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round, stage = stage )
         print( 'stay::::::::::', stay )
         x = posV[-1]
         v = velV[-1]
@@ -247,7 +248,7 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
         right_turn = 1
 
     # x_leader = np.array(arriving_point)
-    nposV, nvelV, nLpos, nkeep, nstay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, turn, arriving_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round )
+    nposV, nvelV, nLpos, nkeep, nstay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, turn, arriving_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round, stage = stage )
     if round == 1:
         posV = np.concatenate((posV, nposV), axis=0)
     else:
@@ -321,6 +322,20 @@ def run( side, path, info, i, single, round, stay ):
         '3R': [ [570.0, 70.0], [-30.0, 70.0] ],
         '4R': [ [620.0, 20.0], [1220.0, 20.0] ]
     }
+    stage_list = {
+        '1M': 2,
+        '2M': 2,
+        '3M': 1,
+        '4M': 1,
+        '1L': 5,
+        '2L': 6,
+        '3L': 4,
+        '4L': 3,
+        '1R': 0,
+        '2R': 0,
+        '3R': 0,
+        '4R': 0
+    }
     # print( rL )
     if starting_direction == 'ver':
         rL = rL.copy()
@@ -329,7 +344,8 @@ def run( side, path, info, i, single, round, stay ):
     select = str( i ) + single
     turning_point = turning[ select ][0]
     arriving_point = turning[ select ][1]
-    posV, stay = one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, status, right_turn, b, g, a, t, road, x, v, turn, round )
+    stage = stage_list[ select ]
+    posV, stay = one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, status, right_turn, b, g, a, t, road, x, v, turn, round, stage )
     stay = np.array( stay )
     stay = stay.reshape(-1, 2)
     print( posV[-1], 'last of this' )
