@@ -1,4 +1,6 @@
 import json
+import numpy as np
+from CAV.code.starter import main
 
 
 # class Car:
@@ -87,3 +89,41 @@ def json_to_file(filename, json_dict):
     with open(filename, 'w', encoding='utf-8') as file:
         file.write(json_output)
     print(f'path_json数据已成功写入到文件：{filename}')
+
+
+def sub_path_json(pos):
+    all_paths = []
+    for car in range(pos.shape[1]):
+        car_path = []
+        for point in range(pos.shape[0]):
+            x = pos[point, car, 0]
+            y = pos[point, car, 1]
+            z = 0.55
+            car_path.append({"x": x, "y": y, "z": z})
+        all_paths.append({"path": car_path})
+    return all_paths
+
+
+# 合并微观图列表然后保存到文件
+def concatenate_arrays(arrays_list, file_name):
+    # 过滤掉空列表，只保留numpy数组
+    non_empty_arrays = [arr for arr in arrays_list if isinstance(arr, np.ndarray) and arr.size > 0]
+
+    # 如果过滤后的数组列表为空，则跳过保存操作
+    if not non_empty_arrays:
+        print("没有非空的NumPy数组，跳过保存。")
+        return
+
+    # 检查所有非空数组的第一维和第三维形状是否一致
+    first_shape = non_empty_arrays[0].shape[0]
+    third_shape = non_empty_arrays[0].shape[2]
+    for arr in non_empty_arrays:
+        if arr.shape[0] != first_shape or arr.shape[2] != third_shape:
+            raise ValueError("非空数组中存在形状不一致的情况")
+
+    # 合并非空数组，沿着第二维（车辆数）进行合并
+    concatenated_array = np.concatenate(non_empty_arrays, axis=1)
+
+    # 保存合并后的数组
+    np.save(file_name, concatenated_array)
+    print(f"已保存合并后的数组到 {file_name}")
