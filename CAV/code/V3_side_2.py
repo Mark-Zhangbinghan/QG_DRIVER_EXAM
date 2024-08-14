@@ -150,10 +150,10 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
 
     for ts in range(t):
         status_list = {
-            'UpLeft': [75.0, '>'],
-            'LeftDown': [565.0, '<'],
-            'RightUp': [625.0, '>'],
-            'DownRight': [15.0, '<']
+            'UpLeft': [15.0, '>'],
+            'LeftDown': [568.75, '<'],
+            'RightUp': [583.75, '>'],
+            'DownRight': [0.0, '<']
         }
         stop = status_list[status][0]
         hypen = status_list[status][1]
@@ -161,7 +161,7 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
         now_time = ts
 
 
-        if stage != 0 and round == 1:  # and keep == 0
+        if stage != 0:  # and keep == 0
             if now_time >= target_time_s and now_time <= target_time_e:  # 可以通行
                 light = 0
             elif now_time < target_time_s and now_time > target_time_e:  # 红灯
@@ -228,8 +228,6 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
         posV.append( xp.copy() )
         velV.append( vp.copy() )
         posL.append( lp.copy() )
-    time_now = time.time()
-    print( time_now - start_time )
     return np.array( posV ), np.array( velV ), np.array( posL ), keep, np.array( stay )
 
 
