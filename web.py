@@ -27,12 +27,13 @@ print("初始化user_path.json成功")
 
 # 使用main算出路径参数
 
-'''all_arrays = main()
-no_n_arrays = all_arrays[:len(all_arrays) // 2]
-with_n_arrays = all_arrays[len(all_arrays) // 2:]
+# all_arrays = main()
+# no_n_arrays = all_arrays[:len(all_arrays) // 2]
+# with_n_arrays = all_arrays[len(all_arrays) // 2:]
+#
+# concatenate_arrays(no_n_arrays, 'concatenated_no_n.npy')
+# concatenate_arrays(with_n_arrays, 'concatenated_with_n.npy')
 
-concatenate_arrays(no_n_arrays, 'concatenated_no_n.npy')
-concatenate_arrays(with_n_arrays, 'concatenated_with_n.npy')'''
 # 保存带 n 的数组
 concatenated_no_n = np.load('concatenated_no_n.npy', allow_pickle=True)
 

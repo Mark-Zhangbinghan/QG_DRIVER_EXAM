@@ -124,6 +124,9 @@ def concatenate_arrays(arrays_list, file_name):
     # 合并非空数组，沿着第二维（车辆数）进行合并
     concatenated_array = np.concatenate(non_empty_arrays, axis=1)
 
-    # 保存合并后的数组
-    np.save(file_name, concatenated_array)
-    print(f"已保存合并后的数组到 {file_name}")
+    # 四舍五入到三位小数
+    rounded_array = np.round(concatenated_array, decimals=3)
+
+    # 保存四舍五入后的数组
+    np.save(file_name, rounded_array)
+    print(f"已保存四舍五入到三位小数的合并后的数组到 {file_name}")
