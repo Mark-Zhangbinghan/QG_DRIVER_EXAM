@@ -138,29 +138,52 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
         for j in range(n):
             R[i][j] = rL[i] - rL[j]
     threshold = 0.5
-    light = 0
+    light = 1
+    # if stage != 0:
+    #     target_time_s = 4.39 * (stage - 1)
+    #     target_time_e = 4.39 * stage
+    #     print(target_time_s, target_time_e, '~~~~~~~~~~~~~~~~~')
     if stage != 0:
-        target_time = 4.39 * stage
+        target_time_s = 13000 * (stage - 1)
+        target_time_e = 13000 * stage
+        # print(target_time_s, target_time_e, '~~~~~~~~~~~~~~~~~')
 
     for ts in range(t):
-        now_time = time.time()
-        # if posV[-1][3][0] <= 565.0 and posV[-1][3][0] >= 564.5:
-        #     print(ts)
-        # 上下
-        if stage != 0 and now_time - start_time >= target_time and keep == 0 and round == 1:
-            end_time = time.time()
-            print(end_time - start_time)
-        # 左右
-        # if ts == 20172 and keep == 0 and round == 1:
-            light = 1
+        status_list = {
+            'UpLeft': [75.0, '>'],
+            'LeftDown': [565.0, '<'],
+            'RightUp': [625.0, '>'],
+            'DownRight': [15.0, '<']
+        }
+        stop = status_list[status][0]
+        hypen = status_list[status][1]
+        reach = 0
+        now_time = ts
+
+
+        if stage != 0 and round == 1:  # and keep == 0
+            if now_time >= target_time_s and now_time <= target_time_e:  # 可以通行
+                light = 0
+            elif now_time < target_time_s and now_time > target_time_e:  # 红灯
+                light = 1
+        if direction == 'ver':
+            r_line = [road, stop]
+        else:
+            r_line = [stop, road]
         if side == '-':
             min = np.argmin(posV[-1][:, idx])
-            if np.all( np.abs( posV[-1][min] - r_turn ) < threshold ):
-                break
+            # print(posV[-1][min], r_line)
+            if np.all( np.abs( posV[-1][min] - r_line ) < threshold ):
+                reach = 1
         else:
             max = np.argmax(posV[-1][:, idx])
-            if np.all( np.abs( posV[-1][max] - r_turn ) < threshold ):
-                break
+            # print(posV[-1][max], r_line)
+            if np.all( np.abs( posV[-1][max] - r_line ) < threshold ):
+                reach = 1
+
+        if reach == 1 and light == 1 and keep == 0:
+            vp = np.zeros_like( vp )
+
         dot_v = np.zeros_like( vp )
         for i in range(n):
             s = xp[i] - lp - rL[i]
@@ -174,16 +197,10 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
                 # print( vp[i], vL )
                 dot_v[i] -= k[i] * (s + g * (vp[i] - vL))            # 与智能体相关联时，与领导者之间的关系参与调整考虑
 
-        status_list = {
-            'UpLeft': [75.0, '>'],
-            'LeftDown': [565.0, '<'],
-            'RightUp': [625.0, '>'],
-            'DownRight': [15.0, '<']
-        }
-        stop = status_list[ status ][0]
-        hypen = status_list[ status ][1]
 
-        if light == 1 and keep == 0 and right_turn == 0:
+
+
+        if reach == 1 and light == 1 and keep == 0 and right_turn == 0:
             if direction == 'ver':
                 mask = (xp[ :, 1 ] < stop if hypen == '<' else xp[ :, 1 ] > stop) & (np.abs(xp[:, 0] - road) <= 0.2)
             else:
@@ -194,7 +211,8 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
             vp[mask] = 0
             # print( vp )
             light_stay = posV[-1][mask]
-            stay.append( light_stay )
+            stay.append(light_stay)
+
 
         idx = 1 if direction == 'ver' else 0
         not_zero = vp[:, idx] != 0
@@ -210,7 +228,8 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
         posV.append( xp.copy() )
         velV.append( vp.copy() )
         posL.append( lp.copy() )
-
+    time_now = time.time()
+    print( time_now - start_time )
     return np.array( posV ), np.array( velV ), np.array( posL ), keep, np.array( stay )
 
 
@@ -227,7 +246,6 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
     v = v.reshape(-1, 2)
     x_leader, x, v, vL, rLeader, A = create_vehicles( starting_direction, x, v, road, rL, n, side )
     A, dd, k = create_k(n, x, x_leader, A)
-
     rLt = rL.copy()
     rLt[:, [0, 1]] = rLt[:, [1, 0]]
 
@@ -236,8 +254,9 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
         print( 'stay::::::::::', stay )
         x = posV[-1]
         v = velV[-1]
-
+    print( x, '...............' )
     x_leader = np.array(turning_point)
+    print( x_leader, '...............' )
     if (turn == 'R' and starting_direction == 'ver') or (turn == 'L' and starting_direction == 'hor'):
         vL[0], vL[1] = vL[1], vL[0]
         rL = rLt
@@ -246,7 +265,6 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
         vL = -vL
         rL = -rLt
         right_turn = 1
-
     # x_leader = np.array(arriving_point)
     nposV, nvelV, nLpos, nkeep, nstay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, turn, arriving_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round, stage = stage )
     if round == 1:
@@ -266,7 +284,7 @@ def run( side, path, info, i, single, round, stay ):
     b = 1
     g = 1
     a = 0.001
-    tt = 80
+    tt = 78
     t = int( tt / a )
     r_left, r_middle, r_right, r_turn, r_gap, starting_direction, status = info
     if round == 1:
@@ -289,6 +307,7 @@ def run( side, path, info, i, single, round, stay ):
             x, v = xR, vR
     elif round == 2:
         tmp = len( stay )
+
         if single ==  'L':
             right_turn = 0
             road = r_left
@@ -309,18 +328,18 @@ def run( side, path, info, i, single, round, stay ):
         rL = np.array( rL )
     turn = single
     turning = {
-        '1M': [ [600.0, 30.0], [1200.0, 30.0] ],
-        '2M': [ [600.0, 60.0], [0.0, 60.0] ],
-        '3M': [ [580.0, 30.0], [580.0, -570.0] ],
-        '4M': [ [610.0, 60.0], [610.0, 660.0] ],
-        '1L': [ [610.0, 40.0], [610.0, 640.0] ],
-        '2L': [ [580.0, 50.0], [580.0, -550.0] ],
-        '3L': [ [590.0, 40.0], [1190.0, 40.0] ],
-        '4L': [ [600.0, 50.0], [0.0, 50.0] ],
-        '1R': [ [570.0, 20.0], [570.0, -580.0] ],
-        '2R': [ [620.0, 70.0], [620.0, 670.0] ],
-        '3R': [ [570.0, 70.0], [-30.0, 70.0] ],
-        '4R': [ [620.0, 20.0], [1220.0, 20.0] ]
+        '1M': [ [577.5, 3.75], [1177.5, 3.75] ],
+        '2M': [ [577.5, 11.25], [-22.5, 11.25] ],
+        '3M': [ [572.5, 3.75], [572.5, -600.0] ],
+        '4M': [ [580.0, 11.25], [580.0, 611.25] ],
+        '1L': [ [580.0, 6.25], [580.0, 606.25] ],
+        '2L': [ [572.5, 8.75], [572.5, -601.25] ],
+        '3L': [ [575.0, 6.25], [1175.0, 6.25] ],
+        '4L': [ [577.5, 8.75], [-22.5, 8.75] ],
+        '1R': [ [570.0, 1.25], [570.0, -600.0] ],
+        '2R': [ [582.5, 13.75], [582.5, 613.75] ],
+        '3R': [ [570.0, 13.75], [-30.0, 13.75] ],
+        '4R': [ [582.5, 1.25], [1182.5, 1.25] ]
     }
     stage_list = {
         '1M': 2,
@@ -349,5 +368,6 @@ def run( side, path, info, i, single, round, stay ):
     stay = np.array( stay )
     stay = stay.reshape(-1, 2)
     print( posV[-1], 'last of this' )
+    print( posV.shape, 'shape ')
     return posV, n, stay
 

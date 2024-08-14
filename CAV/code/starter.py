@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from V3_side import run
+from V3_side_2 import run
 
 
 def method( i, single, round, stay ):
@@ -9,10 +9,10 @@ def method( i, single, round, stay ):
     # 3 -> up2down
     # 4 -> down2up
     info_list = [
-        [40.0, 30.0, 20.0, 600.0, 10.0, 'hor', 'LeftDown'],
-        [50.0, 60.0, 70.0, 600.0, 10.0, 'hor', 'RightUp'],
-        [590.0, 580.0, 570.0, 40.0, 10.0, 'ver', 'UpLeft' ],
-        [600.0, 610.0, 620.0, 50.0, 10.0, 'ver', 'DownRight']
+        [6.25, 3.75, 1.25, 577.5, 2.5, 'hor', 'LeftDown'],
+        [8.75, 11.25, 13.75, 577.5, 2.5, 'hor', 'RightUp'],
+        [575.0, 572.5, 570.0, 6.25, 2.5, 'ver', 'UpLeft' ],
+        [577.5, 580.0, 582.5, 8.75, 2.5, 'ver', 'DownRight']
     ]
     path_list = [
         '../data/test4.txt',
@@ -96,83 +96,83 @@ def read( split, single, round, stay ):
 def main():
     round = 1
     stay = []
-    # # stage1
-    # split = [ 3, 4 ]
-    # single = ['M', 'M']
-    # list1, posV11, posV12 = read( split, single, round, stay )
+    # stage1
+    split = [ 3, 4 ]
+    single = ['M', 'M']
+    list1, posV11, posV12 = read( split, single, round, stay )
 
 
-    # # stage2
-    # split = [1, 2]
-    # single = ['M', 'M']
-    # list2, posV21, posV22 = read( split, single, round, stay )
+    # stage2
+    split = [1, 2]
+    single = ['M', 'M']
+    list2, posV21, posV22 = read( split, single, round, stay )
 
 
-    # # stage3
-    # split = [4]
-    # single = ['L']
-    # list3, posV31, posV32 = read( split, single, round, stay )
+    # stage3
+    split = [4]
+    single = ['L']
+    list3, posV31, posV32 = read( split, single, round, stay )
 
 
-    # # stage4
-    # split = [3]
-    # single = ['L']
-    # list4, posV41, posV42 = read( split, single, round, stay )
+    # stage4
+    split = [3]
+    single = ['L']
+    list4, posV41, posV42 = read( split, single, round, stay )
 
 
-    # # stage5
-    # split = [1]
-    # single = ['L']
-    # list5, posV51, posV52 = read( split, single, round, stay )
+
+    # stage5
+    split = [1]
+    single = ['L']
+    list5, posV51, posV52 = read( split, single, round, stay )
 
 
-    # # stage6
-    # split = [2]
-    # single = ['L']
-    # list6, posV61, posV62 = read( split, single, round, stay )
+    # stage6
+    split = [2]
+    single = ['L']
+    list6, posV61, posV62 = read( split, single, round, stay )
 
-    # # right_turn
-    # split = [ 1, 2 ]
-    # single = [ 'R', 'R' ]
-    # list0, posV01, posV02 = read( split, single, round, stay )
+    # right_turn
+    split = [ 1, 2 ]
+    single = [ 'R', 'R' ]
+    list0, posV01, posV02 = read( split, single, round, stay )
 
-    # split = [ 3, 4 ]
-    # single = [ 'R', 'R' ]
-    # list0, posV03, posV04 = read( split, single, round, stay )
+    split = [ 3, 4 ]
+    single = [ 'R', 'R' ]
+    list0, posV03, posV04 = read( split, single, round, stay )
     ###################################################################################
     round = 2
+    # stage1
+    split = [3, 4]
+    single = ['M', 'M']
+    nlist1, posV11n, posV12n = read( split, single, round, list1 )
 
-    # # stage1
-    # split = [3, 4]
-    # single = ['M', 'M']
-    # nlist1, posV11n, posV12n = read( split, single, round, list1 )
+    # stage2
+    split = [1, 2]
+    single = ['M', 'M']
+    nlist2, posV21n, posV22n = read( split, single, round, list2 )
 
-    # # stage2
-    # split = [1, 2]
-    # single = ['M', 'M']
-    # nlist2, posV21n, posV22n = read( split, single, round, list2 )
-
-    # # stage3
-    # split = [4]
-    # single = ['L']
-    # nlist3, posV31n, posV32n = read( split, single, round, list3 )
-
-
-    # # stage4
-    # split = [3]
-    # single = ['L']
-    # nlist4, posV41n, posV42n = read( split, single, round, list4 )
-
-    # # stage5
-    # split = [1]
-    # single = ['L']
-    # nlist5, posV51n, posV52n = read( split, single, round, list5 )
+    # stage3
+    split = [4]
+    single = ['L']
+    nlist3, posV31n, posV32n = read( split, single, round, list3 )
 
 
-    # # stage6
-    # split = [2]
-    # single = ['L']
-    # nlist6, posV61n, posV62n = read( split, single, round, list6 )
+    # stage4
+    split = [3]
+    single = ['L']
+    nlist4, posV41n, posV42n = read( split, single, round, list4 )
+
+    # stage5
+    split = [1]
+    single = ['L']
+    nlist5, posV51n, posV52n = read( split, single, round, list5 )
+
+
+    # stage6
+    split = [2]
+    single = ['L']
+    nlist6, posV61n, posV62n = read( split, single, round, list6 )
 
     # return posV11, posV12, posV11n, posV12n
 
