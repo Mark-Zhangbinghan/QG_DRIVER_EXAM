@@ -54,10 +54,10 @@ def down2up( i, single ):
 '''
 
 
-def draw( posV, n ):
-    for i in range(n):
-        plt.plot(posV[:, i, 0], posV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(posV[::5000, i, 0], posV[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
+# def draw( posV, n ):
+#     for i in range(n):
+#         plt.plot(posV[:, i, 0], posV[:, i, 1], label=f'Vehicle {i + 1}')
+#         plt.scatter(posV[::5000, i, 0], posV[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置
 
 
 def read( split, single, round, stay ):
@@ -75,7 +75,7 @@ def read( split, single, round, stay ):
             posV, n, ret_stay = method( int( i ), single[k], round, stay[k] )
         elif round == 1:
             posV, n, ret_stay = method(int(i), single[k], round, stay )
-        draw(posV, int(n))
+        # draw(posV, int(n))
         if k == 0:
             posV_list1 = posV
         elif k == 1:
@@ -132,15 +132,18 @@ def main():
     single = ['L']
     list6, posV61, posV62 = read( split, single, round, stay )
 
-    # right_turn
-    split = [ 1, 2 ]
-    single = [ 'R', 'R' ]
-    list0, posV01, posV02 = read( split, single, round, stay )
+    # # right_turn
+    # split = [ 1, 2 ]
+    # single = [ 'R', 'R' ]
+    # list0, posV01, posV02 = read( split, single, round, stay )
+    # split = [ 3, 4 ]
+    # single = [ 'R', 'R' ]
+    # list0, posV03, posV04 = read( split, single, round, stay )
 
-    split = [ 3, 4 ]
-    single = [ 'R', 'R' ]
-    list0, posV03, posV04 = read( split, single, round, stay )
+
     ###################################################################################
+
+
     round = 2
     # stage1
     split = [3, 4]
@@ -174,7 +177,7 @@ def main():
     single = ['L']
     nlist6, posV61n, posV62n = read( split, single, round, list6 )
 
-    # return posV11, posV12, posV11n, posV12n
+    return posV11, posV12, posV21, posV22, posV31, posV41, posV51, posV61, posV11n, posV12n, posV21n, posV22n, posV31n, posV41n, posV51n, posV61n
 
 
 
