@@ -12,7 +12,9 @@ from add_json import cars_to_json, cars_to_file, mat_hot_point, user_null_json, 
 # import e自带data_path,weights
 from road import data_path, e_weights
 from road import user_defined_path_selection
+# 创建路径文件用
 from CAV.code.starter import main
+from CAV.code.starter_Tjunc import t_main
 
 app = FastAPI()
 car_cnt = 0  # 车辆计数器
@@ -25,38 +27,41 @@ origin_filename = 'user_path.json'
 json_to_file(filename=origin_filename, json_dict=origin_path)  # 调用函数写进文件
 print("初始化user_path.json成功")
 
-# 使用main算出路径参数
-
-# all_arrays = main()
+# 十字路口文件
+# all_arrays = t_main()
 # no_n_arrays = all_arrays[:len(all_arrays) // 2]
 # with_n_arrays = all_arrays[len(all_arrays) // 2:]
-#
-# concatenate_arrays(no_n_arrays, 'concatenated_no_n.npy')
-# concatenate_arrays(with_n_arrays, 'concatenated_with_n.npy')
+# # 保存带 n 的数组
+# concatenate_arrays(no_n_arrays, 't_concatenated_no_n.npy')
+# concatenate_arrays(with_n_arrays, 't_concatenated_with_n.npy')
+# 三岔路口文件
+# all_arrays = t_main()
+# no_n_arrays = all_arrays[:len(all_arrays) // 2]
+# with_n_arrays = all_arrays[len(all_arrays) // 2:]
+# # 保存带 n 的数组
+# concatenate_arrays(no_n_arrays, 't_concatenated_no_n.npy')
+# concatenate_arrays(with_n_arrays, 't_concatenated_with_n.npy')
 
-# 保存带 n 的数组
-concatenated_no_n = np.load('concatenated_no_n.npy', allow_pickle=True)
 
 # 读取带 n 的合并后的数组
+# 十字路口
+concatenated_no_n = np.load('concatenated_no_n.npy', allow_pickle=True)
 concatenated_with_n = np.load('concatenated_with_n.npy', allow_pickle=True)
-
 # 打印数组的shape来验证
 print("不带 n 的数组形状:", concatenated_no_n.shape)
 print("带 n 的数组形状:", concatenated_with_n.shape)
 no_n_num = concatenated_no_n.shape[1]
 n_num = concatenated_with_n.shape[1]
-# pos_v11, pos_v12, pos_v11n, pos_v12n = main()
-# # 第一轮
-# all_path_v11 = sub_path_json(pos_v11)
-# v11_num = len(all_path_v11)
-# all_path_v12 = sub_path_json(pos_v12)
-# v12_num = len(all_path_v12)
-# # 第二轮
-# all_path_v11n = sub_path_json(pos_v11n)
-# v11n_num = len(all_path_v11n)
-# all_path_v12n = sub_path_json(pos_v12n)
-# v12n_num = len(all_path_v12n)
-sub_car_cnt = 0  # 微观图车辆计数器
+
+# 三岔路口
+t_concatenated_no_n = np.load('t_concatenated_no_n.npy', allow_pickle=True)
+t_concatenated_with_n = np.load('t_concatenated_with_n.npy', allow_pickle=True)
+print("t不带 n 的数组形状:", concatenated_no_n.shape)
+print("t带 n 的数组形状:", concatenated_with_n.shape)
+t_no_n_num = concatenated_no_n.shape[1]
+t_n_num = concatenated_with_n.shape[1]
+sub_car_cnt = 0  # 十字路口微观图车辆计数器
+sub_car_t_cnt = 0  # 三岔路口微观图车辆计数器
 
 
 # 判断连接是否成功路由
@@ -237,6 +242,29 @@ async def get_sub_path():
         print(sub_car_cnt + 1, "/", n_num)
         sub_car_json = n_list[sub_car_cnt]
     return sub_car_json
+
+
+@app.get("/get_sub_t_path")
+async def get_sub_t_path():
+    t_no_n_list = sub_path_json(t_concatenated_no_n)
+    t_n_list = sub_path_json(t_concatenated_with_n)
+    global sub_car_t_cnt
+    switch_mode = 0  # 0是红灯前,1是红灯后
+    if sub_car_t_cnt >= t_no_n_num and switch_mode == 0:
+        switch_mode = 1  # 切换模式
+        sub_car_t_cnt = 0
+    if sub_car_t_cnt >= t_n_num and switch_mode == 1:
+        switch_mode = 0
+        sub_car_t_cnt = 0
+    print("sub_car_t:")
+    print("cnt/len")
+    if switch_mode == 0:
+        print(sub_car_t_cnt + 1, "/", t_no_n_num)
+        t_sub_car_json = t_no_n_list[sub_car_t_cnt]
+    else:
+        print(sub_car_t_cnt + 1, "/", t_n_num)
+        t_sub_car_json = t_n_list[sub_car_t_cnt]
+    return t_sub_car_json
 
 
 # 主监听函数

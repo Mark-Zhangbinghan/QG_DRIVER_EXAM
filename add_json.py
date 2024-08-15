@@ -97,8 +97,8 @@ def sub_path_json(pos):
         car_path = []
         for point in range(pos.shape[0]):
             x = pos[point, car, 0]
-            y = pos[point, car, 1]
-            z = 0.55
+            y = 0.55
+            z = pos[point, car, 1]
             car_path.append({"x": x, "y": y, "z": z})
         all_paths.append({"path": car_path})
     return all_paths
