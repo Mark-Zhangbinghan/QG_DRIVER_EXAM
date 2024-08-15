@@ -26,33 +26,6 @@ def method(i, single, round, stay):
     return run(side_list[i - 1], path_list[i - 1], info_list[i - 1], i, single, round, stay)
 
 
-'''
-def left2right( i, single ):
-    info_left2right = [ 40.0, 30.0, 20.0, 600.0, 10.0, 'hor', 'LeftDown' ]
-    path_left2right = '../data/test4.txt'
-    side_left2right = '+'
-    return run( side_left2right, path_left2right, info_left2right, i, single )
-
-def right2left( i, single ):
-    info_right2left = [ 50.0, 60.0, 70.0, 600.0, 10.0, 'hor', 'RightUp' ]
-    path_right2left = '../data/test2.txt'
-    side_right2left = '-'
-    return run( side_right2left, path_right2left, info_right2left, i, single )
-
-
-def up2down( i, single ):
-    info_up2down = [ 590.0, 580.0, 570.0, 40.0, 10.0, 'ver', 'UpLeft' ]
-    path_up2down = '../data/test5.txt'
-    side_up2down = '-'
-    return run( side_up2down, path_up2down, info_up2down, i, single )
-
-
-def down2up( i, single ):
-    info_down2up = [ 600.0, 610.0, 620.0, 50.0, 10.0, 'ver', 'DownRight' ]
-    path_down2up = '../data/test6.txt'
-    side_down2up = '+'
-    return run( side_down2up, path_down2up, info_down2up, i, single )
-'''
 
 
 # def draw( posV, n ):

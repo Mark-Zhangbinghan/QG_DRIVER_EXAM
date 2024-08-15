@@ -120,11 +120,7 @@ def check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r):
 
 def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, status, road, direction, right_turn, keep, round, stage ):
     stay = []
-    start_time = time.time()
-    # if (side == '-' and direction == 'hor') or (side == '+' and direction == 'ver'):
-    #     last = -1
-    # elif (side == '+' and direction == 'hor') or (side == '-' and direction == 'ver'):
-    #     last = 0
+
     if direction == 'ver':
         idx = 1
     elif direction == 'hor':
@@ -139,10 +135,6 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
             R[i][j] = rL[i] - rL[j]
     threshold = 0.5
     light = 1
-    # if stage != 0:
-    #     target_time_s = 4.39 * (stage - 1)
-    #     target_time_e = 4.39 * stage
-    #     print(target_time_s, target_time_e, '~~~~~~~~~~~~~~~~~')
     if stage != 0:
         target_time_s = 13000 * (stage - 1)
         target_time_e = 13000 * stage
@@ -253,7 +245,25 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
         x = posV[-1]
         v = velV[-1]
     print( x, '...............' )
-    x_leader = np.array(turning_point)
+    # x_leader = np.array(turning_point)
+    if keep == 0:
+        if side == '-':
+            if starting_direction == 'ver':
+                l_x = turning_point[0]
+                l_y = np.min( x[:, 1] )
+            elif starting_direction == 'hor':
+                l_x = np.min( x[:, 0] )
+                l_y = turning_point
+        else:
+            if starting_direction == 'ver':
+                l_x = turning_point[0]
+                l_y = np.max(x[:, 1])
+            elif starting_direction == 'hor':
+                l_x = np.max(x[:, 0])
+                l_y = turning_point
+        x_leader = np.array([l_x, l_y])
+    else:
+        x_leader = np.array(turning_point)
     print( x_leader, '...............' )
     if (turn == 'R' and starting_direction == 'ver') or (turn == 'L' and starting_direction == 'hor'):
         vL[0], vL[1] = vL[1], vL[0]
