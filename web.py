@@ -197,9 +197,11 @@ async def put_path(path_request: Request):
     filename = 'user_path.json'
     json_to_file(filename=filename, json_dict=path_pos)  # 调用函数写进文件
     if is_driving == 1:
-        return {"running successfully"}
+        return {"message": "running successfully",
+                "stage": 1}  # 成功则返回1
     else:
-        return {"stopped successfully"}
+        return {"message": "stopped successfully",
+                "stage": 0}  # 失败则返回0
 
 
 # 图形重复发请求获取
