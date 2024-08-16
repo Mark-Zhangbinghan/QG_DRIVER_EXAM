@@ -137,7 +137,6 @@ def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag ):
         vp += a * dot_v  # 更新车辆速度位置与领导者位置
         xp += a * vp
 
-        
 
         # MAS ##############################################################################
         if ts % 400 == 0: # and flag == 1:
