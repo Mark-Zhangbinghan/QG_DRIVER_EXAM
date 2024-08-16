@@ -202,7 +202,7 @@ def main():
     tt = 80
     t = int(tt / a)
     L, M, R, xL, vL, xM, vM, xR, vR, rL, r = get_data()
-    # 道路信息 -> 道路中心线坐标 & 路口位置
+
     r_left = 30.0
     r_middle =20.0
     r_right = 10.0
@@ -224,37 +224,9 @@ def main():
     AM, ddM, kM = create_k( M, xM, xM_leader, AM )
     AR, ddR, kR = create_k( R, xR, xR_leader, AR)
 
-    # rLt = rL.copy()
-    # rLt[ :, [0, 1] ] = rLt[ :, [1, 0] ]
-
     LposV, LvelV, LposL, Lnt = update_data( kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rL, 'M', r_turn_before[0], 0 )
     MposV, MvelV, MposL, Mnt = update_data( kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_before[1], 0 )
     RposV, RvelV, RposL, Rnt = update_data( kR, R, xR_leader, xR, vLR, vR, b, g, a, t, AR, r, rL, 'M', r_turn_before[2], 0 )
-
-
-
-    # merged = np.concatenate( ( LposV[-1], MposV[-1], RposV[-1] ) )
-    # merged2 = np.concatenate( ( LvelV[-1], MvelV[-1], RvelV[-1] ) )
-    # mid = len( merged ) // 2
-    # posVL = merged[:mid]
-    # posVR = merged[mid:]
-    # velVL = merged2[:mid]
-    # velVR = merged2[mid:]
-    # L2 = len(posVL)
-    # R2 = len(posVR)
-    # xL = posVL
-    # vL = velVL
-    # xR = posVR
-    # vR = velVR
-    #
-    # AL2, xL, vL, rL = createA( L2, xL, vL, rL )
-    # AR2, xR, vR, rL = createA( R2, xR, vR, rL )
-    # xL_leader = [400.0, 25.0]
-    # xR_leader = [400.0, 15.0]
-    # AL2, ddL, kL = create_k(L2, xL, xL_leader, AL2)
-    # AR2, ddR, kR = create_k(R2, xR, xR_leader, AR2)
-    # nLposV, nLvelV, nLposL, nLnt = update_data(kL, L2, xL_leader, xL, vLL, vL, b, g, a, t, AL2, r, rL, 'M', r_turn_after[0])
-    # nRposV, nRvelV, nRposL, nRnt = update_data(kR, R2, xR_leader, xR, vLR, vR, b, g, a, t, AR2, r, rL, 'M', r_turn_after[1])
 
 
     pos_merged = np.concatenate( ( MposV[-1], RposV[-1] ) )
@@ -266,8 +238,6 @@ def main():
     x_leader = [400.0, 20.0]
     A2, ddL, kL = create_k( n_merged, x, x_leader, A2 )
     nposV, nvelV, nposL, nnt = update_data( kL, n_merged, x_leader, x, vLR, v, b, g, a, t, A2, r, rL, 'M', r_turn_after, 1 )
-
-
 
 
 
@@ -287,9 +257,7 @@ def main():
     for i in range( n_merged ):
         plt.plot(nposV[:, i, 0], nposV[:, i, 1], label=f'Vehicle {i + 1}')
         plt.scatter(nposV[::5000, i, 0], nposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
-    # for i in range(R2):
-    #     plt.plot(nRposV[:, i, 0], nRposV[:, i, 1], label=f'Vehicle {i + 1}')
-    #     plt.scatter(nRposV[::5000, i, 0], nRposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
+
 
 
 
