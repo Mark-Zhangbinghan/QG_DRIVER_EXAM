@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0ac022bf-8196-471b-b022-7d66ba2c2476" name="更改" comment="feat - 注释" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;zizoushandao&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Mark-Zhangbinghan/QG_DRIVER_EXAM.git&quot;,
+    &quot;accountId&quot;: &quot;5757afa3-4311-4085-afd8-79dcdd40355c&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2kMufk9FDq9WPABxGPatUAUubRK" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/QG_DRIVER_EXAM&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-PY-241.18034.82" />
+        <option value="bundled-python-sdk-975db3bf15a3-2767605e8bc2-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-241.18034.82" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="0ac022bf-8196-471b-b022-7d66ba2c2476" name="更改" comment="" />
+      <created>1723105871694</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1723105871694</updated>
+      <workItem from="1723105872614" duration="147000" />
+      <workItem from="1723106021627" duration="317000" />
+      <workItem from="1723106359949" duration="89000" />
+      <workItem from="1723120324466" duration="10000" />
+      <workItem from="1723120343019" duration="413000" />
+      <workItem from="1723124543638" duration="165000" />
+      <workItem from="1723125044206" duration="225000" />
+      <workItem from="1723125418683" duration="67000" />
+      <workItem from="1723126610668" duration="14000" />
+      <workItem from="1723185198668" duration="162000" />
+      <workItem from="1723185372084" duration="5000" />
+      <workItem from="1723187808880" duration="35000" />
+      <workItem from="1723188008303" duration="233000" />
+      <workItem from="1723188251181" duration="32000" />
+      <workItem from="1723188568099" duration="198000" />
+      <workItem from="1723189754776" duration="9000" />
+      <workItem from="1723189938628" duration="577000" />
+      <workItem from="1723190527101" duration="103000" />
+      <workItem from="1723190638050" duration="78000" />
+      <workItem from="1723190737679" duration="131000" />
+      <workItem from="1723190927049" duration="141000" />
+      <workItem from="1723191308789" duration="151000" />
+      <workItem from="1723270418751" duration="171000" />
+      <workItem from="1723272999034" duration="201000" />
+      <workItem from="1723273215670" duration="255000" />
+      <workItem from="1723279065576" duration="8000" />
+      <workItem from="1723281297883" duration="373000" />
+      <workItem from="1723281699958" duration="11000" />
+      <workItem from="1723296581453" duration="75000" />
+      <workItem from="1723296664752" duration="1627000" />
+      <workItem from="1723298704265" duration="906000" />
+      <workItem from="1723299906245" duration="107000" />
+      <workItem from="1723300051403" duration="114000" />
+      <workItem from="1723447046865" duration="1617000" />
+      <workItem from="1723625915198" duration="5000" />
+      <workItem from="1723777784330" duration="111000" />
+      <workItem from="1723777904942" duration="56000" />
+      <workItem from="1723777996348" duration="309000" />
+      <workItem from="1723794462392" duration="53000" />
+      <workItem from="1723794572077" duration="11000" />
+      <workItem from="1723794626669" duration="50000" />
+      <workItem from="1723797772263" duration="1433000" />
+    </task>
+    <task id="LOCAL-00001" summary="refactor - 增加注释">
+      <option name="closed" value="true" />
+      <created>1723106142478</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1723106142478</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat - dijkstra功能函数及调用">
+      <option name="closed" value="true" />
+      <created>1723120471563</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1723120471563</updated>
+    </task>
+    <task id="LOCAL-00003" summary="docs - 功能函数添加说明">
+      <option name="closed" value="true" />
+      <created>1723125467296</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1723125467296</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat - 图的构建房市to zbh">
+      <option name="closed" value="true" />
+      <created>1723188089658</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1723188089658</updated>
+    </task>
+    <task id="LOCAL-00005" summary="feat - 集成好了to lb">
+      <option name="closed" value="true" />
+      <created>1723188128918</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1723188128918</updated>
+    </task>
+    <task id="LOCAL-00006" summary="fix - 删了没用的">
+      <option name="closed" value="true" />
+      <created>1723188734547</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1723188734547</updated>
+    </task>
+    <task id="LOCAL-00007" summary="fix - 减小timesleep">
+      <option name="closed" value="true" />
+      <created>1723189960110</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1723189960110</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fix - 减小timesleep">
+      <option name="closed" value="true" />
+      <created>1723190508114</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1723190508114</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fix - 减小timesleep">
+      <option name="closed" value="true" />
+      <created>1723190797981</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1723190797981</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fix - 减小timesleep">
+      <option name="closed" value="true" />
+      <created>1723190991571</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1723190991571</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fix - 删掉没用的">
+      <option name="closed" value="true" />
+      <created>1723191427859</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1723191427859</updated>
+    </task>
+    <task id="LOCAL-00012" summary="fix - 取消全局变量Edges">
+      <option name="closed" value="true" />
+      <created>1723273073996</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1723273073996</updated>
+    </task>
+    <task id="LOCAL-00013" summary="feat - 成功输出节点权重">
+      <option name="closed" value="true" />
+      <created>1723296749028</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1723296749028</updated>
+    </task>
+    <task id="LOCAL-00014" summary="fix - 删">
+      <option name="closed" value="true" />
+      <created>1723298725667</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1723298725667</updated>
+    </task>
+    <task id="LOCAL-00015" summary="feat - 注释">
+      <option name="closed" value="true" />
+      <created>1723300096693</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1723300096693</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactor - 增加注释" />
+    <MESSAGE value="feat - dijkstra功能函数及调用" />
+    <MESSAGE value="docs - 功能函数添加说明" />
+    <MESSAGE value="feat - 图的构建房市to zbh" />
+    <MESSAGE value="feat - 集成好了to lb" />
+    <MESSAGE value="fix - 删了没用的" />
+    <MESSAGE value="fix - 减小timesleep" />
+    <MESSAGE value="fix - 删掉没用的" />
+    <MESSAGE value="fix - 取消全局变量Edges" />
+    <MESSAGE value="feat - 成功输出节点权重" />
+    <MESSAGE value="fix - 删" />
+    <MESSAGE value="feat - 注释" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat - 注释" />
+  </component>
+</project>
