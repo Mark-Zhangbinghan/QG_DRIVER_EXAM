@@ -137,18 +137,24 @@ def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag ):
         vp += a * dot_v  # 更新车辆速度位置与领导者位置
         xp += a * vp
 
-        # MAS
-        x_A = xp[:, 0]
-        y_A = []
-        x_A = np.array( x_A )
-        rd = len( x_A )
-        for rdd in range( rd ):
-            y_A.append( r_turn[1] )
-        y_A = np.array( y_A )
-        if ts % 1000 == 0:
-            print( xp, x_A, y_A )
-        x_B, y_B = Algorithm_2( x_A, y_A, 0.5 )
-        xp[:, 0] = x_B
+        
+
+        # MAS ##############################################################################
+        if ts % 400 == 0: # and flag == 1:
+            xp_mas = xp.copy()
+            max_mas = np.max( xp_mas[:, 0] )
+            y_mas = xp_mas[:, 1]
+            y_mas = np.append( y_mas, lp[1] )
+            x_mas = []
+            for ddr in range( len( y_mas ) ):
+                x_mas.append( max_mas )
+            x_mas = np.array(x_mas)
+            y_mas = np.array(y_mas)
+            x_B, y_B = Algorithm_2(x_mas, y_mas, 0.2)
+            xp[:, 1] = y_B[:-1] * 0.4 + xp[:, 1] * 0.6
+        ####################################################################################
+
+
 
         lp += a * vL
         # 检查是否收敛
@@ -193,7 +199,7 @@ def main():
     b = 1
     g = 1
     a = 0.001
-    tt = 100
+    tt = 80
     t = int(tt / a)
     L, M, R, xL, vL, xM, vM, xR, vR, rL, r = get_data()
     # 道路信息 -> 道路中心线坐标 & 路口位置
@@ -289,7 +295,7 @@ def main():
 
     plt.xlabel('X Position(m)')
     plt.ylabel('Y Position(m)')
-    plt.legend()
+    # plt.legend()
     plt.show()
 
 
