@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-from V3_side import run
-from animation import ani
+from MAS_Function import Algorithm_1
+from MAS_Function import Algorithm_2
+
 
 def get_data():
     r = 0
@@ -107,7 +107,7 @@ def check_convergence( cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r )
     return cnt, flagla, flaglo
 
 
-def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn ):
+def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag ):
     flaglo = 0
     flagla = 0
     cnt = 0
@@ -136,6 +136,20 @@ def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn ):
 
         vp += a * dot_v  # 更新车辆速度位置与领导者位置
         xp += a * vp
+
+        # MAS
+        x_A = xp[:, 0]
+        y_A = []
+        x_A = np.array( x_A )
+        rd = len( x_A )
+        for rdd in range( rd ):
+            y_A.append( r_turn[1] )
+        y_A = np.array( y_A )
+        if ts % 1000 == 0:
+            print( xp, x_A, y_A )
+        x_B, y_B = Algorithm_2( x_A, y_A, 0.5 )
+        xp[:, 0] = x_B
+
         lp += a * vL
         # 检查是否收敛
         cnt, flagla, flaglo = check_convergence( cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r )
@@ -188,15 +202,12 @@ def main():
     r_right = 10.0
 
     r_turn_before = np.array([
-        [400.0, 30.0],
+        [800.0, 30.0],
         [400.0, 20.0],
         [400.0, 10.0]
     ])
 
-    r_turn_after = np.array([
-        [800.0, 25.0],
-        [800.0, 15.0]
-    ])
+    r_turn_after = [800.0, 20.0]
 
     # 创建车辆信息
     xL_leader, xL, vL, vLL, rLeaderL, AL = create_vehicles( xL, vL, r_left, rL, L, r )
@@ -207,46 +218,51 @@ def main():
     AM, ddM, kM = create_k( M, xM, xM_leader, AM )
     AR, ddR, kR = create_k( R, xR, xR_leader, AR)
 
-    rLt = rL.copy()
-    rLt[ :, [0, 1] ] = rLt[ :, [1, 0] ]
+    # rLt = rL.copy()
+    # rLt[ :, [0, 1] ] = rLt[ :, [1, 0] ]
 
-    LposV, LvelV, LposL, Lnt = update_data( kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rL, 'M', r_turn_before[0] )
-    print( '1' )
-
-
-    MposV, MvelV, MposL, Mnt = update_data( kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_before[1] )
-    print( '2' )
-
-    RposV, RvelV, RposL, Rnt = update_data( kR, R, xR_leader, xR, vLR, vR, b, g, a, t, AR, r, rL, 'M', r_turn_before[2] )
-    print( '3' )
+    LposV, LvelV, LposL, Lnt = update_data( kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rL, 'M', r_turn_before[0], 0 )
+    MposV, MvelV, MposL, Mnt = update_data( kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_before[1], 0 )
+    RposV, RvelV, RposL, Rnt = update_data( kR, R, xR_leader, xR, vLR, vR, b, g, a, t, AR, r, rL, 'M', r_turn_before[2], 0 )
 
 
 
-    merged = np.concatenate( ( LposV[-1], MposV[-1], RposV[-1] ) )
-    merged2 = np.concatenate( ( LvelV[-1], MvelV[-1], RvelV[-1] ) )
-    mid = len( merged ) // 2
-    posVL = merged[:mid]
-    posVR = merged[mid:]
-    velVL = merged2[:mid]
-    velVR = merged2[mid:]
-    L2 = len(posVL)
-    R2 = len(posVR)
-    xL = posVL
-    vL = velVL
-    xR = posVR
-    vR = velVR
+    # merged = np.concatenate( ( LposV[-1], MposV[-1], RposV[-1] ) )
+    # merged2 = np.concatenate( ( LvelV[-1], MvelV[-1], RvelV[-1] ) )
+    # mid = len( merged ) // 2
+    # posVL = merged[:mid]
+    # posVR = merged[mid:]
+    # velVL = merged2[:mid]
+    # velVR = merged2[mid:]
+    # L2 = len(posVL)
+    # R2 = len(posVR)
+    # xL = posVL
+    # vL = velVL
+    # xR = posVR
+    # vR = velVR
+    #
+    # AL2, xL, vL, rL = createA( L2, xL, vL, rL )
+    # AR2, xR, vR, rL = createA( R2, xR, vR, rL )
+    # xL_leader = [400.0, 25.0]
+    # xR_leader = [400.0, 15.0]
+    # AL2, ddL, kL = create_k(L2, xL, xL_leader, AL2)
+    # AR2, ddR, kR = create_k(R2, xR, xR_leader, AR2)
+    # nLposV, nLvelV, nLposL, nLnt = update_data(kL, L2, xL_leader, xL, vLL, vL, b, g, a, t, AL2, r, rL, 'M', r_turn_after[0])
+    # nRposV, nRvelV, nRposL, nRnt = update_data(kR, R2, xR_leader, xR, vLR, vR, b, g, a, t, AR2, r, rL, 'M', r_turn_after[1])
 
-    AL2, xL, vL, rL = createA( L2, xL, vL, rL )
-    AR2, xR, vR, rL = createA( R2, xR, vR, rL )
-    xL_leader = [400.0, 25.0]
-    xR_leader = [400.0, 15.0]
-    AL2, ddL, kL = create_k(L2, xL, xL_leader, AL2)
-    AR2, ddR, kR = create_k(R2, xR, xR_leader, AR2)
+
+    pos_merged = np.concatenate( ( MposV[-1], RposV[-1] ) )
+    vel_merged = np.concatenate( ( MvelV[-1], RvelV[-1] ) )
+    n_merged = len( pos_merged )
+    x = pos_merged
+    v = vel_merged
+    A2, x, v, rL = createA( n_merged, x, v, rL )
+    x_leader = [400.0, 20.0]
+    A2, ddL, kL = create_k( n_merged, x, x_leader, A2 )
+    nposV, nvelV, nposL, nnt = update_data( kL, n_merged, x_leader, x, vLR, v, b, g, a, t, A2, r, rL, 'M', r_turn_after, 1 )
 
 
 
-    nLposV, nLvelV, nLposL, nLnt = update_data( kL, L2, xL_leader, xL, vLL, vL, b, g, a, t, AL2, r, rL,  'M', r_turn_after[0] )
-    nRposV, nRvelV, nRposL, nRnt = update_data( kR, R2, xR_leader, xR, vLR, vR, b, g, a, t, AR2, r, rL, 'M', r_turn_after[1] )
 
 
 
@@ -262,12 +278,12 @@ def main():
     for i in range(R):
         plt.plot(RposV[:, i, 0], RposV[:, i, 1], label=f'Vehicle {i + 1}')
         plt.scatter(RposV[::5000, i, 0], RposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
-    for i in range(L2):
-        plt.plot(nLposV[:, i, 0], nLposV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(nLposV[::5000, i, 0], nLposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
-    for i in range(R2):
-        plt.plot(nRposV[:, i, 0], nRposV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(nRposV[::5000, i, 0], nRposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
+    for i in range( n_merged ):
+        plt.plot(nposV[:, i, 0], nposV[:, i, 1], label=f'Vehicle {i + 1}')
+        plt.scatter(nposV[::5000, i, 0], nposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
+    # for i in range(R2):
+    #     plt.plot(nRposV[:, i, 0], nRposV[:, i, 1], label=f'Vehicle {i + 1}')
+    #     plt.scatter(nRposV[::5000, i, 0], nRposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
 
 
 
