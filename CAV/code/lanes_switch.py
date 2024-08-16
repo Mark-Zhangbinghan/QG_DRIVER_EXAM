@@ -137,19 +137,9 @@ def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag ):
         vp += a * dot_v  # 更新车辆速度位置与领导者位置
         xp += a * vp
 
-        # if ts % 600 == 0:
-        #     xp_mas = xp.copy()
-        #     leader_mas = np.array( [ np.max( xp[:, 0] ), lp[1] ] )
-        #     xp_mas = np.vstack( ( xp_mas, leader_mas ) )
-        #     x_A = xp_mas[:, 0]
-        #     y_A = xp_mas[:, 1]
-        #     x_A = np.array( x_A )
-        #     y_A = np.array( y_A )
-        #     x_B, y_B = Algorithm_1( x_A, y_A, 0.5 )
-        #     if ts % 5000 == 0:
-        #         print( xp_mas, y_B[:-1], ( y_B[:-1] + xp[:, 1] ) /2)
-        #     xp[:, 1] = y_B[:-1]
+        
 
+        # MAS ##############################################################################
         if ts % 400 == 0: # and flag == 1:
             xp_mas = xp.copy()
             max_mas = np.max( xp_mas[:, 0] )
@@ -162,7 +152,7 @@ def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag ):
             y_mas = np.array(y_mas)
             x_B, y_B = Algorithm_2(x_mas, y_mas, 0.2)
             xp[:, 1] = y_B[:-1] * 0.4 + xp[:, 1] * 0.6
-
+        ####################################################################################
 
 
 
