@@ -88,8 +88,7 @@ def adjustA(A, x, n, dd):
     return A
 
 
-
-def check_convergence( cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r ):
+def check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r):
     if turn == 'M':
         x, y = 1, 0
     else:
@@ -107,29 +106,29 @@ def check_convergence( cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r )
     return cnt, flagla, flaglo
 
 
-def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag ):
+def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag):
     flaglo = 0
     flagla = 0
     cnt = 0
-    posV = [x.copy()]               # 用于记录车辆位置更新
-    velV = [v.copy()]               # 用于记录车辆速度更新
-    posL = [ xL.copy()]             # 用于放领导者位置，先存入领导者初始位置
-    xp = x.copy()                   # 用于放车辆位置，先存入车辆初始位置
-    vp = v.copy()                   # 用于放车辆速度，先存入车辆初始速度
+    posV = [x.copy()]  # 用于记录车辆位置更新
+    velV = [v.copy()]  # 用于记录车辆速度更新
+    posL = [xL.copy()]  # 用于放领导者位置，先存入领导者初始位置
+    xp = x.copy()  # 用于放车辆位置，先存入车辆初始位置
+    vp = v.copy()  # 用于放车辆速度，先存入车辆初始速度
     lp = xL.copy()
-    R = np.zeros( ( n, n, 2 ) )     # 用车辆与领导者之间的理想距离计算车辆之间的相对理想距离
+    R = np.zeros((n, n, 2))  # 用车辆与领导者之间的理想距离计算车辆之间的相对理想距离
     for i in range(n):
         for j in range(n):
             R[i][j] = rL[i] - rL[j]
     threshold = 1.0
-    for ts in range( t ):
-        if np.all( np.abs( posV[-1][0] - r_turn ) < threshold ):
-            print( posV[-1][0] )
+    for ts in range(t):
+        if np.all(np.abs(posV[-1][0] - r_turn) < threshold):
+            print(posV[-1][0])
             break
-        dot_v = np.zeros_like( vp )                                 # 领导者速度不变，所有加速度为0
-        for i in range( n ):
+        dot_v = np.zeros_like(vp)  # 领导者速度不变，所有加速度为0
+        for i in range(n):
             s = xp[i] - lp - rL[i]
-            for j in range( n ):
+            for j in range(n):
                 if i != j:  # 当相比较的智能体不是自己时，对应的a不为0，两智能体间的关系参与调整考虑
                     dot_v[i] -= A[i][j] * (xp[i] - xp[j] - R[i][j] + b * (vp[i] - vp[j]))
             dot_v[i] -= k[i] * (s + g * (vp[i] - vL))  # 与智能体相关联时，与领导者之间的关系参与调整考虑
@@ -137,27 +136,24 @@ def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag ):
         vp += a * dot_v  # 更新车辆速度位置与领导者位置
         xp += a * vp
 
-
         # MAS ##############################################################################
-        if ts % 400 == 0: # and flag == 1:
+        if ts % 400 == 0:  # and flag == 1:
             xp_mas = xp.copy()
-            max_mas = np.max( xp_mas[:, 0] )
+            max_mas = np.max(xp_mas[:, 0])
             y_mas = xp_mas[:, 1]
-            y_mas = np.append( y_mas, lp[1] )
+            y_mas = np.append(y_mas, lp[1])
             x_mas = []
-            for ddr in range( len( y_mas ) ):
-                x_mas.append( max_mas )
+            for ddr in range(len(y_mas)):
+                x_mas.append(max_mas)
             x_mas = np.array(x_mas)
             y_mas = np.array(y_mas)
             x_B, y_B = Algorithm_2(x_mas, y_mas, 0.2)
             xp[:, 1] = y_B[:-1] * 0.4 + xp[:, 1] * 0.6
         ####################################################################################
 
-
-
         lp += a * vL
         # 检查是否收敛
-        cnt, flagla, flaglo = check_convergence( cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r )
+        cnt, flagla, flaglo = check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r)
 
         posV.append(xp.copy())
         velV.append(vp.copy())
@@ -169,18 +165,16 @@ def update_data( k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, flag ):
     return posV, velV, posL, t
 
 
-
-
-def create_vehicles( x, v, r_side, rL, n, r ):
-    x_leader = np.array( [ float( np.max( x[ :, 0 ] ) ), r_side ] )
+def create_vehicles(x, v, r_side, rL, n, r):
+    x_leader = np.array([float(np.max(x[:, 0])), r_side])
     vL = np.array([float(round(np.mean(v[:, 0]), 1)), 0.0])
-    A, x, v, rLeader = createA( n, x, v, rL )
+    A, x, v, rLeader = createA(n, x, v, rL)
     return x_leader, x, v, vL, rLeader, A
 
 
-def create_k( n, x, x_leader, A ):
-    dd = np.mean( np.diff( x[ :, 1 ] ) )
-    k = np.zeros( ( n, 1 ) )
+def create_k(n, x, x_leader, A):
+    dd = np.mean(np.diff(x[:, 1]))
+    k = np.zeros((n, 1))
     if dd != 0:
         k[0] = abs(np.round((x[0, 1] - x_leader[1]) / dd, 1))
         if n > 1:
@@ -190,8 +184,13 @@ def create_k( n, x, x_leader, A ):
         if n > 1:
             k[1] = 1
         dd = 1
-    A = adjustA( A, x, n, dd )
+    A = adjustA(A, x, n, dd)
     return A, dd, k
+
+
+def add_noise(data, epsilon, sensitivity=1.0):
+    noise = np.random.laplace(0, sensitivity/epsilon, data.shape)
+    return data + noise
 
 
 def main():
@@ -201,9 +200,9 @@ def main():
     tt = 80
     t = int(tt / a)
     L, M, R, xL, vL, xM, vM, xR, vR, rL, r = get_data()
-
+    # 道路信息 -> 道路中心线坐标 & 路口位置
     r_left = 30.0
-    r_middle =20.0
+    r_middle = 20.0
     r_right = 10.0
 
     r_turn_before = np.array([
@@ -215,56 +214,56 @@ def main():
     r_turn_after = [800.0, 20.0]
 
     # 创建车辆信息
-    xL_leader, xL, vL, vLL, rLeaderL, AL = create_vehicles( xL, vL, r_left, rL, L, r )
-    xM_leader, xM, vM, vLM, rLeaderM, AM = create_vehicles( xM, vM, r_middle, rL, M, r )
-    xR_leader, xR, vR, vLR, rLeaderR, AR = create_vehicles( xR, vR, r_right, rL, R, r )
+    xL_leader, xL, vL, vLL, rLeaderL, AL = create_vehicles(xL, vL, r_left, rL, L, r)
+    xM_leader, xM, vM, vLM, rLeaderM, AM = create_vehicles(xM, vM, r_middle, rL, M, r)
+    xR_leader, xR, vR, vLR, rLeaderR, AR = create_vehicles(xR, vR, r_right, rL, R, r)
 
-    AL, ddL, kL = create_k( L, xL, xL_leader, AL )
-    AM, ddM, kM = create_k( M, xM, xM_leader, AM )
-    AR, ddR, kR = create_k( R, xR, xR_leader, AR)
+    AL, ddL, kL = create_k(L, xL, xL_leader, AL)
+    AM, ddM, kM = create_k(M, xM, xM_leader, AM)
+    AR, ddR, kR = create_k(R, xR, xR_leader, AR)
 
-    LposV, LvelV, LposL, Lnt = update_data( kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rL, 'M', r_turn_before[0], 0 )
-    MposV, MvelV, MposL, Mnt = update_data( kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_before[1], 0 )
-    RposV, RvelV, RposL, Rnt = update_data( kR, R, xR_leader, xR, vLR, vR, b, g, a, t, AR, r, rL, 'M', r_turn_before[2], 0 )
+    # 更新数据
+    LposV, LvelV, LposL, Lnt = update_data(kL, L, xL_leader, xL, vLL, vL, b, g, a, t, AL, r, rL, 'M', r_turn_before[0], 0)
+    MposV, MvelV, MposL, Mnt = update_data(kM, M, xM_leader, xM, vLM, vM, b, g, a, t, AM, r, rL, 'M', r_turn_before[1], 0)
+    RposV, RvelV, RposL, Rnt = update_data(kR, R, xR_leader, xR, vLR, vR, b, g, a, t, AR, r, rL, 'M', r_turn_before[2], 0)
 
+    # 为位置和速度数据添加噪声
+    LposV_noisy = add_noise(LposV, epsilon=8.5)
+    LvelV_noisy = add_noise(LvelV, epsilon=8.5)
+    MposV_noisy = add_noise(MposV, epsilon=8.5)
+    MvelV_noisy = add_noise(MvelV, epsilon=8.5)
+    RposV_noisy = add_noise(RposV, epsilon=8.5)
+    RvelV_noisy = add_noise(RvelV, epsilon=8.5)
 
-    pos_merged = np.concatenate( ( MposV[-1], RposV[-1] ) )
-    vel_merged = np.concatenate( ( MvelV[-1], RvelV[-1] ) )
-    n_merged = len( pos_merged )
+    # 将车辆合并后更新数据
+    pos_merged = np.concatenate((MposV_noisy[-1], RposV_noisy[-1]))
+    vel_merged = np.concatenate((MvelV_noisy[-1], RvelV_noisy[-1]))
+    n_merged = len(pos_merged)
     x = pos_merged
     v = vel_merged
-    A2, x, v, rL = createA( n_merged, x, v, rL )
+    A2, x, v, rL = createA(n_merged, x, v, rL)
     x_leader = [400.0, 20.0]
-    A2, ddL, kL = create_k( n_merged, x, x_leader, A2 )
-    nposV, nvelV, nposL, nnt = update_data( kL, n_merged, x_leader, x, vLR, v, b, g, a, t, A2, r, rL, 'M', r_turn_after, 1 )
-
-
-
-
+    A2, ddL, kL = create_k(n_merged, x, x_leader, A2)
+    nposV, nvelV, nposL, nnt = update_data(kL, n_merged, x_leader, x, vLR, v, b, g, a, t, A2, r, rL, 'M', r_turn_after, 1)
 
     # 显示图片
     plt.figure(figsize=(10, 6))
     for i in range(L):
-        plt.plot(LposV[:, i, 0], LposV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(LposV[::5000, i, 0], LposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
+        plt.plot(LposV_noisy[:, i, 0], LposV_noisy[:, i, 1], label=f'Vehicle {i + 1}')
+        plt.scatter(LposV_noisy[::5000, i, 0], LposV_noisy[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
     for i in range(M):
-        plt.plot(MposV[:, i, 0], MposV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(MposV[::5000, i, 0], MposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
+        plt.plot(MposV_noisy[:, i, 0], MposV_noisy[:, i, 1], label=f'Vehicle {i + 1}')
+        plt.scatter(MposV_noisy[::5000, i, 0], MposV_noisy[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
     for i in range(R):
-        plt.plot(RposV[:, i, 0], RposV[:, i, 1], label=f'Vehicle {i + 1}')
-        plt.scatter(RposV[::5000, i, 0], RposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
-    for i in range( n_merged ):
+        plt.plot(RposV_noisy[:, i, 0], RposV_noisy[:, i, 1], label=f'Vehicle {i + 1}')
+        plt.scatter(RposV_noisy[::5000, i, 0], RposV_noisy[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
+    for i in range(n_merged):
         plt.plot(nposV[:, i, 0], nposV[:, i, 1], label=f'Vehicle {i + 1}')
         plt.scatter(nposV[::5000, i, 0], nposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
 
-
-
-
     plt.xlabel('X Position(m)')
     plt.ylabel('Y Position(m)')
-    # plt.legend()
     plt.show()
-
 
 
 if __name__ == '__main__':

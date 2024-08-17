@@ -1,4 +1,6 @@
 import numpy as np
+from MAS_Function import Algorithm_1
+from MAS_Function import Algorithm_2
 
 
 def get_data(side, path):
@@ -137,7 +139,7 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
     if stage != 0:
         target_time_s = 26000 * (stage - 1)
         target_time_e = 25000 * stage
-    print( target_time_s, target_time_e )
+    # print( target_time_s, target_time_e )
     for ts in range(t):
         status = str(status)
         status_list = {
@@ -193,7 +195,7 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
                 mask = (xp[:, 1] < stop if hypen == '<' else xp[:, 1] > stop) & (np.abs(xp[:, 0] - road) <= 0.2)
             else:
                 mask = (xp[:, 0] < stop if hypen == '<' else xp[:, 0] > stop) & (np.abs(xp[:, 1] - road) <= 0.2)
-            print(mask)
+            # print(mask)
             keep = 1
             mask = mask.astype(bool)
             vp[mask] = 0
@@ -208,6 +210,24 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
         elif round == 2:
             vp += a * dot_v  # 更新车辆速度位置与领导者位置
         xp += a * vp
+
+        if ts % 400 == 0:
+            xp_mas = xp.copy()
+            if (direction == 'ver' and round == 1) or (direction == 'hor' and round == 2 and turn != 'M'):
+                ym, xm = 0, 1
+            elif (direction == 'hor' and round == 1) or (direction == 'ver' and round == 2 and turn != 'M'):
+                xm, ym = 0, 1
+            max_mas = np.max(xp_mas[:, xm])
+            y_mas = xp_mas[:, ym]
+            y_mas = np.append(y_mas, lp[ym])
+            x_mas = []
+            for ddr in range(len(y_mas)):
+                x_mas.append(max_mas)
+            x_mas = np.array(x_mas)
+            y_mas = np.array(y_mas)
+            x_B, y_B = Algorithm_2(x_mas, y_mas, 0.2)
+            xp[:, ym] = y_B[:-1] * 0.4 + xp[:, ym] * 0.6
+
         lp += a * vL
         # 检查是否收敛
         cnt, flagla, flaglo = check_convergence(cnt, ts, t, flagla, flaglo, xp, posV, vp, velV, turn, r)
@@ -241,10 +261,9 @@ def one_car(turning_point, arriving_point, starting_direction, rL, r, n, side, s
         posV, velV, posL, keep, stay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, 'M', turning_point,
                                                    side, status, road, starting_direction, right_turn=right_turn,
                                                    keep=keep, round=round, stage = stage )
-        print('stay::::::::::', stay )
+
         x = posV[-1]
         v = velV[-1]
-    print( x )
     if keep == 0:
         if side == '-':
             if starting_direction == 'ver':
@@ -260,8 +279,6 @@ def one_car(turning_point, arriving_point, starting_direction, rL, r, n, side, s
             elif starting_direction == 'hor':
                 l_x = np.max(x[:, 0])
                 l_y = turning_point[1]
-        x_leader = np.array([l_x, l_y])
-        print( l_x, l_y )
         x_leader = np.array([l_x, l_y])
     else:
         x_leader = np.array(turning_point)
@@ -283,7 +300,6 @@ def one_car(turning_point, arriving_point, starting_direction, rL, r, n, side, s
     else:
         posV = nposV
         stay = nstay
-    # print( posV[-1] )
     return posV, stay
 
 
@@ -371,6 +387,4 @@ def run( side, path, info, i, single, round, stay ):
     posV, stay = one_car(turning_point, arriving_point, starting_direction, rL, r, n, side, status, right_turn, b, g, a, t, road, x, v, turn, round, stage )
     stay = np.array( stay )
     stay = stay.reshape(-1, 2)
-    print(posV[-1], 'last of this')
-    print(posV.shape, 'shape ')
     return posV, n, stay
