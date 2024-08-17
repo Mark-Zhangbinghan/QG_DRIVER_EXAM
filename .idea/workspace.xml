@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0b053833-0f5c-4bad-b601-3b74246827b6" name="更改" comment="refactor - 为前端返回更多数据">
+      <change afterPath="$PROJECT_DIR$/Vertices_Weight_create/draw_map.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web.py" beforeDir="false" afterPath="$PROJECT_DIR$/web.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Jupyter Notebook" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2kGQULoHtvGKOQlyScqeTj5kfSb" />
+  <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.add_json.executor": "Run",
+    "Python.create_Vertices.executor": "Debug",
+    "Python.dijkstra_newmap.executor": "Run",
+    "Python.draw_map.executor": "Run",
+    "Python.heat_map.executor": "Run",
+    "Python.hot_spot.executor": "Run",
+    "Python.jicheng_fun.executor": "Debug",
+    "Python.predict.executor": "Run",
+    "Python.road.executor": "Run",
+    "Python.starter.executor": "Run",
+    "Python.web.executor": "Debug",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/24468/Desktop/QG_DRIVER_EXAM",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "http.proxy",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\24468\Desktop\QG_DRIVER_EXAM\Vertices_Weight_create" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\24468\Desktop\QG_DRIVER_EXAM\结点权重生成函数" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="draw_map" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QG_DRIVER_EXAM" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Vertices_Weight_create" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Vertices_Weight_create/draw_map.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="starter" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QG_DRIVER_EXAM" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/CAV/code" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/CAV/code/starter.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="web" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="QG_DRIVER_EXAM" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/web.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.web" />
+        <item itemvalue="Python.starter" />
+        <item itemvalue="Python.draw_map" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-50da183f06c8-2887949eec09-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.13135.95" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\24468\AppData\Roaming\Subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="0b053833-0f5c-4bad-b601-3b74246827b6" name="更改" comment="" />
+      <created>1722907447745</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1722907447745</updated>
+      <workItem from="1722907448991" duration="163000" />
+      <workItem from="1722908323014" duration="1506000" />
+      <workItem from="1722910461768" duration="3381000" />
+      <workItem from="1722914997406" duration="1095000" />
+      <workItem from="1722916254694" duration="1118000" />
+      <workItem from="1722927855135" duration="5920000" />
+      <workItem from="1722944407640" duration="36526000" />
+      <workItem from="1723167530374" duration="74279000" />
+      <workItem from="1723531312403" duration="39000" />
+      <workItem from="1723531447649" duration="22121000" />
+      <workItem from="1723707715376" duration="8305000" />
+    </task>
+    <task id="LOCAL-00001" summary="docs - 修改README项目文档">
+      <option name="closed" value="true" />
+      <created>1722908471653</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1722908471653</updated>
+    </task>
+    <task id="LOCAL-00002" summary="docs - 修改README项目文档">
+      <option name="closed" value="true" />
+      <created>1722908742770</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1722908742770</updated>
+    </task>
+    <task id="LOCAL-00003" summary="docs - 修改README项目文档">
+      <option name="closed" value="true" />
+      <created>1722915548393</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1722915548393</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat - 增加了设置点线图的代码">
+      <option name="closed" value="true" />
+      <created>1722938588425</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1722938588425</updated>
+    </task>
+    <task id="LOCAL-00005" summary="refactor - 修改点线图的名称为大写英文字母">
+      <option name="closed" value="true" />
+      <created>1722945868126</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1722945868126</updated>
+    </task>
+    <task id="LOCAL-00006" summary="feat - 设置了创造点类型的函数">
+      <option name="closed" value="true" />
+      <created>1722947255215</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1722947255215</updated>
+    </task>
+    <task id="LOCAL-00007" summary="refactor - 增加了权重设置">
+      <option name="closed" value="true" />
+      <created>1722952241524</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1722952241524</updated>
+    </task>
+    <task id="LOCAL-00008" summary="refactor - 将文件夹名更新为 权重生成函数">
+      <option name="closed" value="true" />
+      <created>1722954980869</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1722954980869</updated>
+    </task>
+    <task id="LOCAL-00009" summary="refactor - 设置读取结点信息函数">
+      <option name="closed" value="true" />
+      <created>1723017493604</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1723017493604</updated>
+    </task>
+    <task id="LOCAL-00010" summary="refactor - 修改对象名称">
+      <option name="closed" value="true" />
+      <created>1723017972558</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1723017972558</updated>
+    </task>
+    <task id="LOCAL-00011" summary="feat - 建立寻找重要结点函数">
+      <option name="closed" value="true" />
+      <created>1723036994594</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1723036994594</updated>
+    </task>
+    <task id="LOCAL-00012" summary="refactor - 修改使用示例">
+      <option name="closed" value="true" />
+      <created>1723188577580</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1723188577580</updated>
+    </task>
+    <task id="LOCAL-00013" summary="feat - 封装获取结点信息的函数create_Vertices">
+      <option name="closed" value="true" />
+      <created>1723260112477</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1723260112477</updated>
+    </task>
+    <task id="LOCAL-00014" summary="refactor - 更新大学城结点图和结点excel数据">
+      <option name="closed" value="true" />
+      <created>1723260259401</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1723260259401</updated>
+    </task>
+    <task id="LOCAL-00015" summary="fix - 增加输出结点信息数组dot">
+      <option name="closed" value="true" />
+      <created>1723261691413</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1723261691413</updated>
+    </task>
+    <task id="LOCAL-00016" summary="fix - 注释掉无关代码">
+      <option name="closed" value="true" />
+      <created>1723276051609</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1723276051609</updated>
+    </task>
+    <task id="LOCAL-00017" summary="refactor - 修改结点坐标信息">
+      <option name="closed" value="true" />
+      <created>1723276747936</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1723276747936</updated>
+    </task>
+    <task id="LOCAL-00018" summary="refactor - 将G和dot设置为全局变量">
+      <option name="closed" value="true" />
+      <created>1723277294823</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1723277294823</updated>
+    </task>
+    <task id="LOCAL-00019" summary="refactor - 修改格子大小">
+      <option name="closed" value="true" />
+      <created>1723279333585</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1723279333585</updated>
+    </task>
+    <task id="LOCAL-00020" summary="refactor - 将小数点设置为后3位">
+      <option name="closed" value="true" />
+      <created>1723280617243</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1723280617243</updated>
+    </task>
+    <task id="LOCAL-00021" summary="refactor - 修改import项目文件语句">
+      <option name="closed" value="true" />
+      <created>1723299142591</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1723299142591</updated>
+    </task>
+    <task id="LOCAL-00022" summary="refactor - 增加v = 0改进代码">
+      <option name="closed" value="true" />
+      <created>1723300236436</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1723300236436</updated>
+    </task>
+    <task id="LOCAL-00023" summary="refactor - 修改结点信息">
+      <option name="closed" value="true" />
+      <created>1723351679773</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1723351679773</updated>
+    </task>
+    <task id="LOCAL-00024" summary="refactor - 修改结点图片">
+      <option name="closed" value="true" />
+      <created>1723351707276</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1723351707276</updated>
+    </task>
+    <task id="LOCAL-00025" summary="refactor - 增加接收微观路口数量的url">
+      <option name="closed" value="true" />
+      <created>1723370624694</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1723370624694</updated>
+    </task>
+    <task id="LOCAL-00026" summary="refactor - 将weight更换为图形需要的z">
+      <option name="closed" value="true" />
+      <created>1723449492660</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1723449492660</updated>
+    </task>
+    <task id="LOCAL-00027" summary="fix - 回退对weight的修改">
+      <option name="closed" value="true" />
+      <created>1723451476852</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1723451476852</updated>
+    </task>
+    <task id="LOCAL-00028" summary="refactor - 修改传输头">
+      <option name="closed" value="true" />
+      <created>1723463433240</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1723463433241</updated>
+    </task>
+    <task id="LOCAL-00029" summary="refactor - 注释无关语句">
+      <option name="closed" value="true" />
+      <created>1723541036667</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1723541036667</updated>
+    </task>
+    <task id="LOCAL-00030" summary="refactor - 将结点信息weight修改为z">
+      <option name="closed" value="true" />
+      <created>1723542761767</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1723542761767</updated>
+    </task>
+    <task id="LOCAL-00031" summary="refactor - 注释获取路口数量端口">
+      <option name="closed" value="true" />
+      <created>1723706348785</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1723706348785</updated>
+    </task>
+    <task id="LOCAL-00032" summary="refactor - 为前端返回更多数据">
+      <option name="closed" value="true" />
+      <created>1723708422755</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1723708422755</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
+                  <option value="main" />
+                </option>
+              </RecentGroup>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="refactor - 将文件夹名更新为 权重生成函数" />
+    <MESSAGE value="refactor - 设置读取结点信息函数" />
+    <MESSAGE value="refactor - 修改对象名称" />
+    <MESSAGE value="feat - 建立寻找重要结点函数" />
+    <MESSAGE value="refactor - 修改使用示例" />
+    <MESSAGE value="feat - 封装获取结点信息的函数create_Vertices" />
+    <MESSAGE value="refactor - 更新大学城结点图和结点excel数据" />
+    <MESSAGE value="fix - 增加输出结点信息数组dot" />
+    <MESSAGE value="fix - 注释掉无关代码" />
+    <MESSAGE value="refactor - 修改结点坐标信息" />
+    <MESSAGE value="refactor - 将G和dot设置为全局变量" />
+    <MESSAGE value="refactor - 修改格子大小" />
+    <MESSAGE value="refactor - 将小数点设置为后3位" />
+    <MESSAGE value="refactor - 修改import项目文件语句" />
+    <MESSAGE value="refactor - 增加v = 0改进代码" />
+    <MESSAGE value="refactor - 修改结点信息" />
+    <MESSAGE value="refactor - 修改结点图片" />
+    <MESSAGE value="refactor - 增加接收微观路口数量的url" />
+    <MESSAGE value="refactor - 将weight更换为图形需要的z" />
+    <MESSAGE value="fix - 回退对weight的修改" />
+    <MESSAGE value="refactor - 修改传输头" />
+    <MESSAGE value="refactor - 注释无关语句" />
+    <MESSAGE value="refactor - 将结点信息weight修改为z" />
+    <MESSAGE value="refactor - 注释获取路口数量端口" />
+    <MESSAGE value="refactor - 为前端返回更多数据" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor - 为前端返回更多数据" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/web_py$web.coverage" NAME="web 覆盖结果" MODIFIED="1723645143867" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/create_Vertices_py$create_Vertices.coverage" NAME="create_Vertices 覆盖结果" MODIFIED="1723295705879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Vertices_Weight_create" />
+    <SUITE FILE_PATH="coverage/web_py$predict.coverage" NAME="predict 覆盖结果" MODIFIED="1723708464934" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/数模代码及数据集/数模代码及数据集" />
+    <SUITE FILE_PATH="coverage/create_Vertices_py$web.coverage" NAME="web 覆盖结果" MODIFIED="1723452955035" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/QG_DRIVER_EXAM$add_json.coverage" NAME="add_json 覆盖结果" MODIFIED="1723017203723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/create_Vertices_py$road.coverage" NAME="road 覆盖结果" MODIFIED="1723473116904" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/create_Vertices_py$jicheng_fun.coverage" NAME="jicheng_fun 覆盖结果" MODIFIED="1723295805787" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/QG_DRIVER_EXAM$dijkstra_newmap.coverage" NAME="dijkstra_newmap 覆盖结果" MODIFIED="1723121230364" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/create_Vertices_py$draw_map.coverage" NAME="draw_map 覆盖结果" MODIFIED="1723376277434" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Vertices_Weight_create" />
+    <SUITE FILE_PATH="coverage/web_py$starter.coverage" NAME="starter 覆盖结果" MODIFIED="1723538261443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/CAV/code" />
+    <SUITE FILE_PATH="coverage/QG_DRIVER_EXAM$draw_map.coverage" NAME="draw_map 覆盖结果" MODIFIED="1723022232990" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/QG_DRIVER_EXAM$heat_map.coverage" NAME="heat_map 覆盖结果" MODIFIED="1722936814561" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/QG_DRIVER_EXAM$hot_spot.coverage" NAME="hot_spot 覆盖结果" MODIFIED="1723022667542" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Vertices_Weight_create" />
+    <SUITE FILE_PATH="coverage/QG_DRIVER_EXAM$create_Vertices.coverage" NAME="create_Vertices 覆盖结果" MODIFIED="1723022220660" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Vertices_Weight_create" />
+    <SUITE FILE_PATH="coverage/create_Vertices_py$hot_spot.coverage" NAME="hot_spot 覆盖结果" MODIFIED="1723212665957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Vertices_Weight_create" />
+  </component>
+</project>

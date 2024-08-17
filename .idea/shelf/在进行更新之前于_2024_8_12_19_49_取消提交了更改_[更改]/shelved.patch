@@ -1,0 +1,162 @@
+Index: add_json.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import json\r\n\r\n\r\n# class Car:\r\n#     def __init__(self, car_num, speed, start_position, end_position):\r\n#         self.car_num = car_num\r\n#         self.speed = speed\r\n#         self.start_position = start_position\r\n#         self.end_position = end_position\r\n#         self.path = []\r\n#         self.relative_time = 0.0\r\n\r\n# e版本\r\n# cars = start_simulation(10, vertices, edges)\r\n\r\ndef cars_to_file(cars_list, add_z=-3):\r\n    car_list_json = []\r\n    for car in cars_list:\r\n        # 转换路径为所需的格式\r\n        path_list = [{\"x\": point['coords'][0], \"y\": point['coords'][1], \"z\": add_z} for point in car['path']]\r\n\r\n        # 构建车辆的字典\r\n        car_dict = {\r\n            \"car_num\": car['car_num'],\r\n            \"speed\": car['speed'],\r\n            \"path\": path_list\r\n        }\r\n        car_list_json.append(car_dict)\r\n    # 转成json\r\n    json_output = json.dumps({\"CarList\": car_list_json}, indent=2)\r\n    filename = 'cars_data.json'\r\n    # 打开文件，准备写入\r\n    with open(filename, 'w', encoding='utf-8') as file:\r\n        file.write(json_output)\r\n    print(f'JSON数据已成功写入到文件：{filename}')\r\n\r\n\r\ndef cars_to_json(cars_list, add_z=-3):\r\n    car_list_json = []\r\n    for car in cars_list:\r\n        # 转换路径为所需的格式\r\n        path_list = [{\"x\": point['coords'][0], \"y\": point['coords'][1], \"z\": add_z} for point in car['path']]\r\n\r\n        # 构建车辆的字典\r\n        car_dict = {\r\n            \"speed\": car['speed'],\r\n            \"path\": path_list\r\n        }\r\n        car_list_json.append(car_dict)\r\n    return car_list_json\r\n\r\n\r\n# cars = run_simulation(G=G, total_cars=10, round_num=1, speed=0.5)\r\n# cars_to_json(cars)\r\n\r\ndef mat_hot_point(weights):\r\n    dot_list_json = []\r\n    for weight_key, weight_value in weights.items():\r\n        # 这里的权重列表中的每个条目是一个字典\r\n        dot_dict = {\r\n            \"x\": weight_value['pos'][0],\r\n            \"y\": weight_value['pos'][1],\r\n            \"weight\": weight_value['weight']\r\n        }\r\n        dot_list_json.append(dot_dict)\r\n    return dot_list_json\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/add_json.py b/add_json.py
+--- a/add_json.py	(revision b9154a6e324cd12d81c7d380458dc9c03657642e)
++++ b/add_json.py	(date 1723453488794)
+@@ -60,7 +60,7 @@
+         dot_dict = {
+             "x": weight_value['pos'][0],
+             "y": weight_value['pos'][1],
+-            "weight": weight_value['weight']
++            "z": weight_value['weight']
+         }
+         dot_list_json.append(dot_dict)
+     return dot_list_json
+Index: web.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import asyncio\r\n\r\nfrom fastapi import FastAPI, File, UploadFile, WebSocket\r\nfrom fastapi import Request\r\nimport uvicorn\r\nimport json\r\nimport requests\r\n# 自定函数\r\nfrom end_dijkstra import run_simulation\r\nfrom Vertices_Weight_create.create_Vertices import G\r\nfrom add_json import cars_to_json\r\nfrom add_json import cars_to_file\r\nfrom add_json import mat_hot_point\r\n\r\napp = FastAPI()\r\ncar_cnt = 0  # 车辆计数器\r\nweights_cnt = 0\r\ncars = []  # 全局列表cars\r\nweights = []  # 全局列表weight\r\n\r\n\r\n# 判断连接是否成功路由\r\n@app.get('/')\r\n@app.post('/')\r\n@app.put('/')\r\n@app.delete('/')\r\nasync def read_root():\r\n    return {\"Connect Succeed\"}\r\n\r\n\r\n# 推送车辆数量路由\r\n@app.put('/put_car')\r\nasync def put_car(get_params: Request):  # 要在url中写参数而不是请求体\r\n    global cars\r\n    global weights\r\n    car_num = 10  # 预设被运算车辆的数量\r\n    params = get_params.query_params\r\n    car_num = params.get('car_num')\r\n    if car_num and car_num.isdigit():  # 判断能否转换成整数\r\n        car_num = int(car_num)  # 将字符串转换为整数\r\n    else:\r\n        car_num = -1  # 表示转换失败\r\n    print(car_num)\r\n    # 转换成功\r\n    if car_num == -1:\r\n        return {\"need int\"}\r\n    else:\r\n        # 根据接受到的car_num先计算宏观路径\r\n        cars, weights = run_simulation(G=G, total_cars=car_num, round_num=1, speed=0.5)  # 直接计算path然后存成字典列表\r\n        # 存成文件方便检查\r\n        cars_to_file(cars)\r\n        for weight in weights:\r\n            print(weight)\r\n        return {\"put succeed\"}\r\n\r\n\r\n# 获得微观图路口数量\r\n@app.put('/put_path_num')\r\nasync def put_path_num(get_params: Request):  # 要在url中写参数而不是请求体\r\n    path_num = 4  # 预设岔路的数量\r\n    params = get_params.query_params\r\n    path_num = params.get('path_num')\r\n    if path_num and path_num.isdigit():  # 判断能否转换成整数\r\n        path_num = int(path_num)  # 将字符串转换为整数\r\n    else:\r\n        path_num = -1  # 表示转换失败\r\n    print(path_num)\r\n    if path_num == -1:\r\n        return {\"need int\"}\r\n    else:\r\n        return {\"put succeed\"}\r\n\r\n\r\n# 获取车辆路径路由\r\n@app.get(\"/get_path\")\r\nasync def get_path():  # 要在body中写参数\r\n    global car_cnt\r\n    car_list = cars_to_json(cars, add_z=-3)\r\n    print(\"car:\")\r\n    print(\"cnt/len\")\r\n    print(car_cnt, \"/\", len(car_list))\r\n    if car_cnt >= len(car_list):\r\n        car_cnt = 0\r\n    car_data = car_list[car_cnt]\r\n    car_cnt += 1\r\n    return car_data  # 直接返回字典\r\n\r\n\r\n@app.get(\"/get_weights\")\r\nasync def get_weights():\r\n    global weights_cnt\r\n    if weights_cnt >= len(weights):\r\n        weights_cnt = 0\r\n    weight_data = weights[weights_cnt]\r\n    print(\"weights:\")\r\n    print(\"cnt/len\")\r\n    print(weights_cnt, \"/\", len(weights))\r\n    dot_json = mat_hot_point(weight_data)\r\n    weight_pos = {\r\n        \"PosWeights\": dot_json  # 修改成图形要的格式\r\n    }\r\n    weights_cnt += 1\r\n    return weight_pos  # 直接返回字典\r\n\r\n\r\n@app.websocket(\"/ws_weights\")\r\nasync def ws_weights(websocket: WebSocket):\r\n    await websocket.accept()\r\n    weight_cnt = 0\r\n    try:\r\n        while True:\r\n            print(weight_cnt)\r\n            print(len(weights))\r\n            if weight_cnt >= len(weights):\r\n                weight_cnt = 0  # 重置索引\r\n            # 提取一次列表\r\n            weight_data = weights[weight_cnt]\r\n            # 转成json\r\n            dot_json = mat_hot_point(weight_data)\r\n            json_data = json.dumps(dot_json)\r\n            await websocket.send_text(json_data)\r\n            weight_cnt += 1\r\n            await asyncio.sleep(0.5)\r\n    except Exception as e:\r\n        # 处理异常，例如连接关闭\r\n        print(f\"Websocket closed: {e}\")\r\n\r\n\r\n# 主监听函数\r\nif __name__ == \"__main__\":\r\n    # uvicorn.run(app=\"web:app\", host=\"192.168.0.92\", port=8080, reload=False)\r\n    uvicorn.run(app=\"web:app\", host=\"127.0.0.1\", port=8080, reload=False)\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web.py b/web.py
+--- a/web.py	(revision b9154a6e324cd12d81c7d380458dc9c03657642e)
++++ b/web.py	(date 1723453846479)
+@@ -97,7 +97,7 @@
+     print(weights_cnt, "/", len(weights))
+     dot_json = mat_hot_point(weight_data)
+     weight_pos = {
+-        "PosWeights": dot_json  # 修改成图形要的格式
++        "PosWeight": dot_json  # 修改成图形要的格式
+     }
+     weights_cnt += 1
+     return weight_pos  # 直接返回字典
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"Black\">\r\n<<<<<<< Updated upstream\r\n    <option name=\"sdkName\" value=\"Python 3.12\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.11\" project-jdk-type=\"Python SDK\" />\r\n=======\r\n    <option name=\"sdkName\" value=\"QG_Summer_Camp\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"QG_Summer_Camp\" project-jdk-type=\"Python SDK\" />\r\n>>>>>>> Stashed changes\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision b9154a6e324cd12d81c7d380458dc9c03657642e)
++++ b/.idea/misc.xml	(date 1723452474734)
+@@ -4,7 +4,7 @@
+ <<<<<<< Updated upstream
+     <option name="sdkName" value="Python 3.12" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
+ =======
+     <option name="sdkName" value="QG_Summer_Camp" />
+   </component>
+Index: .idea/QG_DRIVER_EXAM.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\" />\r\n<<<<<<< Updated upstream\r\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.11\" jdkType=\"Python SDK\" />\r\n=======\r\n    <orderEntry type=\"jdk\" jdkName=\"QG_Summer_Camp\" jdkType=\"Python SDK\" />\r\n>>>>>>> Stashed changes\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/QG_DRIVER_EXAM.iml b/.idea/QG_DRIVER_EXAM.iml
+--- a/.idea/QG_DRIVER_EXAM.iml	(revision b9154a6e324cd12d81c7d380458dc9c03657642e)
++++ b/.idea/QG_DRIVER_EXAM.iml	(date 1723452474739)
+@@ -2,11 +2,7 @@
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+     <content url="file://$MODULE_DIR$" />
+-<<<<<<< Updated upstream
+-    <orderEntry type="jdk" jdkName="Python 3.11" jdkType="Python SDK" />
+-=======
+-    <orderEntry type="jdk" jdkName="QG_Summer_Camp" jdkType="Python SDK" />
+->>>>>>> Stashed changes
++    <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file
+Index: Vertices_Weight_create/draw_map.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Vertices_Weight_create/draw_map.py b/Vertices_Weight_create/draw_map.py
+new file mode 100644
+--- /dev/null	(date 1723452474731)
++++ b/Vertices_Weight_create/draw_map.py	(date 1723452474731)
+@@ -0,0 +1,71 @@
++import numpy as np
++import pandas as pd
++import networkx as nx
++import matplotlib.pyplot as plt
++
++plt.rcParams['font.sans-serif'] = ['SimHei']  # 显示中文标签
++plt.rcParams['axes.unicode_minus'] = False  # 设置正常显示符号
++
++
++# 寻找相邻结点函数
++def find_neighbors(num_list, neighbor_list):
++    neighbors = []
++    count = 1
++    for num, neighbor in zip(num_list, neighbor_list):
++        neighbor_ids = neighbor.split('、')  # 分割邻居结点序号
++        for id in neighbor_ids:
++            neighbors.append((num, int(id), str(count)))
++            count += 1
++    return neighbors
++
++
++# 建立结点G
++def get_vertices(data_path):
++    data = pd.read_excel(data_path)
++
++    # 提取 X_Coordinate、Y_Coordinate 和 Name 列
++    x_data = data['X_Coordinate']
++    y_data = data['Y_Coordinate']
++    nums = data['Num']
++    names = data['Name']
++    connect = data['Connect']
++    weights = data['Weight']
++    Edges = find_neighbors(nums, connect)
++
++    # 创建字典
++    Vertices = {num: (x, y) for num, x, y in zip(nums, x_data, y_data)}
++
++    # 创建图
++    G = nx.Graph()
++    for node, pos in Vertices.items():
++        G.add_node(node, pos=pos)
++    for edge in Edges:
++        G.add_edge(edge[0], edge[1], road=edge[2])
++        pos1 = Vertices[edge[0]]
++        pos2 = Vertices[edge[1]]
++        distance = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
++        G.edges[edge[0], edge[1]]['length'] = distance
++
++    # 设置节点属性
++    nx.set_node_attributes(G, Vertices, 'pos')
++
++    # 设置节点权重
++    node_weights = {num: weight for num, weight in zip(nums, weights)}
++    nx.set_node_attributes(G, node_weights, 'weight')
++
++    # # 绘制图
++    # pos = nx.get_node_attributes(G, 'pos')
++    # nx.draw(G, pos=pos, with_labels=False, node_color='lightblue', edge_color='gray', node_size=200)
++    #
++    # # 设置节点标签
++    # labels = {node: node for node in G.nodes()}
++    # nx.draw_networkx_labels(G, pos, labels, font_size=6)  # 设置字体大小为 12
++    #
++    # plt.show()
++
++    return G
++
++
++if __name__ == '__main__':
++    data_path = 'node_data.xlsx'
++    G = get_vertices(data_path)

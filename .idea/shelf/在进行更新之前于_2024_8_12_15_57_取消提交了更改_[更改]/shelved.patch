@@ -1,0 +1,168 @@
+Index: add_json.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import json\r\n\r\n\r\n# class Car:\r\n#     def __init__(self, car_num, speed, start_position, end_position):\r\n#         self.car_num = car_num\r\n#         self.speed = speed\r\n#         self.start_position = start_position\r\n#         self.end_position = end_position\r\n#         self.path = []\r\n#         self.relative_time = 0.0\r\n\r\n# e版本\r\n# cars = start_simulation(10, vertices, edges)\r\n\r\ndef cars_to_file(cars_list, add_z=-3):\r\n    car_list_json = []\r\n    for car in cars_list:\r\n        # 转换路径为所需的格式\r\n        path_list = [{\"x\": point['coords'][0], \"y\": point['coords'][1], \"z\": add_z} for point in car['path']]\r\n\r\n        # 构建车辆的字典\r\n        car_dict = {\r\n            \"car_num\": car['car_num'],\r\n            \"speed\": car['speed'],\r\n            \"path\": path_list\r\n        }\r\n        car_list_json.append(car_dict)\r\n    # 转成json\r\n    json_output = json.dumps({\"CarList\": car_list_json}, indent=2)\r\n    filename = 'cars_data.json'\r\n    # 打开文件，准备写入\r\n    with open(filename, 'w', encoding='utf-8') as file:\r\n        file.write(json_output)\r\n    print(f'JSON数据已成功写入到文件：{filename}')\r\n\r\n\r\ndef cars_to_json(cars_list, add_z=-3):\r\n    car_list_json = []\r\n    for car in cars_list:\r\n        # 转换路径为所需的格式\r\n        path_list = [{\"x\": point['coords'][0], \"y\": point['coords'][1], \"z\": add_z} for point in car['path']]\r\n\r\n        # 构建车辆的字典\r\n        car_dict = {\r\n            \"speed\": car['speed'],\r\n            \"path\": path_list\r\n        }\r\n        car_list_json.append(car_dict)\r\n    return car_list_json\r\n\r\n\r\n# cars = run_simulation(G=G, total_cars=10, round_num=1, speed=0.5)\r\n# cars_to_json(cars)\r\n\r\ndef mat_hot_point(weights):\r\n    dot_list_json = []\r\n    for weight_key, weight_value in weights.items():\r\n        # 这里的权重列表中的每个条目是一个字典\r\n        dot_dict = {\r\n            \"x\": weight_value['pos'][0],\r\n            \"y\": weight_value['pos'][1],\r\n            \"weight\": weight_value['weight']\r\n        }\r\n        dot_list_json.append(dot_dict)\r\n    return dot_list_json\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/add_json.py b/add_json.py
+--- a/add_json.py	(revision 018a74a62c752702f7b110476a99c41fa0c26edc)
++++ b/add_json.py	(date 1723449455098)
+@@ -60,7 +60,7 @@
+         dot_dict = {
+             "x": weight_value['pos'][0],
+             "y": weight_value['pos'][1],
+-            "weight": weight_value['weight']
++            "z": weight_value['weight']
+         }
+         dot_list_json.append(dot_dict)
+     return dot_list_json
+Index: road.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import matplotlib.pyplot as plt\r\nimport networkx as nx\r\nimport numpy as np\r\nfrom Vertices_Weight_create.create_Vertices import create_vertices  # 引入第二段代码\r\n\r\ndef initialize_graph_from_dot(dot):\r\n    \"\"\"初始化图\"\"\"\r\n    G = nx.Graph()\r\n    for vertex in dot:\r\n        G.add_node(vertex.name, pos=vertex.dot_place, cars=vertex.dot_weight)\r\n    for vertex in dot:\r\n        for neighbor in vertex.near_dot:\r\n            pos1 = vertex.dot_place\r\n            pos2 = dot[neighbor - 1].dot_place\r\n            length = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos2[1] - pos2[1]) ** 2)\r\n            G.add_edge(vertex.name, neighbor, length=length)\r\n    return G\r\n\r\ndef compute_centrality(G):\r\n    \"\"\"计算 PageRank 和中介中心性\"\"\"\r\n    pagerank_values = nx.pagerank(G, weight='length')\r\n    betweenness_centrality_values = nx.betweenness_centrality(G, weight='length')\r\n    nx.set_node_attributes(G, pagerank_values, 'pagerank')\r\n    nx.set_node_attributes(G, betweenness_centrality_values, 'betweenness')\r\n    return pagerank_values, betweenness_centrality_values\r\n\r\ndef attract_rank(G, alpha=0.5, beta=0.5):\r\n    \"\"\"计算 AttractRank 值\"\"\"\r\n    attractiveness = {}\r\n    for node in G.nodes:\r\n        pagerank_score = G.nodes[node]['pagerank']\r\n        betweenness_score = G.nodes[node]['betweenness']\r\n        attract_rank_score = alpha * pagerank_score + beta * betweenness_score\r\n        attractiveness[node] = attract_rank_score\r\n    nx.set_node_attributes(G, attractiveness, 'attract_rank')\r\n    return attractiveness\r\n\r\ndef heuristic(node, end_node, pos):\r\n    \"\"\"计算启发式估计值（欧氏距离）\"\"\"\r\n    x1, y1 = pos[node]\r\n    x2, y2 = pos[end_node]\r\n    return np.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)\r\n\r\ndef normalize(value, min_value, max_value, reverse=False):\r\n    \"\"\"归一化处理\"\"\"\r\n    if max_value == min_value:\r\n        return 0\r\n    norm_value = (value - min_value) / (max_value - min_value)\r\n    return 1 - norm_value if reverse else norm_value\r\n\r\nclass Car:\r\n    def __init__(self, car_num, speed, start_position, end_position):\r\n        \"\"\"初始化车辆\"\"\"\r\n        self.car_num = car_num\r\n        self.start_position = start_position\r\n        self.end_position = end_position\r\n        self.current_position = start_position\r\n        self.finished = False\r\n        self.path = [start_position]  # 使用节点名称存储路径\r\n        self.relative_time = 0\r\n        self.speed = speed\r\n\r\n    def move(self, G, current_time, heuristics, car_counts, attract_ranks, weights, pos):\r\n        \"\"\"模拟车辆移动\"\"\"\r\n        if self.finished:\r\n            return\r\n\r\n        neighbors = list(G[self.current_position])\r\n        if not neighbors:\r\n            self.finished = True\r\n            return\r\n\r\n        next_node = None\r\n        min_cost = float('inf')\r\n        for neighbor in neighbors:\r\n            if neighbor in self.path:\r\n                continue  # 跳过已经走过的节点\r\n\r\n            edge_length = G[self.current_position][neighbor]['length']\r\n            cars_on_node = G.nodes[neighbor]['cars']\r\n            attract_rank = G.nodes[neighbor]['attract_rank']\r\n\r\n            edge_cost = normalize(edge_length, 0, max(nx.get_edge_attributes(G, 'length').values()))\r\n            congestion_cost = normalize(cars_on_node, 0, max(car_counts))\r\n            heuristic_cost = normalize(heuristic(neighbor, self.end_position, pos), 0, max(heuristics))\r\n            attract_rank_cost = normalize(attract_rank, min(attract_ranks.values()), max(attract_ranks.values()), reverse=True)\r\n\r\n            total_cost = (weights['edge'] * edge_cost +\r\n                          weights['congestion'] * congestion_cost +\r\n                          weights['heuristic'] * heuristic_cost +\r\n                          weights['attract_rank'] * attract_rank_cost)\r\n            if total_cost < min_cost:\r\n                min_cost = total_cost\r\n                next_node = neighbor\r\n\r\n        if next_node is None:\r\n            self.finished = True\r\n            return\r\n\r\n        self.current_position = next_node\r\n        self.path.append(next_node)\r\n        self.relative_time += G[self.path[-2]][self.path[-1]]['length'] / self.speed\r\n\r\n        if self.current_position == self.end_position:\r\n            self.finished = True\r\n\r\ndef simulate_specified_car(start_node, end_node, G, weights):\r\n    \"\"\"模拟指定车辆的路径\"\"\"\r\n    pos = nx.get_node_attributes(G, 'pos')\r\n    heuristics = {node: heuristic(node, end_node, pos) for node in G.nodes}\r\n    attract_ranks = attract_rank(G)\r\n    car_counts = [G.nodes[node]['cars'] for node in G.nodes]\r\n\r\n    car = Car(1, 60, start_node, end_node)\r\n    current_time = 0\r\n\r\n    while not car.finished:\r\n        car.move(G, current_time, heuristics, car_counts, attract_ranks, weights, pos)\r\n        current_time += 1\r\n\r\n    return car.path\r\n\r\ndef user_defined_path_selection(data_path, weights):\r\n    \"\"\"让用户选择起点和终点并模拟车辆路径\"\"\"\r\n    # 从文件创建图\r\n    G, dot = create_vertices(data_path)\r\n    G = initialize_graph_from_dot(dot)\r\n    compute_centrality(G)\r\n\r\n    # 用户输入起点和终点\r\n    start_node = int(input(\"请输入起点节点编号: \"))\r\n    end_node = int(input(\"请输入终点节点编号: \"))\r\n\r\n    # 模拟车辆并返回路径\r\n    path = simulate_specified_car(start_node, end_node, G, weights)\r\n    return path\r\n\r\n# 示例数据，如何调用\r\n# data_path = 'Vertices_Weight_create/node_data.xlsx'\r\n# weights = {'edge': 0.5, 'congestion': 0.2, 'heuristic': 0.2, 'attract_rank': 0.1}\r\n#\r\n# # 执行用户输入选择，并打印结果\r\n# path = user_defined_path_selection(data_path, weights)\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/road.py b/road.py
+--- a/road.py	(revision 018a74a62c752702f7b110476a99c41fa0c26edc)
++++ b/road.py	(date 1723449207455)
+@@ -136,9 +136,9 @@
+     return path
+ 
+ # 示例数据，如何调用
+-# data_path = 'Vertices_Weight_create/node_data.xlsx'
+-# weights = {'edge': 0.5, 'congestion': 0.2, 'heuristic': 0.2, 'attract_rank': 0.1}
+-#
+-# # 执行用户输入选择，并打印结果
+-# path = user_defined_path_selection(data_path, weights)
++data_path = 'Vertices_Weight_create/node_data.xlsx'
++weights = {'edge': 0.5, 'congestion': 0.2, 'heuristic': 0.2, 'attract_rank': 0.1}
+ 
++# 执行用户输入选择，并打印结果
++path = user_defined_path_selection(data_path, weights)
++print(path)
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"Black\">\r\n<<<<<<< Updated upstream\r\n    <option name=\"sdkName\" value=\"Python 3.12\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.11\" project-jdk-type=\"Python SDK\" />\r\n=======\r\n    <option name=\"sdkName\" value=\"QG_Summer_Camp\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"QG_Summer_Camp\" project-jdk-type=\"Python SDK\" />\r\n>>>>>>> Stashed changes\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 018a74a62c752702f7b110476a99c41fa0c26edc)
++++ b/.idea/misc.xml	(date 1723449011710)
+@@ -4,7 +4,7 @@
+ <<<<<<< Updated upstream
+     <option name="sdkName" value="Python 3.12" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
+ =======
+     <option name="sdkName" value="QG_Summer_Camp" />
+   </component>
+Index: Vertices_Weight_create/draw_map.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Vertices_Weight_create/draw_map.py b/Vertices_Weight_create/draw_map.py
+new file mode 100644
+--- /dev/null	(date 1723449011715)
++++ b/Vertices_Weight_create/draw_map.py	(date 1723449011715)
+@@ -0,0 +1,71 @@
++import numpy as np
++import pandas as pd
++import networkx as nx
++import matplotlib.pyplot as plt
++
++plt.rcParams['font.sans-serif'] = ['SimHei']  # 显示中文标签
++plt.rcParams['axes.unicode_minus'] = False  # 设置正常显示符号
++
++
++# 寻找相邻结点函数
++def find_neighbors(num_list, neighbor_list):
++    neighbors = []
++    count = 1
++    for num, neighbor in zip(num_list, neighbor_list):
++        neighbor_ids = neighbor.split('、')  # 分割邻居结点序号
++        for id in neighbor_ids:
++            neighbors.append((num, int(id), str(count)))
++            count += 1
++    return neighbors
++
++
++# 建立结点G
++def get_vertices(data_path):
++    data = pd.read_excel(data_path)
++
++    # 提取 X_Coordinate、Y_Coordinate 和 Name 列
++    x_data = data['X_Coordinate']
++    y_data = data['Y_Coordinate']
++    nums = data['Num']
++    names = data['Name']
++    connect = data['Connect']
++    weights = data['Weight']
++    Edges = find_neighbors(nums, connect)
++
++    # 创建字典
++    Vertices = {num: (x, y) for num, x, y in zip(nums, x_data, y_data)}
++
++    # 创建图
++    G = nx.Graph()
++    for node, pos in Vertices.items():
++        G.add_node(node, pos=pos)
++    for edge in Edges:
++        G.add_edge(edge[0], edge[1], road=edge[2])
++        pos1 = Vertices[edge[0]]
++        pos2 = Vertices[edge[1]]
++        distance = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
++        G.edges[edge[0], edge[1]]['length'] = distance
++
++    # 设置节点属性
++    nx.set_node_attributes(G, Vertices, 'pos')
++
++    # 设置节点权重
++    node_weights = {num: weight for num, weight in zip(nums, weights)}
++    nx.set_node_attributes(G, node_weights, 'weight')
++
++    # # 绘制图
++    # pos = nx.get_node_attributes(G, 'pos')
++    # nx.draw(G, pos=pos, with_labels=False, node_color='lightblue', edge_color='gray', node_size=200)
++    #
++    # # 设置节点标签
++    # labels = {node: node for node in G.nodes()}
++    # nx.draw_networkx_labels(G, pos, labels, font_size=6)  # 设置字体大小为 12
++    #
++    # plt.show()
++
++    return G
++
++
++if __name__ == '__main__':
++    data_path = 'node_data.xlsx'
++    G = get_vertices(data_path)
+Index: .idea/QG_DRIVER_EXAM.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\" />\r\n<<<<<<< Updated upstream\r\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.11\" jdkType=\"Python SDK\" />\r\n=======\r\n    <orderEntry type=\"jdk\" jdkName=\"QG_Summer_Camp\" jdkType=\"Python SDK\" />\r\n>>>>>>> Stashed changes\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/QG_DRIVER_EXAM.iml b/.idea/QG_DRIVER_EXAM.iml
+--- a/.idea/QG_DRIVER_EXAM.iml	(revision 018a74a62c752702f7b110476a99c41fa0c26edc)
++++ b/.idea/QG_DRIVER_EXAM.iml	(date 1723449011719)
+@@ -2,11 +2,7 @@
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+     <content url="file://$MODULE_DIR$" />
+-<<<<<<< Updated upstream
+-    <orderEntry type="jdk" jdkName="Python 3.11" jdkType="Python SDK" />
+-=======
+-    <orderEntry type="jdk" jdkName="QG_Summer_Camp" jdkType="Python SDK" />
+->>>>>>> Stashed changes
++    <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file

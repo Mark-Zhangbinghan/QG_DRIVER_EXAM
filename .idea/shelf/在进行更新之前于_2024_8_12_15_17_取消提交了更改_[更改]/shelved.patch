@@ -1,0 +1,124 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"Black\">\r\n<<<<<<< Updated upstream\r\n    <option name=\"sdkName\" value=\"Python 3.12\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.11\" project-jdk-type=\"Python SDK\" />\r\n=======\r\n    <option name=\"sdkName\" value=\"QG_Summer_Camp\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"QG_Summer_Camp\" project-jdk-type=\"Python SDK\" />\r\n>>>>>>> Stashed changes\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision f797aa0567890b291c51edf2e1db775c27d6bde5)
++++ b/.idea/misc.xml	(date 1723370634497)
+@@ -4,7 +4,7 @@
+ <<<<<<< Updated upstream
+     <option name="sdkName" value="Python 3.12" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
+ =======
+     <option name="sdkName" value="QG_Summer_Camp" />
+   </component>
+Index: Vertices_Weight_create/draw_map.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Vertices_Weight_create/draw_map.py b/Vertices_Weight_create/draw_map.py
+new file mode 100644
+--- /dev/null	(date 1723446758432)
++++ b/Vertices_Weight_create/draw_map.py	(date 1723446758432)
+@@ -0,0 +1,71 @@
++import numpy as np
++import pandas as pd
++import networkx as nx
++import matplotlib.pyplot as plt
++
++plt.rcParams['font.sans-serif'] = ['SimHei']  # 显示中文标签
++plt.rcParams['axes.unicode_minus'] = False  # 设置正常显示符号
++
++
++# 寻找相邻结点函数
++def find_neighbors(num_list, neighbor_list):
++    neighbors = []
++    count = 1
++    for num, neighbor in zip(num_list, neighbor_list):
++        neighbor_ids = neighbor.split('、')  # 分割邻居结点序号
++        for id in neighbor_ids:
++            neighbors.append((num, int(id), str(count)))
++            count += 1
++    return neighbors
++
++
++# 建立结点G
++def get_vertices(data_path):
++    data = pd.read_excel(data_path)
++
++    # 提取 X_Coordinate、Y_Coordinate 和 Name 列
++    x_data = data['X_Coordinate']
++    y_data = data['Y_Coordinate']
++    nums = data['Num']
++    names = data['Name']
++    connect = data['Connect']
++    weights = data['Weight']
++    Edges = find_neighbors(nums, connect)
++
++    # 创建字典
++    Vertices = {num: (x, y) for num, x, y in zip(nums, x_data, y_data)}
++
++    # 创建图
++    G = nx.Graph()
++    for node, pos in Vertices.items():
++        G.add_node(node, pos=pos)
++    for edge in Edges:
++        G.add_edge(edge[0], edge[1], road=edge[2])
++        pos1 = Vertices[edge[0]]
++        pos2 = Vertices[edge[1]]
++        distance = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
++        G.edges[edge[0], edge[1]]['length'] = distance
++
++    # 设置节点属性
++    nx.set_node_attributes(G, Vertices, 'pos')
++
++    # 设置节点权重
++    node_weights = {num: weight for num, weight in zip(nums, weights)}
++    nx.set_node_attributes(G, node_weights, 'weight')
++
++    # # 绘制图
++    # pos = nx.get_node_attributes(G, 'pos')
++    # nx.draw(G, pos=pos, with_labels=False, node_color='lightblue', edge_color='gray', node_size=200)
++    #
++    # # 设置节点标签
++    # labels = {node: node for node in G.nodes()}
++    # nx.draw_networkx_labels(G, pos, labels, font_size=6)  # 设置字体大小为 12
++    #
++    # plt.show()
++
++    return G
++
++
++if __name__ == '__main__':
++    data_path = 'node_data.xlsx'
++    G = get_vertices(data_path)
+Index: .idea/QG_DRIVER_EXAM.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\" />\r\n<<<<<<< Updated upstream\r\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.11\" jdkType=\"Python SDK\" />\r\n=======\r\n    <orderEntry type=\"jdk\" jdkName=\"QG_Summer_Camp\" jdkType=\"Python SDK\" />\r\n>>>>>>> Stashed changes\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/QG_DRIVER_EXAM.iml b/.idea/QG_DRIVER_EXAM.iml
+--- a/.idea/QG_DRIVER_EXAM.iml	(revision f797aa0567890b291c51edf2e1db775c27d6bde5)
++++ b/.idea/QG_DRIVER_EXAM.iml	(date 1723370634509)
+@@ -2,11 +2,7 @@
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+     <content url="file://$MODULE_DIR$" />
+-<<<<<<< Updated upstream
+-    <orderEntry type="jdk" jdkName="Python 3.11" jdkType="Python SDK" />
+-=======
+-    <orderEntry type="jdk" jdkName="QG_Summer_Camp" jdkType="Python SDK" />
+->>>>>>> Stashed changes
++    <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file

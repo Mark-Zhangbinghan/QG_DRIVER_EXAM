@@ -1,0 +1,394 @@
+Index: end_dijkstra.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import networkx as nx\r\nimport numpy as np\r\nimport random\r\nimport time\r\nimport queue\r\nimport threading\r\n\r\n# data_path = 'node_data.xlsx'\r\n# G, dot = get_graph_and_vertices(data_path)\r\ndef run_simulation(G, total_cars=10, round_num=5, speed=0.5):\r\n    # 初始化图和其他相关参数\r\n    road_data = [\r\n        {'道路名称': G.edges[edge]['road'], '实际距离': G.edges[edge]['length']}\r\n        for edge in G.edges\r\n    ]\r\n\r\n    pos = nx.get_node_attributes(G, 'pos')  # 获取每个节点的位置属性\r\n\r\n    # 计算 PageRank 和中介中心性\r\n    pagerank_values = nx.pagerank(G, weight='length')  # 计算 PageRank 值\r\n    betweenness_centrality_values = nx.betweenness_centrality(G, weight='length')  # 计算中介中心性\r\n\r\n    nx.set_node_attributes(G, pagerank_values, 'pagerank')  # 设置节点的 PageRank 属性\r\n    nx.set_node_attributes(G, betweenness_centrality_values, 'betweenness')  # 设置节点的中介中心性属性\r\n\r\n    def attract_rank(G, alpha=0.5, beta=0.3, gamma=0.2):\r\n        # 计算每个节点的吸引力排名\r\n        attractiveness = {}\r\n        for node in G.nodes:\r\n            pagerank_score = G.nodes[node]['pagerank']  # 获取节点的 PageRank 分数\r\n            betweenness_score = G.nodes[node]['betweenness']  # 获取节点的中介中心性分数\r\n            node_weight = G.nodes[node]['weight']  # 获取节点的权重\r\n            attract_rank_score = alpha * pagerank_score + beta * betweenness_score + gamma * node_weight  # 计算吸引力分数\r\n            attractiveness[node] = attract_rank_score  # 存储吸引力分数\r\n        return attractiveness\r\n\r\n    attract_rank_values = attract_rank(G)  # 计算每个节点的吸引力排名\r\n    nx.set_node_attributes(G, attract_rank_values, 'attract_rank')  # 设置节点的吸引力排名属性\r\n\r\n    def custom_weight(u, v, d, G):\r\n        # 自定义的权重函数，用于路径选择\r\n        return d['length'] / (G.nodes[v]['attract_rank'] + 1e-6)\r\n\r\n    class Car:\r\n        def __init__(self, car_num, speed, start_position, end_position, path):\r\n            self.car_num = car_num  # 车辆编号\r\n            self.speed = speed  # 车辆速度\r\n            self.start_position = start_position  # 起始位置\r\n            self.end_position = end_position  # 终点位置\r\n            self.path = path  # 路径\r\n            self.relative_time = 0.0  # 相对时间\r\n\r\n        def add_path_point(self, coords, travel_time):\r\n            # 向路径中添加一个新点\r\n            self.relative_time += travel_time  # 更新相对时间\r\n            self.path.append({\r\n                'coords': coords,  # 当前坐标\r\n                'relative_time': self.relative_time,  # 当前的相对时间\r\n                'travel_time': travel_time,  # 当前段的行驶时间\r\n                'timestamp': time.time()  # 当前时间戳\r\n            })\r\n\r\n        def __lt__(self, other):\r\n            # 比较两个车辆路径中的最后一个时间戳\r\n            return self.path[-1]['timestamp'] < other.path[-1]['timestamp']\r\n\r\n    def calculate_stay_time(attractiveness):\r\n        # 计算车辆在节点的停留时间\r\n        return max(0.1, attractiveness * 0.1)\r\n\r\n    cars_info = []  # 存储车辆信息\r\n    vertex_weight = []  # 存储节点权重变化信息\r\n    lock = threading.Lock()  # 线程锁\r\n\r\n    def simulate_vehicle_path(G, road_data, pos, car_num, output_queue):\r\n        # 模拟单个车辆的路径\r\n        for _ in range(round_num):\r\n            start_road_index = np.random.choice(len(road_data))  # 随机选择起始道路\r\n            end_road_index = np.random.choice(len(road_data))  # 随机选择终点道路\r\n\r\n            while end_road_index == start_road_index:\r\n                end_road_index = np.random.choice(len(road_data))  # 确保起始和终点不同\r\n\r\n            start_road = road_data[start_road_index]  # 获取起始道路信息\r\n            end_road = road_data[end_road_index]  # 获取终点道路信息\r\n            start_position = np.random.uniform(0, start_road['实际距离'])  # 随机生成起始位置\r\n            end_position = np.random.uniform(0, end_road['实际距离'])  # 随机生成终点位置\r\n\r\n            start_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == start_road['道路名称']]  # 包含所有与起始道路名称匹配的边的列表\r\n            end_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == end_road['道路名称']]  # 包含所有与终点道路名称匹配的边的列表\r\n\r\n            if not start_connected_edges or not end_connected_edges:\r\n                continue  # 如果没有找到相连的边则跳过当前轮次\r\n\r\n            start_edge = random.choice(start_connected_edges)  # 随机选择起始边\r\n            end_edge = random.choice(end_connected_edges)  # 随机选择终点边\r\n\r\n            try:\r\n                if start_position < end_position:\r\n                    path = nx.dijkstra_path(G, source=start_edge[0], target=end_edge[1],\r\n                                            weight=lambda u, v, d: custom_weight(u, v, d, G))  # 使用 Dijkstra 算法计算路径\r\n                else:\r\n                    path = nx.dijkstra_path(G, source=start_edge[1], target=end_edge[0],\r\n                                            weight=lambda u, v, d: custom_weight(u, v, d, G))  # 使用 Dijkstra 算法计算路径\r\n            except nx.NetworkXNoPath:\r\n                continue  # 如果没有找到路径则跳过当前轮次\r\n\r\n            car = Car(car_num, speed, pos[start_edge[0]], pos[end_edge[1]], [])  # 创建 Car 对象\r\n            car.add_path_point(car.start_position, start_position / car.speed)  # 添加路径起点\r\n            v = 0\r\n            for i in range(len(path) - 1):\r\n                u = path[i]\r\n                v = path[i + 1]\r\n                edge_data = G[u][v]  # 获取边的数据\r\n                travel_time = edge_data['length'] / car.speed  # 计算行驶时间\r\n                stay_time = calculate_stay_time(G.nodes[v]['attract_rank'])  # 计算停留时间\r\n                car.add_path_point(pos[v], travel_time + stay_time)  # 添加路径点\r\n                G.nodes[v]['weight'] += 1  # 增加节点权重\r\n                nx.set_node_attributes(G, attract_rank(G), 'attract_rank')  # 更新吸引力排名\r\n\r\n                if i < len(path) - 2:\r\n                    try:\r\n                        new_path = nx.dijkstra_path(G, source=v, target=path[-1],\r\n                                                    weight=lambda u, v, d: custom_weight(u, v, d, G))  # 重新计算路径\r\n                        if new_path != path[i + 1:]:\r\n                            path = path[:i + 1] + new_path  # 更新路径\r\n                    except nx.NetworkXNoPath:\r\n                        break  # 如果没有找到路径则跳出循环\r\n\r\n            last_leg_time = end_position / car.speed  # 计算最后一段的行驶时间\r\n            car.add_path_point(pos[path[-1]], last_leg_time)  # 添加路径终点\r\n\r\n            with lock:\r\n                vertex_weight.append({\r\n                    node: {'weight': G.nodes[node]['weight'], 'pos': G.nodes[node]['pos']}\r\n                    for node in G.nodes\r\n                })  # 记录节点权重变化\r\n\r\n            G.nodes[v]['weight'] -= 1  # 减少节点权重\r\n            nx.set_node_attributes(G, attract_rank(G), 'attract_rank')  # 更新吸引力排名\r\n\r\n            output_queue.put((car.path[-1]['timestamp'], car))  # 将车辆路径添加到队列中\r\n            cars_info.append({\r\n                'car_num': car.car_num,\r\n                'speed': car.speed,\r\n                'path': car.path\r\n            })  # 将车辆信息存储在 cars_info 中\r\n\r\n            time.sleep(np.random.uniform(0.1, 0.3))  # 随机等待时间模拟现实情况\r\n\r\n    output_queue = queue.PriorityQueue()  # 创建优先级队列\r\n\r\n    threads = []\r\n    for car_num in range(1, total_cars + 1):\r\n        t = threading.Thread(target=simulate_vehicle_path, args=(G, road_data, pos, car_num, output_queue))\r\n        threads.append(t)\r\n        t.start()  # 启动每个线程，模拟每辆车的行驶路径\r\n\r\n    for t in threads:\r\n        t.join()  # 等待所有线程完成\r\n\r\n    return cars_info, vertex_weight  # 返回车辆信息和节点权重变化信息\r\n\r\n\r\n\r\n# cars_info, vertex_weight = run_simulation(G, total_cars=10, round_num=5, speed=0.5)\r\n# print(cars_info)\r\n# print(vertex_weight\r\n# print(len(cars_info))\r\n# print(len(vertex_weight))
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/end_dijkstra.py b/end_dijkstra.py
+--- a/end_dijkstra.py	(revision c1c1d1c90a0bcdef70abc241c092b35b8ba8f225)
++++ b/end_dijkstra.py	(date 1723540899898)
+@@ -5,8 +5,7 @@
+ import queue
+ import threading
+ 
+-# data_path = 'node_data.xlsx'
+-# G, dot = get_graph_and_vertices(data_path)
++
+ def run_simulation(G, total_cars=10, round_num=5, speed=0.5):
+     # 初始化图和其他相关参数
+     road_data = [
+@@ -17,154 +16,193 @@
+     pos = nx.get_node_attributes(G, 'pos')  # 获取每个节点的位置属性
+ 
+     # 计算 PageRank 和中介中心性
+-    pagerank_values = nx.pagerank(G, weight='length')  # 计算 PageRank 值
+-    betweenness_centrality_values = nx.betweenness_centrality(G, weight='length')  # 计算中介中心性
++    pagerank_values = nx.pagerank(G, weight='length')
++    betweenness_centrality_values = nx.betweenness_centrality(G, weight='length')
+ 
+-    nx.set_node_attributes(G, pagerank_values, 'pagerank')  # 设置节点的 PageRank 属性
+-    nx.set_node_attributes(G, betweenness_centrality_values, 'betweenness')  # 设置节点的中介中心性属性
++    nx.set_node_attributes(G, pagerank_values, 'pagerank')
++    nx.set_node_attributes(G, betweenness_centrality_values, 'betweenness')
+ 
+     def attract_rank(G, alpha=0.5, beta=0.3, gamma=0.2):
+-        # 计算每个节点的吸引力排名
+         attractiveness = {}
+         for node in G.nodes:
+-            pagerank_score = G.nodes[node]['pagerank']  # 获取节点的 PageRank 分数
+-            betweenness_score = G.nodes[node]['betweenness']  # 获取节点的中介中心性分数
+-            node_weight = G.nodes[node]['weight']  # 获取节点的权重
+-            attract_rank_score = alpha * pagerank_score + beta * betweenness_score + gamma * node_weight  # 计算吸引力分数
+-            attractiveness[node] = attract_rank_score  # 存储吸引力分数
++            pagerank_score = G.nodes[node]['pagerank']
++            betweenness_score = G.nodes[node]['betweenness']
++            node_weight = G.nodes[node]['weight']
++            attract_rank_score = alpha * pagerank_score + beta * betweenness_score + gamma * node_weight
++            attractiveness[node] = attract_rank_score
+         return attractiveness
+ 
+-    attract_rank_values = attract_rank(G)  # 计算每个节点的吸引力排名
+-    nx.set_node_attributes(G, attract_rank_values, 'attract_rank')  # 设置节点的吸引力排名属性
++    attract_rank_values = attract_rank(G)
++    nx.set_node_attributes(G, attract_rank_values, 'attract_rank')
+ 
+     def custom_weight(u, v, d, G):
+-        # 自定义的权重函数，用于路径选择
+-        return d['length'] / (G.nodes[v]['attract_rank'] + 1e-6)
++        # 确保权重始终为正
++        weight = d['length'] / (G.nodes[v]['attract_rank'] + 1e-6)
++        return max(weight, 1e-6)
+ 
+     class Car:
+         def __init__(self, car_num, speed, start_position, end_position, path):
+-            self.car_num = car_num  # 车辆编号
+-            self.speed = speed  # 车辆速度
+-            self.start_position = start_position  # 起始位置
+-            self.end_position = end_position  # 终点位置
+-            self.path = path  # 路径
+-            self.relative_time = 0.0  # 相对时间
++            self.car_num = car_num
++            self.speed = speed
++            self.start_position = start_position
++            self.end_position = end_position
++            self.path = path
++            self.relative_time = 0.0
+ 
+-        def add_path_point(self, coords, travel_time):
+-            # 向路径中添加一个新点
+-            self.relative_time += travel_time  # 更新相对时间
++        def add_path_point(self, node_name, coords, travel_time):
++            self.relative_time += travel_time
+             self.path.append({
+-                'coords': coords,  # 当前坐标
+-                'relative_time': self.relative_time,  # 当前的相对时间
+-                'travel_time': travel_time,  # 当前段的行驶时间
+-                'timestamp': time.time()  # 当前时间戳
++                'node_name': node_name,  # 添加节点名称
++                'coords': coords,
++                'relative_time': self.relative_time,
++                'travel_time': travel_time,
++                'timestamp': time.time()
+             })
+ 
+         def __lt__(self, other):
+-            # 比较两个车辆路径中的最后一个时间戳
+             return self.path[-1]['timestamp'] < other.path[-1]['timestamp']
+ 
++    # class Car:
++    #     def __init__(self, car_num, speed, start_position, end_position, path):
++    #         self.car_num = car_num
++    #         self.speed = speed
++    #         self.start_position = start_position
++    #         self.end_position = end_position
++    #         self.path = path
++    #         self.relative_time = 0.0
++    #
++    #     def add_path_point(self, coords, travel_time):
++    #         self.relative_time += travel_time
++    #         self.path.append({
++    #             'coords': coords,
++    #             'relative_time': self.relative_time,
++    #             'travel_time': travel_time,
++    #             'timestamp': time.time()
++    #         })
++    #
++    #     def __lt__(self, other):
++    #         return self.path[-1]['timestamp'] < other.path[-1]['timestamp']
++
+     def calculate_stay_time(attractiveness):
+-        # 计算车辆在节点的停留时间
+         return max(0.1, attractiveness * 0.1)
+ 
+-    cars_info = []  # 存储车辆信息
+-    vertex_weight = []  # 存储节点权重变化信息
+-    lock = threading.Lock()  # 线程锁
++    cars_info = []
++    vertex_weight = []
++    lock = threading.Lock()
+ 
+     def simulate_vehicle_path(G, road_data, pos, car_num, output_queue):
+-        # 模拟单个车辆的路径
+         for _ in range(round_num):
+-            start_road_index = np.random.choice(len(road_data))  # 随机选择起始道路
+-            end_road_index = np.random.choice(len(road_data))  # 随机选择终点道路
++            # 从road_data中随机选择起点和终点的道路
++            start_road_index = np.random.choice(len(road_data))
++            end_road_index = np.random.choice(len(road_data))
+ 
+             while end_road_index == start_road_index:
+-                end_road_index = np.random.choice(len(road_data))  # 确保起始和终点不同
++                end_road_index = np.random.choice(len(road_data))
+ 
+-            start_road = road_data[start_road_index]  # 获取起始道路信息
+-            end_road = road_data[end_road_index]  # 获取终点道路信息
+-            start_position = np.random.uniform(0, start_road['实际距离'])  # 随机生成起始位置
+-            end_position = np.random.uniform(0, end_road['实际距离'])  # 随机生成终点位置
++            start_road = road_data[start_road_index]
++            end_road = road_data[end_road_index]
++            start_position = np.random.uniform(0, start_road['实际距离'])
++            end_position = np.random.uniform(0, end_road['实际距离'])
+ 
+-            start_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == start_road['道路名称']]  # 包含所有与起始道路名称匹配的边的列表
+-            end_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == end_road['道路名称']]  # 包含所有与终点道路名称匹配的边的列表
++            start_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == start_road['道路名称']]
++            end_connected_edges = [(u, v) for u, v, d in G.edges(data=True) if d['road'] == end_road['道路名称']]
+ 
+             if not start_connected_edges or not end_connected_edges:
+                 continue  # 如果没有找到相连的边则跳过当前轮次
+ 
+-            start_edge = random.choice(start_connected_edges)  # 随机选择起始边
+-            end_edge = random.choice(end_connected_edges)  # 随机选择终点边
++            start_edge = random.choice(start_connected_edges)
++            end_edge = random.choice(end_connected_edges)
+ 
+             try:
+-                if start_position < end_position:
+-                    path = nx.dijkstra_path(G, source=start_edge[0], target=end_edge[1],
+-                                            weight=lambda u, v, d: custom_weight(u, v, d, G))  # 使用 Dijkstra 算法计算路径
+-                else:
+-                    path = nx.dijkstra_path(G, source=start_edge[1], target=end_edge[0],
+-                                            weight=lambda u, v, d: custom_weight(u, v, d, G))  # 使用 Dijkstra 算法计算路径
++                # 使用Dijkstra算法计算路径，确保只使用图中存在的边
++                path = nx.dijkstra_path(G, source=start_edge[0], target=end_edge[1],
++                                        weight=lambda u, v, d: custom_weight(u, v, d, G))
+             except nx.NetworkXNoPath:
+-                continue  # 如果没有找到路径则跳过当前轮次
+-
+-            car = Car(car_num, speed, pos[start_edge[0]], pos[end_edge[1]], [])  # 创建 Car 对象
+-            car.add_path_point(car.start_position, start_position / car.speed)  # 添加路径起点
+-            v = 0
++                continue  # 如果没有找到路径则跳过当前轮
++            car = Car(car_num, speed, pos[start_edge[0]], pos[end_edge[1]], [])
++            car.add_path_point(start_edge[0], car.start_position, start_position / car.speed)  # 添加起始节点名称
++            v = 1
+             for i in range(len(path) - 1):
+                 u = path[i]
+                 v = path[i + 1]
+-                edge_data = G[u][v]  # 获取边的数据
+-                travel_time = edge_data['length'] / car.speed  # 计算行驶时间
+-                stay_time = calculate_stay_time(G.nodes[v]['attract_rank'])  # 计算停留时间
+-                car.add_path_point(pos[v], travel_time + stay_time)  # 添加路径点
+-                G.nodes[v]['weight'] += 1  # 增加节点权重
+-                nx.set_node_attributes(G, attract_rank(G), 'attract_rank')  # 更新吸引力排名
++                edge_data = G[u][v]
++                travel_time = edge_data['length'] / car.speed
++                stay_time = calculate_stay_time(G.nodes[v]['attract_rank'])
++                car.add_path_point(v, pos[v], travel_time + stay_time)  # 添加中间节点名称
++                G.nodes[v]['weight'] += 1
++                nx.set_node_attributes(G, attract_rank(G), 'attract_rank')
+ 
+                 if i < len(path) - 2:
+                     try:
+                         new_path = nx.dijkstra_path(G, source=v, target=path[-1],
+-                                                    weight=lambda u, v, d: custom_weight(u, v, d, G))  # 重新计算路径
++                                                    weight=lambda u, v, d: custom_weight(u, v, d, G))
+                         if new_path != path[i + 1:]:
+-                            path = path[:i + 1] + new_path  # 更新路径
++                            path = path[:i + 1] + new_path
+                     except nx.NetworkXNoPath:
+-                        break  # 如果没有找到路径则跳出循环
++                        break
+ 
+-            last_leg_time = end_position / car.speed  # 计算最后一段的行驶时间
+-            car.add_path_point(pos[path[-1]], last_leg_time)  # 添加路径终点
++            last_leg_time = end_position / car.speed
++            car.add_path_point(path[-1], pos[path[-1]], last_leg_time)  # 添加终点节点名称
++
++            # car = Car(car_num, speed, pos[start_edge[0]], pos[end_edge[1]], [])
++            # car.add_path_point(car.start_position, start_position / car.speed)
++            # v = 1
++            # for i in range(len(path) - 1):
++            #     u = path[i]
++            #     v = path[i + 1]
++            #     edge_data = G[u][v]
++            #     travel_time = edge_data['length'] / car.speed
++            #     stay_time = calculate_stay_time(G.nodes[v]['attract_rank'])
++            #     car.add_path_point(pos[v], travel_time + stay_time)
++            #     G.nodes[v]['weight'] += 1
++            #     nx.set_node_attributes(G, attract_rank(G), 'attract_rank')
++            #
++            #     if i < len(path) - 2:
++            #         try:
++            #             new_path = nx.dijkstra_path(G, source=v, target=path[-1],
++            #                                         weight=lambda u, v, d: custom_weight(u, v, d, G))
++            #             if new_path != path[i + 1:]:
++            #                 path = path[:i + 1] + new_path
++            #         except nx.NetworkXNoPath:
++            #             break
++            #
++            # last_leg_time = end_position / car.speed
++            # car.add_path_point(pos[path[-1]], last_leg_time)
+ 
+             with lock:
+                 vertex_weight.append({
+                     node: {'weight': G.nodes[node]['weight'], 'pos': G.nodes[node]['pos']}
+                     for node in G.nodes
+-                })  # 记录节点权重变化
++                })
+ 
+-            G.nodes[v]['weight'] -= 1  # 减少节点权重
+-            nx.set_node_attributes(G, attract_rank(G), 'attract_rank')  # 更新吸引力排名
++            G.nodes[v]['weight'] -= 1
++            nx.set_node_attributes(G, attract_rank(G), 'attract_rank')
+ 
+-            output_queue.put((car.path[-1]['timestamp'], car))  # 将车辆路径添加到队列中
++            output_queue.put((car.path[-1]['timestamp'], car))
+             cars_info.append({
+                 'car_num': car.car_num,
+                 'speed': car.speed,
+                 'path': car.path
+-            })  # 将车辆信息存储在 cars_info 中
++            })
+ 
+-            time.sleep(np.random.uniform(0.1, 0.3))  # 随机等待时间模拟现实情况
++            time.sleep(np.random.uniform(0.1, 0.3))
+ 
+-    output_queue = queue.PriorityQueue()  # 创建优先级队列
++    output_queue = queue.PriorityQueue()
+ 
+     threads = []
+     for car_num in range(1, total_cars + 1):
+         t = threading.Thread(target=simulate_vehicle_path, args=(G, road_data, pos, car_num, output_queue))
+         threads.append(t)
+-        t.start()  # 启动每个线程，模拟每辆车的行驶路径
++        t.start()
+ 
+     for t in threads:
+-        t.join()  # 等待所有线程完成
++        t.join()
+ 
+-    return cars_info, vertex_weight  # 返回车辆信息和节点权重变化信息
+-
++    return cars_info, vertex_weight
+ 
+ 
+ # cars_info, vertex_weight = run_simulation(G, total_cars=10, round_num=5, speed=0.5)
+ # print(cars_info)
+-# print(vertex_weight
++# print(vertex_weight)
+ # print(len(cars_info))
+-# print(len(vertex_weight))
+\ No newline at end of file
++# print(len(vertex_weight))
+Index: CAV/code/starter.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import numpy as np\r\nimport matplotlib.pyplot as plt\r\nfrom V3_side import run\r\n\r\n\r\ndef method( i, single, round, stay ):\r\n    # 1 -> left2right\r\n    # 2 -> right2left\r\n    # 3 -> up2down\r\n    # 4 -> down2up\r\n    info_list = [\r\n        [40.0, 30.0, 20.0, 600.0, 10.0, 'hor', 'LeftDown'],\r\n        [50.0, 60.0, 70.0, 600.0, 10.0, 'hor', 'RightUp'],\r\n        [590.0, 580.0, 570.0, 40.0, 10.0, 'ver', 'UpLeft' ],\r\n        [600.0, 610.0, 620.0, 50.0, 10.0, 'ver', 'DownRight']\r\n    ]\r\n    path_list = [\r\n        '../data/test4.txt',\r\n        '../data/test2.txt',\r\n        '../data/test5.txt',\r\n        '../data/test6.txt'\r\n    ]\r\n    side_list = [\r\n        '+', '-', '-', '+'\r\n    ]\r\n    return run(side_list[i-1], path_list[i-1], info_list[i-1], i, single, round, stay )\r\n\r\n'''\r\ndef left2right( i, single ):\r\n    info_left2right = [ 40.0, 30.0, 20.0, 600.0, 10.0, 'hor', 'LeftDown' ]\r\n    path_left2right = '../data/test4.txt'\r\n    side_left2right = '+'\r\n    return run( side_left2right, path_left2right, info_left2right, i, single )\r\n\r\ndef right2left( i, single ):\r\n    info_right2left = [ 50.0, 60.0, 70.0, 600.0, 10.0, 'hor', 'RightUp' ]\r\n    path_right2left = '../data/test2.txt'\r\n    side_right2left = '-'\r\n    return run( side_right2left, path_right2left, info_right2left, i, single )\r\n\r\n\r\ndef up2down( i, single ):\r\n    info_up2down = [ 590.0, 580.0, 570.0, 40.0, 10.0, 'ver', 'UpLeft' ]\r\n    path_up2down = '../data/test5.txt'\r\n    side_up2down = '-'\r\n    return run( side_up2down, path_up2down, info_up2down, i, single )\r\n\r\n\r\ndef down2up( i, single ):\r\n    info_down2up = [ 600.0, 610.0, 620.0, 50.0, 10.0, 'ver', 'DownRight' ]\r\n    path_down2up = '../data/test6.txt'\r\n    side_down2up = '+'\r\n    return run( side_down2up, path_down2up, info_down2up, i, single )\r\n'''\r\n\r\n\r\ndef draw( posV, n ):\r\n    for i in range(n):\r\n        plt.plot(posV[:, i, 0], posV[:, i, 1], label=f'Vehicle {i + 1}')\r\n        plt.scatter(posV[::5000, i, 0], posV[::5000, i, 1], marker='<')  # 每5000个点显示一次各个车辆的位置\r\n\r\n\r\ndef read( split, single, round, stay ):\r\n    plt.figure(figsize=(10, 6))\r\n    ret_list = []\r\n    for k, i in enumerate( split ):\r\n        if round == 2:\r\n            if len( stay ) == 0:\r\n                continue\r\n            if stay and stay[k].size == 0:\r\n                continue\r\n            print( 'round', i )\r\n            posV, n, ret_stay = method( int( i ), single[k], round, stay[k] )\r\n        elif round == 1:\r\n            posV, n, ret_stay = method(int(i), single[k], round, stay )\r\n        # posV -> 轨迹点\r\n        draw( posV, int( n ) )\r\n\r\n        ret_list.append( ret_stay )\r\n    plt.xlabel('X Position(m)')\r\n    plt.ylabel('Y Position(m)')\r\n    plt.legend()\r\n    plt.show()\r\n    return ret_list, posV\r\n\r\n\r\n\r\n\r\n\r\ndef main():\r\n    round = 1\r\n    stay = []\r\n    # stage1\r\n    split = [ 3, 4 ]\r\n    single = ['M', 'M']\r\n    list1, posV1 = read( split, single, round, stay )\r\n\r\n\r\n    # # stage2\r\n    # split = [1, 2]\r\n    # single = ['M', 'M']\r\n    # list2, posV2 = read( split, single, round, stay )\r\n\r\n    # # stage3\r\n    # split = [4]\r\n    # single = ['L']\r\n    # list3, posV3 = read( split, single, round, stay )\r\n    #\r\n    # # stage4\r\n    # split = [3]\r\n    # single = ['L']\r\n    # list4, posV4 = read( split, single, round, stay )\r\n    #\r\n    # # stage5\r\n    # split = [1]\r\n    # single = ['L']\r\n    # list5, posV5 = read( split, single, round, stay )\r\n    #\r\n    #\r\n    # # stage6\r\n    # split = [2]\r\n    # single = ['L']\r\n    # list6, posV6 = read( split, single, round, stay )\r\n    #\r\n    #\r\n    # # right_turn\r\n    # split = [ 1, 2, 3, 4 ]\r\n    # single = [ 'R', 'R', 'R', 'R' ]\r\n    # list0, posV0 = read( split, single, round, stay )\r\n\r\n    ###################################################################################\r\n    round = 2\r\n\r\n    # stage1\r\n    split = [3, 4]\r\n    single = ['M', 'M']\r\n    nlist1, posV1n = read( split, single, round, list1 )\r\n\r\n    # # stage2\r\n    # split = [1, 2]\r\n    # single = ['M', 'M']\r\n    # nlist2, posV2n = read( split, single, round, list2 )\r\n\r\n    # # stage3\r\n    # split = [4]\r\n    # single = ['L']\r\n    # nlist3, posV3n = read( split, single, round, list3 )\r\n    #\r\n    # # stage4\r\n    # split = [3]\r\n    # single = ['L']\r\n    # nlist4, posV4n = read( split, single, round, list4 )\r\n    #\r\n    # # stage5\r\n    # split = [1]\r\n    # single = ['L']\r\n    # nlist5, posV5n = read( split, single, round, list5 )\r\n    #\r\n    # # stage6\r\n    # split = [2]\r\n    # single = ['L']\r\n    # nlist6, posV6n = read( split, single, round, list6 )\r\n\r\n\r\n\r\nif __name__ == '__main__':\r\n    main()
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/CAV/code/starter.py b/CAV/code/starter.py
+--- a/CAV/code/starter.py	(revision c1c1d1c90a0bcdef70abc241c092b35b8ba8f225)
++++ b/CAV/code/starter.py	(date 1723538261434)
+@@ -160,7 +160,7 @@
+     # split = [2]
+     # single = ['L']
+     # nlist6, posV6n = read( split, single, round, list6 )
+-
++    print(posV1)
+ 
+ 
+ if __name__ == '__main__':
+Index: Vertices_Weight_create/draw_map.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Vertices_Weight_create/draw_map.py b/Vertices_Weight_create/draw_map.py
+new file mode 100644
+--- /dev/null	(date 1723537226166)
++++ b/Vertices_Weight_create/draw_map.py	(date 1723537226166)
+@@ -0,0 +1,71 @@
++import numpy as np
++import pandas as pd
++import networkx as nx
++import matplotlib.pyplot as plt
++
++plt.rcParams['font.sans-serif'] = ['SimHei']  # 显示中文标签
++plt.rcParams['axes.unicode_minus'] = False  # 设置正常显示符号
++
++
++# 寻找相邻结点函数
++def find_neighbors(num_list, neighbor_list):
++    neighbors = []
++    count = 1
++    for num, neighbor in zip(num_list, neighbor_list):
++        neighbor_ids = neighbor.split('、')  # 分割邻居结点序号
++        for id in neighbor_ids:
++            neighbors.append((num, int(id), str(count)))
++            count += 1
++    return neighbors
++
++
++# 建立结点G
++def get_vertices(data_path):
++    data = pd.read_excel(data_path)
++
++    # 提取 X_Coordinate、Y_Coordinate 和 Name 列
++    x_data = data['X_Coordinate']
++    y_data = data['Y_Coordinate']
++    nums = data['Num']
++    names = data['Name']
++    connect = data['Connect']
++    weights = data['Weight']
++    Edges = find_neighbors(nums, connect)
++
++    # 创建字典
++    Vertices = {num: (x, y) for num, x, y in zip(nums, x_data, y_data)}
++
++    # 创建图
++    G = nx.Graph()
++    for node, pos in Vertices.items():
++        G.add_node(node, pos=pos)
++    for edge in Edges:
++        G.add_edge(edge[0], edge[1], road=edge[2])
++        pos1 = Vertices[edge[0]]
++        pos2 = Vertices[edge[1]]
++        distance = np.sqrt((pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2)
++        G.edges[edge[0], edge[1]]['length'] = distance
++
++    # 设置节点属性
++    nx.set_node_attributes(G, Vertices, 'pos')
++
++    # 设置节点权重
++    node_weights = {num: weight for num, weight in zip(nums, weights)}
++    nx.set_node_attributes(G, node_weights, 'weight')
++
++    # # 绘制图
++    # pos = nx.get_node_attributes(G, 'pos')
++    # nx.draw(G, pos=pos, with_labels=False, node_color='lightblue', edge_color='gray', node_size=200)
++    #
++    # # 设置节点标签
++    # labels = {node: node for node in G.nodes()}
++    # nx.draw_networkx_labels(G, pos, labels, font_size=6)  # 设置字体大小为 12
++    #
++    # plt.show()
++
++    return G
++
++
++if __name__ == '__main__':
++    data_path = 'node_data.xlsx'
++    G = get_vertices(data_path)

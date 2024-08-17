@@ -1,0 +1,39 @@
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"Black\">\r\n<<<<<<< Updated upstream\r\n    <option name=\"sdkName\" value=\"Python 3.12\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"Python 3.11\" project-jdk-type=\"Python SDK\" />\r\n=======\r\n    <option name=\"sdkName\" value=\"QG_Summer_Camp\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" project-jdk-name=\"QG_Summer_Camp\" project-jdk-type=\"Python SDK\" />\r\n>>>>>>> Stashed changes\r\n</project>
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	
++++ b/.idea/misc.xml	
+@@ -4,7 +4,7 @@
+ <<<<<<< Updated upstream
+     <option name="sdkName" value="Python 3.12" />
+   </component>
+-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11" project-jdk-type="Python SDK" />
++  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12" project-jdk-type="Python SDK" />
+ =======
+     <option name="sdkName" value="QG_Summer_Camp" />
+   </component>
+Index: .idea/QG_DRIVER_EXAM.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module type=\"PYTHON_MODULE\" version=\"4\">\r\n  <component name=\"NewModuleRootManager\">\r\n    <content url=\"file://$MODULE_DIR$\" />\r\n<<<<<<< Updated upstream\r\n    <orderEntry type=\"jdk\" jdkName=\"Python 3.11\" jdkType=\"Python SDK\" />\r\n=======\r\n    <orderEntry type=\"jdk\" jdkName=\"QG_Summer_Camp\" jdkType=\"Python SDK\" />\r\n>>>>>>> Stashed changes\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+===================================================================
+diff --git a/.idea/QG_DRIVER_EXAM.iml b/.idea/QG_DRIVER_EXAM.iml
+--- a/.idea/QG_DRIVER_EXAM.iml	
++++ b/.idea/QG_DRIVER_EXAM.iml	
+@@ -2,11 +2,7 @@
+ <module type="PYTHON_MODULE" version="4">
+   <component name="NewModuleRootManager">
+     <content url="file://$MODULE_DIR$" />
+-<<<<<<< Updated upstream
+-    <orderEntry type="jdk" jdkName="Python 3.11" jdkType="Python SDK" />
+-=======
+-    <orderEntry type="jdk" jdkName="QG_Summer_Camp" jdkType="Python SDK" />
+->>>>>>> Stashed changes
++    <orderEntry type="jdk" jdkName="Python 3.12" jdkType="Python SDK" />
+     <orderEntry type="sourceFolder" forTests="false" />
+   </component>
+ </module>
+\ No newline at end of file

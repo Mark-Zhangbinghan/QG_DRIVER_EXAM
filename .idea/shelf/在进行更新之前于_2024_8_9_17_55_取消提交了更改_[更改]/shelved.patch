@@ -1,0 +1,46 @@
+Index: draw_map.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import matplotlib.pyplot as plt\r\nimport networkx as nx\r\n\r\nVertices = {'A': (4, 4), 'B': (18, 4), 'C': (32, 4), 'D': (4, 16), 'E': (16, 14), 'F': (28, 12), 'G': (4, 22), 'H': (34, 38), 'I': (60, 34)}\r\nEdges = [('A', 'B'), ('A', 'D'), ('B', 'C'), ('B', 'E'), ('C', 'F'), ('D', 'E'), ('D', 'G'), ('E', 'F'), ('E', 'H'), ('F', 'I'), ('G', 'H'), ('H', 'I')]\r\n\r\n\r\nG = nx.Graph()\r\n# 添加顶点和边\r\nfor edge in Edges:\r\n    G.add_edge(*edge)\r\n# 绘制图\r\nnx.draw(G, Vertices, with_labels=True, node_color='lightblue', edge_color='gray')\r\nplt.show()\r\n
+===================================================================
+diff --git a/draw_map.py b/draw_map.py
+--- a/draw_map.py	
++++ b/draw_map.py	
+@@ -1,6 +1,32 @@
+ import matplotlib.pyplot as plt
+ import networkx as nx
++import pandas as pd
++
++data = pd.read_excel("Vertices_Weight_create/output_data.xlsx")
++x_data = data['X_Coordinate'] / 100
++y_data = data['Y_Coordinate'] / 100
++names = data['Num']
++
++# 创建字典
++Vertices = {name: (x, y) for name, x, y in zip(names, x_data, y_data)}
++print(Vertices)
++G = nx.Graph()
++G.add_nodes_from(Vertices.keys())
++
++# 设置节点属性
++nx.set_node_attributes(G, Vertices, 'pos')
++
++# 绘制图
++pos = nx.get_node_attributes(G, 'pos')
++nx.draw(G, pos=pos, with_labels=False, node_color='lightblue', edge_color='gray', node_size=100)
+ 
++# 设置节点标签
++labels = {node: node for node in G.nodes()}
++nx.draw_networkx_labels(G, pos, labels, font_size=8)  # 设置字体大小为 6
++
++plt.show()
++
++"""
+ Vertices = {'A': (4, 4), 'B': (18, 4), 'C': (32, 4), 'D': (4, 16), 'E': (16, 14), 'F': (28, 12), 'G': (4, 22), 'H': (34, 38), 'I': (60, 34)}
+ Edges = [('A', 'B'), ('A', 'D'), ('B', 'C'), ('B', 'E'), ('C', 'F'), ('D', 'E'), ('D', 'G'), ('E', 'F'), ('E', 'H'), ('F', 'I'), ('G', 'H'), ('H', 'I')]
+ 
+@@ -12,3 +38,4 @@
+ # 绘制图
+ nx.draw(G, Vertices, with_labels=True, node_color='lightblue', edge_color='gray')
+ plt.show()
++"""
