@@ -1,6 +1,7 @@
 import asyncio
 from fastapi import FastAPI, File, UploadFile, WebSocket
 from fastapi import Request
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import json
 import numpy as np
@@ -62,6 +63,16 @@ t_no_n_num = concatenated_no_n.shape[1]
 t_n_num = concatenated_with_n.shape[1]
 sub_car_cnt = 0  # 十字路口微观图车辆计数器
 sub_car_t_cnt = 0  # 三岔路口微观图车辆计数器
+
+
+# 配置CORS中间件
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 允许所有来源
+    allow_credentials=True,  # 允许携带凭证信息
+    allow_methods=["*"],  # 允许所有方法
+    allow_headers=["*"],  # 允许所有头部
+)
 
 
 # 判断连接是否成功路由
