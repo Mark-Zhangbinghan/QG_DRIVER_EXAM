@@ -105,12 +105,6 @@ def random_road(car_num, L, M, R, l_road, m_road, r_road, pos, width, num):
 
 
 def two(car_num, num):
-    if car_num == 1:
-        car_num = 2
-    if car_num == 3:
-        car_num = 4
-    if car_num == 5:
-        car_num = 6
     # 处理两条路径的逻辑
     r = 0
     rr = 5
