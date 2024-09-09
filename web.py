@@ -282,12 +282,16 @@ async def get_sub_t_path():
     return t_sub_car_json
 
 
-@app.post("/post_sub_position")
+@app.put("/put_sub_position")
 async def post_sub_position(path_request: Request):
     global switch_cnt
+    global array_list
     path_json = await path_request.json()
     array_list = get_data(path_json)
-    print(array_list[1])
+
+
+@app.get("/get_sub_position")
+async def get_sub_position():
     final_json_list = sub_switch_road(array_list)
     final_length = len(final_json_list)
     print("sub_car_t:")
