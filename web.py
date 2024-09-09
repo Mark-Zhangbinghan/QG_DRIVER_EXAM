@@ -67,6 +67,7 @@ sub_car_t_cnt = 0  # 三岔路口微观图车辆计数器
 
 # 变道cnt
 switch_cnt = 0
+array_list = []
 # 配置CORS中间件
 app.add_middleware(
     CORSMiddleware,
@@ -284,20 +285,22 @@ async def get_sub_t_path():
 
 @app.put("/put_sub_position")
 async def post_sub_position(path_request: Request):
-    global switch_cnt
     global array_list
     path_json = await path_request.json()
     array_list = get_data(path_json)
+    return {"put succeed"}
 
 
 @app.get("/get_sub_position")
 async def get_sub_position():
+    global switch_cnt
     final_json_list = sub_switch_road(array_list)
     final_length = len(final_json_list)
     print("sub_car_t:")
     print("cnt/len")
     print(switch_cnt + 1, "/", final_length)
     the_switch_json = final_json_list[switch_cnt]
+    switch_cnt += 1
     return the_switch_json
 
 
