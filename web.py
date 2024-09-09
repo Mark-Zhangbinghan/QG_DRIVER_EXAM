@@ -6,10 +6,11 @@ import uvicorn
 import json
 import numpy as np
 # 自定函数
+from CAV.code.position_give import get_data
 from end_dijkstra import run_simulation
 from Vertices_Weight_create.create_Vertices import G
 from add_json import cars_to_json, cars_to_file, mat_hot_point, user_null_json, json_to_file, sub_path_json, \
-    concatenate_arrays
+    concatenate_arrays, sub_switch_road
 # import e自带data_path,weights
 from road import data_path, e_weights
 from road import user_defined_path_selection
@@ -64,7 +65,8 @@ t_n_num = concatenated_with_n.shape[1]
 sub_car_cnt = 0  # 十字路口微观图车辆计数器
 sub_car_t_cnt = 0  # 三岔路口微观图车辆计数器
 
-
+# 变道cnt
+switch_cnt = 0
 # 配置CORS中间件
 app.add_middleware(
     CORSMiddleware,
@@ -278,6 +280,20 @@ async def get_sub_t_path():
         print(sub_car_t_cnt + 1, "/", t_n_num)
         t_sub_car_json = t_n_list[sub_car_t_cnt]
     return t_sub_car_json
+
+
+@app.post("/post_sub_position")
+async def post_sub_position(path_request: Request):
+    global switch_cnt
+    path_json = await path_request.json()
+    array_list = get_data(path_json)
+    final_json_list = sub_path_json(array_list)
+    final_length = final_json_list.shape[1]
+    print("sub_car_t:")
+    print("cnt/len")
+    print(switch_cnt + 1, "/", final_length)
+    the_switch_json = final_json_list[switch_cnt]
+    return the_switch_json
 
 
 # 主监听函数

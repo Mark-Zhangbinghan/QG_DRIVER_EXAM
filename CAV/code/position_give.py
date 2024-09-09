@@ -10,7 +10,6 @@ def get_data(json_data):
     pathnum = data['PathNum']
     car_num = data['Car_Num']
 
-    # 获取车辆数量
     if pathnum == 2:
 
         data1 = {'PathNum': 3, 'Car_Num': car_num[0]}
@@ -22,5 +21,8 @@ def get_data(json_data):
         right2left = [-7.5, -5.0, -2.5, -5.0]
         L2, M2, R2, LposV2, MposV2, RposV2, xLe2, xMe2, xRe2 = run(data2, 2, right2left[0], right2left[1],
                                                                    right2left[2], right2left[3])
+        print(LposV, MposV, RposV)
+        print(LposV.shape, MposV.shape, RposV.shape)
+        return [LposV, MposV, RposV, LposV2, MposV2, RposV2]
     else:
         car_num = data['CarNum']
