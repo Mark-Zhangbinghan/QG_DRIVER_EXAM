@@ -1,6 +1,6 @@
 import numpy as np
-from MAS_Function import Algorithm_1
-from MAS_Function import Algorithm_2
+from CAV.code.MAS_Function import Algorithm_1
+from CAV.code.MAS_Function import Algorithm_2
 
 
 def get_data(side, path):

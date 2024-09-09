@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-from MAS_Function import Algorithm_1
-from MAS_Function import Algorithm_2
+from CAV.code.MAS_Function import Algorithm_1
+from CAV.code.MAS_Function import Algorithm_2
 
 
 # 三岔路口和十字路口的车辆不用变道

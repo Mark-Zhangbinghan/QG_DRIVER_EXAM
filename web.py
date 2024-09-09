@@ -287,8 +287,9 @@ async def post_sub_position(path_request: Request):
     global switch_cnt
     path_json = await path_request.json()
     array_list = get_data(path_json)
-    final_json_list = sub_path_json(array_list)
-    final_length = final_json_list.shape[1]
+    print(array_list[1])
+    final_json_list = sub_switch_road(array_list)
+    final_length = len(final_json_list)
     print("sub_car_t:")
     print("cnt/len")
     print(switch_cnt + 1, "/", final_length)

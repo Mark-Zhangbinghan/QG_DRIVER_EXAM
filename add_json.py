@@ -132,13 +132,29 @@ def concatenate_arrays(arrays_list, file_name):
     print(f"已保存四舍五入到三位小数的合并后的数组到 {file_name}")
 
 
+# def sub_switch_road(arrays_list):
+#     final_json_list = []
+#     for array in arrays_list:
+#         # print(array.shape)
+#         for i in range(array.shape[1]):  # 遍历车辆的数量
+#             path = []
+#             for point in array[:, i, :]:  # 遍历每个点
+#                 x, z = point
+#                 path.append({"x": x, "y": 0, "z": z})
+#             final_json_list.append({"path": path})
+#     return final_json_list
 def sub_switch_road(arrays_list):
     final_json_list = []
     for array in arrays_list:
-        for i in range(array.shape[1]):  # 遍历车辆的数量
-            path = []
-            for point in array[:, i, :]:  # 遍历每个点
-                x, z = point
-                path.append({"x": x, "y": 0.55, "z": z})
-            final_json_list.append({"path": path})
+        print(f"Type of array: {type(array)}")  # 打印数组类型
+        if isinstance(array, np.ndarray):
+            for i in range(array.shape[1]):  # 遍历车辆的数量
+                path = []
+                for point in array[:, i, :]:  # 遍历每个点
+                    x, z = point
+                    path.append({"x": x, "y": 0, "z": z})
+                final_json_list.append({"path": path})
+        else:
+            print("Array is not a numpy array")
+            continue
     return final_json_list
