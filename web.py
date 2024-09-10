@@ -92,7 +92,7 @@ async def read_root():
 async def put_car(get_params: Request):  # 要在url中写参数而不是请求体
     global cars
     global weights
-    car_num = 10  # 预设被运算车辆的数量
+    car_num = 50  # 预设被运算车辆的数量
     params = get_params.query_params
     car_num = params.get('car_num')
     if car_num and car_num.isdigit():  # 判断能否转换成整数
@@ -105,7 +105,7 @@ async def put_car(get_params: Request):  # 要在url中写参数而不是请求�
         return {"need int"}
     else:
         # 根据接受到的car_num先计算宏观路径
-        cars, weights = run_simulation(G=G, total_cars=car_num, round_num=1, speed=0.5)  # 直接计算path然后存成字典列表
+        cars, weights = run_simulation(G=G, total_cars=car_num, round_num=5, speed=0.5)  # 直接计算path然后存成字典列表
         # 存成文件方便检查
         cars_to_file(cars)
         for weight in weights:
@@ -148,9 +148,11 @@ async def get_path():  # 要在body中写参数
 @app.get("/get_weights")
 async def get_weights():
     global weights_cnt
-    if weights_cnt >= len(weights):
+    if weights_cnt < len(weights):
+        weight_data = weights[weights_cnt]
+    else:
         weights_cnt = 0
-    weight_data = weights[weights_cnt]
+        weight_data = weights[weights_cnt]
     print("weights:")
     print("cnt/len")
     print(weights_cnt + 1, "/", len(weights))
@@ -294,6 +296,7 @@ async def post_sub_position(path_request: Request):
 @app.get("/get_sub_position")
 async def get_sub_position():
     global switch_cnt
+    switch_cnt = 0
     final_json_list = sub_switch_road(array_list)
     final_length = len(final_json_list)
     print("sub_car_t:")
@@ -307,4 +310,4 @@ async def get_sub_position():
 # 主监听函数
 if __name__ == "__main__":
     # uvicorn.run(app="web:app", host="192.168.0.92", port=8080, reload=False)#华为云
-    uvicorn.run(app="web:app", host="127.0.0.1", port=8080, reload=False)
+    uvicorn.run(app="web:app", host="172.17.180.137", port=8080, reload=False)
