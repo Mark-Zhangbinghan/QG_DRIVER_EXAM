@@ -218,59 +218,7 @@ def three(car_num, num):
     return L, M, R, xL, vL, xM, vM, xR, vR, rL, rr
 
 
-def four(car_num, num):
-    # 处理四条路径的逻辑
-    r = 0
-    rL = []
-    pos = 0  # 要修改的坐标索引(0:x, 1:z)
-    width = 8  # 车辆间距
 
-    # 确保每个方向最后至少有两辆车
-    L, M, R = 2, 2, 2
-    remaining_cars = car_num - (L + M + R)  # 计算剩余车辆数量
-
-    # 随机分配剩余的车辆到三个方向
-    directions = [L, M, R]  # 创建一个列表来存储方向数量
-    while remaining_cars > 0:
-        random.shuffle(directions)  # 随机打乱顺序
-        for i, direction in enumerate(directions):
-            if remaining_cars > 0:
-                directions[i] += 1
-                remaining_cars -= 1
-    L, M, R = directions[0], directions[1], directions[2]
-
-    if num == 1:    # 第一种情况
-        pos = 1
-        width = -8
-        l_road = [8.75, -20]
-        m_road = [11.25, -20]
-        r_road = [13.75, -20]
-
-    elif num == 2:  # 第二种情况
-        l_road = [40, 8.75]
-        m_road = [40, 11.25]
-        r_road = [40, 13.75]
-
-    elif num == 3:  # 第三种情况
-        pos = 1
-        l_road = [6.25, 40]
-        m_road = [3.75, 40]
-        r_road = [1.25, 40]
-
-    else:   # 第四种情况
-        width = -8
-        l_road = [-20, 6.25]
-        m_road = [-20, 3.75]
-        r_road = [-20, 1.25]
-
-    xL, vL, xM, vM, xR, vR = steady_road(L, M, R, l_road, m_road, r_road, pos, width)
-
-    for i in range(car_num):
-        r += 1
-        rL.append([-1 * r, 0.0])
-
-    # 返回最终的分配结果
-    return L, M, R, xL, vL, xM, vM, xR, vR, rL, r
 
 
 def get_data():
