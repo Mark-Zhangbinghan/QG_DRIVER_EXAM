@@ -276,7 +276,7 @@ def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
 
     # 将车辆合并后更新数据
     Comb_e = 1
-    if MposV[-1].size != 0 and RposV[-1].size != 0:
+    if len(MposV) > 0 and len(RposV) > 0 and MposV[-1].size != 0 and RposV[-1].size != 0:
         Comb_e = 0
         pos_merged = np.concatenate((MposV[-1], RposV[-1]))
         vel_merged = np.concatenate((MvelV[-1], RvelV[-1]))
@@ -309,5 +309,6 @@ def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
     # plt.xlabel('X Position(m)')
     # plt.ylabel('Y Position(m)')
     # plt.show()
-
-    return L, M, R, LposV, MposV, RposV, nposV, xLe, xMe, xRe, Comb_e
+        MposV = np.vstack([MposV, nposV[:, :M, :]])
+        RposV = np.vstack([RposV, nposV[:, M:, :]])
+    return L, M, R, LposV, MposV, RposV, xLe, xMe, xRe, Comb_e
