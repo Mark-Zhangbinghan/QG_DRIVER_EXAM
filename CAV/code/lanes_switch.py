@@ -421,7 +421,7 @@ def run( data, num, r_left, r_middle, r_right, ending_line ):
     L, M, R, xL, vL, xM, vM, xR, vR, rL, r = two(data['Car_Num'], num)
     print(L, M, R)
     print(xL, xM, xR)
-    print( rL)
+    print(rL)
     # 道路信息 -> 道路中心线坐标 & 路口位置
     # r_left = -10.0
     # r_middle = -12.5

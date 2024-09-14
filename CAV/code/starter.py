@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 # from CAV.code.V3_side_2 import run
 from V3_side_2 import run
 
-def method(i, single, round, stay, car_n,):
+
+def method(i, single, round, stay, car_n):
     # 1 -> left2right
     # 2 -> right2left
     # 3 -> up2down
@@ -63,84 +64,83 @@ def read(split, single, round, stay, car_n):
     return ret_list, posV_list1, posV_list2
 
 
-def main():
+def main(car_n):
     round = 1
     stay = []
-    car_n = [12, 13, 12, 13]
 
     # stage1
-    # split = [3, 4]
-    # single = ['M', 'M']
-    # list1, posV11, posV12 = read(split, single, round, stay, car_n)
+    split = [3, 4]
+    single = ['M', 'M']
+    list1, posV11, posV12 = read(split, single, round, stay, car_n)
 
     # stage2
-    # split = [1, 2]
-    # single = ['M', 'M']
-    # list2, posV21, posV22 = read(split, single, round, stay, car_n)
+    split = [1, 2]
+    single = ['M', 'M']
+    list2, posV21, posV22 = read(split, single, round, stay, car_n)
 
-    # # # stage3
-    # split = [4]
-    # single = ['L']
-    # list3, posV31, posV32 = read(split, single, round, stay, car_n)
-    #
-    # # stage4
-    # split = [3]
-    # single = ['L']
-    # list4, posV41, posV42 = read(split, single, round, stay, car_n)
-    #
+    # stage3
+    split = [4]
+    single = ['L']
+    list3, posV31, posV32 = read(split, single, round, stay, car_n)
+
+    # stage4
+    split = [3]
+    single = ['L']
+    list4, posV41, posV42 = read(split, single, round, stay, car_n)
+
     # stage5
     split = [1]
     single = ['L']
     list5, posV51, posV52 = read(split, single, round, stay, car_n)
 
-    # # stage6
-    # split = [2]
-    # single = ['L']
-    # list6, posV61, posV62 = read(split, single, round, stay, car_n)
-    #
-    # # # right_turn
-    # # split = [ 1, 2 ]
-    # # single = [ 'R', 'R' ]
-    # # list0, posV01, posV02 = read( split, single, round, stay, car_n )
-    # # split = [ 3, 4 ]
-    # # single = [ 'R', 'R' ]
-    # # list0, posV03, posV04 = read( split, single, round, stay, car_n )
-    #
-    # ###################################################################################
-    #
+    # stage6
+    split = [2]
+    single = ['L']
+    list6, posV61, posV62 = read(split, single, round, stay, car_n)
+
+    # # right_turn
+    # split = [ 1, 2 ]
+    # single = [ 'R', 'R' ]
+    # list0, posV01, posV02 = read( split, single, round, stay, car_n )
+    # split = [ 3, 4 ]
+    # single = [ 'R', 'R' ]
+    # list0, posV03, posV04 = read( split, single, round, stay, car_n )
+
+    ###################################################################################
+
     round = 2
     # stage1
-    # split = [3, 4]
-    # single = ['M', 'M']
-    # nlist1, posV11n, posV12n = read(split, single, round, list1, car_n)
+    split = [3, 4]
+    single = ['M', 'M']
+    nlist1, posV11n, posV12n = read(split, single, round, list1, car_n)
 
     # stage2
-    # split = [1, 2]
-    # single = ['M', 'M']
-    # nlist2, posV21n, posV22n = read(split, single, round, list2, car_n)
-    #
+    split = [1, 2]
+    single = ['M', 'M']
+    nlist2, posV21n, posV22n = read(split, single, round, list2, car_n)
+
     # stage3
-    # split = [4]
-    # single = ['L']
-    # nlist3, posV31n, posV32n = read(split, single, round, list3, car_n)
+    split = [4]
+    single = ['L']
+    nlist3, posV31n, posV32n = read(split, single, round, list3, car_n)
 
     # stage4
-    # split = [3]
-    # single = ['L']
-    # nlist4, posV41n, posV42n = read(split, single, round, list4, car_n)
-    #
+    split = [3]
+    single = ['L']
+    nlist4, posV41n, posV42n = read(split, single, round, list4, car_n)
+
     # stage5
     split = [1]
     single = ['L']
     nlist5, posV51n, posV52n = read(split, single, round, list5, car_n)
-    #
-    # # stage6
-    # split = [2]
-    # single = ['L']
-    # nlist6, posV61n, posV62n = read(split, single, round, list6, car_n)
-    #
-    # return [posV11, posV12, posV21, posV22, posV31, posV41, posV51, posV61, posV11n, posV12n, posV21n, posV22n, posV31n,
-    #         posV41n, posV51n, posV61n]
+
+    # stage6
+    split = [2]
+    single = ['L']
+    nlist6, posV61n, posV62n = read(split, single, round, list6, car_n)
+
+    return [posV11, posV12, posV21, posV22, posV31, posV41, posV51, posV61, posV11n, posV12n, posV21n, posV22n, posV31n,
+            posV41n, posV51n, posV61n]
 
 
 if __name__ == '__main__':

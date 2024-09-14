@@ -1,15 +1,15 @@
 import json
 import numpy as np
 from CAV.code.lanes_switch2 import run_three2two
+from CAV.code.starter import main
 
 
 def get_data(json_data):
     num = 1  # 设置用来判断为道路的哪一条路
     # 使用json.loads()函数将JSON字符串解析为Python字典
     data = json_data
-if __name__ == '__main__':
-    pathnum = 2# data['PathNum']
-    car_num = [6, 6]# data['Car_Num']
+    pathnum = 4# data['PathNum']
+    car_num = [10, 10, 10, 10]# data['Car_Num']
 
     if pathnum == 2:
 
@@ -22,9 +22,11 @@ if __name__ == '__main__':
         right2left = [-7.5, -5.0, -2.5, -5.0]
         L2, M2, R2, LposV2, MposV2, RposV2, xLe2, xMe2, xRe2 = run_three2two(data2, 2, right2left[0], right2left[1],
                                                                    right2left[2], right2left[3])
-    #     return [LposV, MposV, RposV, LposV2, MposV2, RposV2]
-    # else:
-    #     car_num = data['CarNum']
+        return [LposV, MposV, RposV, LposV2, MposV2, RposV2]
+
+    elif pathnum == 4:
+        path_list = main(car_num)
+        return path_list
 
 
 # if __name__ == '__main__':
