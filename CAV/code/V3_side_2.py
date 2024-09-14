@@ -1,6 +1,10 @@
 import numpy as np
-from CAV.code.MAS_Function import Algorithm_1
-from CAV.code.MAS_Function import Algorithm_2
+import random
+# from CAV.code.MAS_Function import Algorithm_1
+# from CAV.code.MAS_Function import Algorithm_2
+from MAS_Function import Algorithm_1
+from MAS_Function import Algorithm_2
+from Tests import steady_road, random_road
 
 def get_data( side, path ):
     with open( path, 'r' ) as file:
@@ -41,6 +45,78 @@ def get_data( side, path ):
 
     return L, M, R, np.array(xL), np.array(vL), np.array(xM), np.array(vM), np.array(xR), np.array(vR), np.array(rL), rr
 
+def four(car_num, num):
+    if car_num == 1:
+        car_num = 2
+    if car_num == 3:
+        car_num = 4
+    if car_num == 5:
+        car_num = 6
+    # 处理四条路径的逻辑
+    r = 0
+    rr = 5
+    rL = []
+    pos = 0  # 要修改的坐标索引(0:x, 1:z)
+    width = 8  # 车辆间距
+
+    # 确保每个方向最后至少有两辆车
+    L, M, R = 2, 2, 2
+    remaining_cars = car_num - (L + M + R)  # 计算剩余车辆数量
+
+    # 随机分配剩余的车辆到三个方向
+    directions = [L, M, R]  # 创建一个列表来存储方向数量
+    while remaining_cars > 0:
+        random.shuffle(directions)  # 随机打乱顺序
+        for i, direction in enumerate(directions):
+            if remaining_cars > 0:
+                directions[i] += 1
+                remaining_cars -= 1
+    L, M, R = directions[0], directions[1], directions[2]
+
+    if num == 1:  # 第一种情况
+        width = -8
+        l_road = [-30.0, 6.25]
+        m_road = [-30.0, 3.75]
+        r_road = [-30.0, 1.25]
+
+    elif num == 2:  # 第二种情况
+        l_road = [50.0, 8.75]
+        m_road = [50.0, 11.25]
+        r_road = [50.0, 13.75]
+
+    elif num == 3:  # 第三种情况
+        pos = 1
+        l_road = [6.25, 50.0]
+        m_road = [3.75, 50.0]
+        r_road = [1.25, 50.0]
+
+    else:  # 第四种情况
+        pos = 1
+        width = -8
+        l_road = [8.75, -30.0]
+        m_road = [11.25, -30.0]
+        r_road = [13.75, -30.0]
+    print( "$$$$$$$$$$$$$$", num )
+    xL, vL, xM, vM, xR, vR = steady_road(L, M, R, l_road, m_road, r_road, pos, width, num)
+
+    side = -1
+    if num == 2 or num == 3:
+        side = 1
+
+    for i in range(car_num):
+        r += rr
+        rL.append([side * r, 0.0])
+
+    xL = np.array(xL)
+    vL = np.array(vL)
+    xM = np.array(xM)
+    vM = np.array(vM)
+    xR = np.array(xR)
+    vR = np.array(vR)
+    rL = np.array(rL)
+
+    # 返回最终的分配结果
+    return L, M, R, xL, vL, xM, vM, xR, vR, rL, rr
 
 def createA(n, x, v, rL, side, direction ):
     A = np.ones((n, n))
@@ -61,14 +137,17 @@ def createA(n, x, v, rL, side, direction ):
     return A, x, v, rL
 
 
-def adjustA(A, x, n, dd):
+def adjustA(A, x, n, dd, side):
     for i in range(n):
         for j in range(n):
             if A[i][j] != 0 and i != j:
-                A[i][j] = abs((x[i, 1] - x[j, 1]) / dd)
+                if side == 'hor':
+                    A[i][j] = abs((x[i, 0] - x[j, 0]) / dd)
+                elif side == 'ver':
+                    A[i][j] = abs((x[i, 1] - x[j, 1]) / dd)
     return A
 
-def create_k(n, x, x_leader, A ):
+def create_k(n, x, x_leader, A, side ):
     if len( x ) == 1:
         dd = 0
     else:
@@ -83,11 +162,11 @@ def create_k(n, x, x_leader, A ):
         if n > 1:
             k[1] = 1
         dd = 1
-    A = adjustA( A, x, n, dd )
+    A = adjustA( A, x, n, dd, side )
     return A, dd, k
 
 def create_vehicles(direction, x, v, r_side, rL, n, side ):
-    given_vel = 27.0
+    given_vel = 5.0
     if direction == 'hor':
         x_leader = np.array( [float( np.min( x[:, 0] ) if side == '-' else np.max( x[:, 0] ) ), r_side] )
         # vL = np.array( [ float( round( np.mean( v[:, 0] ), 1 ) ), 0.0 ] )
@@ -137,15 +216,15 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
     threshold = 0.5
     light = 1
     if stage != 0:
-        target_time_s = 13000 * (stage - 1)
-        target_time_e = 13000 * stage
-        # print(target_time_s, target_time_e, '~~~~~~~~~~~~~~~~~')
+        target_time_s = 10000 * (stage - 1)
+        target_time_e = 10000 * stage
+        print(target_time_s, target_time_e, '~~~~~~~~~~~~~~~~~')
 
     for ts in range(t):
         status_list = {
             'UpLeft': [15.0, '>'],
-            'LeftDown': [568.75, '<'],
-            'RightUp': [583.75, '>'],
+            'LeftDown': [0.0, '<'],
+            'RightUp': [15.0, '>'],
             'DownRight': [0.0, '<']
         }
         stop = status_list[status][0]
@@ -159,18 +238,19 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
                 light = 0
             elif now_time < target_time_s and now_time > target_time_e:  # 红灯
                 light = 1
+                print( now_time, target_time_s, target_time_e)
         if direction == 'ver':
             r_line = [road, stop]
         else:
             r_line = [stop, road]
+
         if side == '-':
             min = np.argmin(posV[-1][:, idx])
-            # print(posV[-1][min], r_line)
             if np.all( np.abs( posV[-1][min] - r_line ) < threshold ):
                 reach = 1
         else:
             max = np.argmax(posV[-1][:, idx])
-            # print(posV[-1][max], r_line)
+
             if np.all( np.abs( posV[-1][max] - r_line ) < threshold ):
                 reach = 1
 
@@ -215,22 +295,22 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
             vp += a * dot_v  # 更新车辆速度位置与领导者位置
         xp += a * vp
 
-        if ts % 400 == 0:
-            xp_mas = xp.copy()
-            if (direction == 'ver' and round == 1) or (direction == 'hor' and round == 2 and turn != 'M'):
-                ym, xm = 0, 1
-            elif (direction == 'hor' and round == 1) or (direction == 'ver' and round == 2 and turn != 'M'):
-                xm, ym = 0, 1
-            max_mas = np.max(xp_mas[:, xm])
-            y_mas = xp_mas[:, ym]
-            y_mas = np.append(y_mas, lp[ym])
-            x_mas = []
-            for ddr in range(len(y_mas)):
-                x_mas.append(max_mas)
-            x_mas = np.array(x_mas)
-            y_mas = np.array(y_mas)
-            x_B, y_B = Algorithm_2(x_mas, y_mas, 0.2)
-            xp[:, ym] = y_B[:-1] * 0.4 + xp[:, ym] * 0.6
+        # if ts % 400 == 0:
+        #     xp_mas = xp.copy()
+        #     if (direction == 'ver' and round == 1) or (direction == 'hor' and round == 2 and turn != 'M'):
+        #         ym, xm = 0, 1
+        #     elif (direction == 'hor' and round == 1) or (direction == 'ver' and round == 2 and turn != 'M'):
+        #         xm, ym = 0, 1
+        #     max_mas = np.max(xp_mas[:, xm])
+        #     y_mas = xp_mas[:, ym]
+        #     y_mas = np.append(y_mas, lp[ym])
+        #     x_mas = []
+        #     for ddr in range(len(y_mas)):
+        #         x_mas.append(max_mas)
+        #     x_mas = np.array(x_mas)
+        #     y_mas = np.array(y_mas)
+        #     x_B, y_B = Algorithm_2(x_mas, y_mas, 0.2)
+        #     xp[:, ym] = y_B[:-1] * 0.4 + xp[:, ym] * 0.6
 
 
 
@@ -256,13 +336,15 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
     x = x.reshape(-1, 2)
     v = v.reshape(-1, 2)
     x_leader, x, v, vL, rLeader, A = create_vehicles( starting_direction, x, v, road, rL, n, side )
-    A, dd, k = create_k(n, x, x_leader, A)
+    # print( A, n, "AAAAANNNNN" )
+    A, dd, k = create_k(n, x, x_leader, A, starting_direction )
+
     rLt = rL.copy()
     rLt[:, [0, 1]] = rLt[:, [1, 0]]
 
     if round == 1:
         posV, velV, posL, keep, stay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, 'M', turning_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round, stage = stage )
-        # print( 'stay::::::::::', stay )
+        print( 'stay::::::::::', stay )
         x = posV[-1]
         v = velV[-1]
     # print( x, '...............' )
@@ -295,6 +377,7 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
         rL = -rLt
         right_turn = 1
     # x_leader = np.array(arriving_point)
+    # print(A, n, "AN22222222")
     nposV, nvelV, nLpos, nkeep, nstay = update_data(k, n, x_leader, x, vL, v, b, g, a, t, A, r, rL, turn, arriving_point, side, status, road, starting_direction, right_turn = right_turn, keep = keep, round = round, stage = stage )
     if round == 1:
         posV = np.concatenate((posV, nposV), axis=0)
@@ -308,16 +391,18 @@ def one_car( turning_point, arriving_point, starting_direction, rL, r, n, side, 
 
 
 
-def run( side, path, info, i, single, round, stay ):
+def run( side, car_n, info, i, single, round, stay, s ):
     # side -> 车道口   single -> L/M/R
     b = 1
     g = 1
     a = 0.001
-    tt = 78
+    tt = 60
     t = int( tt / a )
     r_left, r_middle, r_right, r_turn, r_gap, starting_direction, status = info
     if round == 1:
-        L, M, R, xL, vL, xM, vM, xR, vR, rL, r = get_data( side, path )
+
+        L, M, R, xL, vL, xM, vM, xR, vR, rL, r = four( car_n, s )
+        print( L, M, R, xM, vM )
         # 道路信息 -> 道路中心线坐标 & 路口位置
         if single == 'M':
             n = M
@@ -336,7 +421,7 @@ def run( side, path, info, i, single, round, stay ):
             x, v = xR, vR
     elif round == 2:
         tmp = len( stay )
-
+        print( "tmp:-----------", tmp )
         if single ==  'L':
             right_turn = 0
             road = r_left
@@ -357,18 +442,18 @@ def run( side, path, info, i, single, round, stay ):
         rL = np.array( rL )
     turn = single
     turning = {
-        '1M': [ [577.5, 3.75], [1177.5, 3.75] ],
-        '2M': [ [577.5, 11.25], [-22.5, 11.25] ],
-        '3M': [ [572.5, 3.75], [572.5, -600.0] ],
-        '4M': [ [580.0, 11.25], [580.0, 611.25] ],
-        '1L': [ [580.0, 6.25], [580.0, 606.25] ],
-        '2L': [ [572.5, 8.75], [572.5, -601.25] ],
-        '3L': [ [575.0, 6.25], [1175.0, 6.25] ],
-        '4L': [ [577.5, 8.75], [-22.5, 8.75] ],
-        '1R': [ [570.0, 1.25], [570.0, -600.0] ],
-        '2R': [ [582.5, 13.75], [582.5, 613.75] ],
-        '3R': [ [570.0, 13.75], [-30.0, 13.75] ],
-        '4R': [ [582.5, 1.25], [1182.5, 1.25] ]
+        '1M': [ [8.75, 3.75], [50.0, 3.75] ],
+        '2M': [ [6.25, 11.25], [-30.0, 11.25] ],
+        '3M': [ [3.75, 6.25], [3.75, -30.0] ],
+        '4M': [ [11.25, 8.75], [11.25, 50.0] ],
+        '1L': [ [8.75, 6.25], [8.75, 50.0] ],
+        '2L': [ [6.25, 8.75], [6.25, -30.0] ],
+        '3L': [ [6.25, 6.25], [50.0, 6.25] ],
+        '4L': [ [8.75, 8.75], [-30.0, 8.75] ],
+        '1R': [ [1.25, 1.25], [1.25, -30.0] ],
+        '2R': [ [13.75, 13.75], [13.75, 50.0] ],
+        '3R': [ [1.25, 13.75], [-30.0, 13.75] ],
+        '4R': [ [13.75, 1.25], [50.0, 1.25] ]
     }
     stage_list = {
         '1M': 2,
@@ -384,11 +469,10 @@ def run( side, path, info, i, single, round, stay ):
         '3R': 0,
         '4R': 0
     }
-    # print( rL )
+
     if starting_direction == 'ver':
         rL = rL.copy()
         rL[:, [0, 1]] = rL[:, [1, 0]]
-    # print( i, 'here')
     select = str( i ) + single
     turning_point = turning[ select ][0]
     arriving_point = turning[ select ][1]
