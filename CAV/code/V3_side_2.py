@@ -2,9 +2,9 @@ import numpy as np
 import random
 # from CAV.code.MAS_Function import Algorithm_1
 # from CAV.code.MAS_Function import Algorithm_2
-from MAS_Function import Algorithm_1
-from MAS_Function import Algorithm_2
-from Tests import steady_road, random_road
+from CAV.code.MAS_Function import Algorithm_1
+from CAV.code.MAS_Function import Algorithm_2
+from CAV.code.Tests import steady_road, random_road
 
 def get_data( side, path ):
     with open( path, 'r' ) as file:

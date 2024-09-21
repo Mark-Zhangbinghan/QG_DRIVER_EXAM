@@ -1,5 +1,3 @@
-import json
-import numpy as np
 from CAV.code.lanes_switch2 import run_three2two
 from CAV.code.starter import main
 
@@ -8,8 +6,8 @@ def get_data(json_data):
     num = 1  # 设置用来判断为道路的哪一条路
     # 使用json.loads()函数将JSON字符串解析为Python字典
     data = json_data
-    pathnum = 4# data['PathNum']
-    car_num = [10, 10, 10, 10]# data['Car_Num']
+    pathnum = data['PathNum']
+    car_num = data['Car_Num']
 
     if pathnum == 2:
 

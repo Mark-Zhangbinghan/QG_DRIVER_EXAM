@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 # from CAV.code.V3_side_2 import run
-from V3_side_2 import run
+from CAV.code.V3_side_2 import run
 
 
 def method(i, single, round, stay, car_n):

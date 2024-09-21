@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from MAS_Function import Algorithm_1
-from MAS_Function import Algorithm_2
-from Tests import two_steady
+from CAV.code.MAS_Function import Algorithm_1
+from CAV.code.MAS_Function import Algorithm_2
+from CAV.code.Tests import two_steady
 
 
 def get_data():
@@ -311,4 +311,4 @@ def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
     # plt.show()
         MposV = np.vstack([MposV, nposV[:, :M, :]])
         RposV = np.vstack([RposV, nposV[:, M:, :]])
-    return L, M, R, LposV, MposV, RposV, xLe, xMe, xRe, Comb_e
+    return L, M, R, LposV, MposV, RposV, xLe, xMe, xRe
