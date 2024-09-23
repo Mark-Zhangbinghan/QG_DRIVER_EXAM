@@ -11,10 +11,10 @@ def steady_road(L, M, R, l_road, m_road, r_road, pos, width, num):
     vM = []
     xR = []
     vR = []
-    speed_1 = [ 5.0, 0.0 ]
-    speed_2 = [-5.0, 0.0]
-    speed_3 = [0.0, -5.0]
-    speed_4 = [0.0, 5.0]
+    speed_1 = [ 10.0, 0.0 ]
+    speed_2 = [-10.0, 0.0]
+    speed_3 = [0.0, -10.0]
+    speed_4 = [0.0, 10.0]
     # print( "###########", num )
     for i in range(L):
         xL.append(l_road[:])
@@ -379,7 +379,8 @@ def three(car_num, num):
 
 def four(car_num, num):
     # 处理四条路径的逻辑
-    r = 0
+    rr = 5
+    r = -5
     rL = []
     pos = 0  # 要修改的坐标索引(0:x, 1:z)
     width = 8  # 车辆间距
@@ -425,7 +426,7 @@ def four(car_num, num):
     xL, vL, xM, vM, xR, vR = steady_road(L, M, R, l_road, m_road, r_road, pos, width)
 
     for i in range(car_num):
-        r += 1
+        r += rr
         rL.append([-1 * r, 0.0])
 
     # 返回最终的分配结果

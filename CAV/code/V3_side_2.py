@@ -166,7 +166,7 @@ def create_k(n, x, x_leader, A, side ):
     return A, dd, k
 
 def create_vehicles(direction, x, v, r_side, rL, n, side ):
-    given_vel = 5.0
+    given_vel = 10.0
     if direction == 'hor':
         x_leader = np.array( [float( np.min( x[:, 0] ) if side == '-' else np.max( x[:, 0] ) ), r_side] )
         # vL = np.array( [ float( round( np.mean( v[:, 0] ), 1 ) ), 0.0 ] )
@@ -222,10 +222,10 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
 
     for ts in range(t):
         status_list = {
-            'UpLeft': [15.0, '>'],
-            'LeftDown': [0.0, '<'],
-            'RightUp': [15.0, '>'],
-            'DownRight': [0.0, '<']
+            'UpLeft': [17.0, '>'],
+            'LeftDown': [-2.0, '<'],
+            'RightUp': [17.0, '>'],
+            'DownRight': [-2.0, '<']
         }
         stop = status_list[status][0]
         hypen = status_list[status][1]

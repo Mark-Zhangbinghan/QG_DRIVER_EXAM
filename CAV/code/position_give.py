@@ -12,12 +12,12 @@ def get_data(json_data):
     if pathnum == 2:
 
         data1 = {'PathNum': 3, 'Car_Num': car_num[0]}
-        left2right = [-10.0, -12.5, -15.0, 127.0]
+        left2right = [ -10.0, -12.5, -15.0, 20.0 ]
         L, M, R, LposV, MposV, RposV, xLe, xMe, xRe = run_three2two(data1, 1, left2right[0], left2right[1], left2right[2],
                                                           left2right[3])
 
         data2 = {'PathNum': 3, 'Car_Num': car_num[1]}
-        right2left = [-7.5, -5.0, -2.5, -5.0]
+        right2left = [ -7.5, -5.0, -2.5, 107.0 ]
         L2, M2, R2, LposV2, MposV2, RposV2, xLe2, xMe2, xRe2 = run_three2two(data2, 2, right2left[0], right2left[1],
                                                                    right2left[2], right2left[3])
         return [LposV, MposV, RposV, LposV2, MposV2, RposV2]

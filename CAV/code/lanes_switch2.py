@@ -195,6 +195,7 @@ def create_k(n, x, x_leader, A):
 #     return data + noise
 
 
+
 def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
     b = 1
     g = 1
@@ -276,7 +277,8 @@ def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
 
     # 将车辆合并后更新数据
     Comb_e = 1
-    if len(MposV) > 0 and len(RposV) > 0 and MposV[-1].size != 0 and RposV[-1].size != 0:
+    # print('############', MposV[-1], '\n', RposV[-1], '\n', '############' )
+    if MposV[-1].size != 0 and RposV[-1].size != 0:
         Comb_e = 0
         pos_merged = np.concatenate((MposV[-1], RposV[-1]))
         vel_merged = np.concatenate((MvelV[-1], RvelV[-1]))
@@ -285,12 +287,12 @@ def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
         v = vel_merged
         A2, x, v, rL = createA(n_merged, x, v, rL)
         if num == 1:
-            x_leader = [ 40.0, -12.5 ]
+            x_leader = [ 20.0, -12.5 ]
         else:
-            x_leader = [ 87.0, -5.0 ]
+            x_leader = [ 107.0, -5.0 ]
         A2, ddL, kL = create_k(n_merged, x, x_leader, A2)
         nposV, nvelV, nposL, nnt = update_data(kL, n_merged, x_leader, x, vLR, v, b, g, a, t, A2, r, rL, 'M', r_turn_after, 1)
-
+        # print( nposV[-1], '$$$$$$$$$$$$$$$$$$$$$$')
     # # 显示图片
     # plt.figure(figsize=(10, 6))
     # for i in range(L):
@@ -305,10 +307,18 @@ def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
     # for i in range(n_merged):
     #     plt.plot(nposV[:, i, 0], nposV[:, i, 1], label=f'Vehicle {i + 1}')
     #     plt.scatter(nposV[::5000, i, 0], nposV[::5000, i, 1], marker='>')  # 每5000个点显示一次各个车辆的位置
-
+    #
     # plt.xlabel('X Position(m)')
     # plt.ylabel('Y Position(m)')
     # plt.show()
         MposV = np.vstack([MposV, nposV[:, :M, :]])
         RposV = np.vstack([RposV, nposV[:, M:, :]])
+    plt.figure(figsize=(10, 6))
+    for i in range(M):  # 遍历车辆的数量
+        plt.plot(MposV[:, i, 0], MposV[:, i, 1], label=f'Vehicle {i + 1}')
+    plt.show()
+    plt.figure(figsize=(10, 6))
+    for i in range(R):  # 遍历车辆的数量
+        plt.plot(RposV[:, i, 0], RposV[:, i, 1], label=f'Vehicle {i + 1}')
+    plt.show()
     return L, M, R, LposV, MposV, RposV, xLe, xMe, xRe
