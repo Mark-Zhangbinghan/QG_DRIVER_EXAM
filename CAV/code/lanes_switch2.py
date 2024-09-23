@@ -203,8 +203,6 @@ def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
     tt = 50
     t = int(tt / a)
     L, M, R, xL, vL, xM, vM, xR, vR, rL, r = two_steady(data['Car_Num'], num)
-    print(L, M, R)
-    print(xL, '\n', xM, '\n', xR)
     # L, M, R, xL, vL, xM, vM, xR, vR, rL, r = get_data()
     # 道路信息 -> 道路中心线坐标 & 路口位置
     # r_left = 30.0
@@ -311,13 +309,38 @@ def run_three2two( data, num, r_left, r_middle, r_right, ending_line ):
     # plt.xlabel('X Position(m)')
     # plt.ylabel('Y Position(m)')
     # plt.show()
-        MposV = np.vstack([MposV, nposV[:, :M, :]])
-        RposV = np.vstack([RposV, nposV[:, M:, :]])
+
+        # 获取最后一行的第二个元素的值，用于比较
+        M_last_value = MposV[-1, -1, 1]
+
+        # 初始化临时列表，用于存储拼接结果
+        M_list = []
+        R_list = []
+
+        # 遍历 nposV
+        for i in range(R + M):
+            nposV_value = nposV[0, i, 1]
+            if nposV_value == M_last_value:
+                # 将匹配的元素追加到 M_list
+                M_list.append(nposV[:, i, :])
+            else:
+                # 将不匹配的元素追加到 R_list
+                R_list.append(nposV[:, i, :])
+
+        # 将 M_list 和 R_list 转换为数组并与原来的 MposV 和 RposV 进行拼接
+        if M_list:
+            M_list = np.array(M_list)
+            M_list = np.transpose(M_list, (1, 0, 2))
+            MposV = np.vstack([MposV, M_list])
+
+        if R_list:
+            R_list = np.array(R_list)
+            R_list = np.transpose(R_list, (1, 0, 2))
+            RposV = np.vstack([RposV, R_list])
+
     plt.figure(figsize=(10, 6))
     for i in range(M):  # 遍历车辆的数量
-        plt.plot(MposV[:, i, 0], MposV[:, i, 1], label=f'Vehicle {i + 1}')
-    plt.show()
-    plt.figure(figsize=(10, 6))
+        plt.plot(MposV[:, i, 0], MposV[:, i, 1], label=f'Vehicle {0 + 1}')
     for i in range(R):  # 遍历车辆的数量
         plt.plot(RposV[:, i, 0], RposV[:, i, 1], label=f'Vehicle {i + 1}')
     plt.show()
