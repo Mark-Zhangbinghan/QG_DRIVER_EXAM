@@ -96,11 +96,13 @@ async def root_micro():
 # 启动宏观图应用的函数
 def start_macro():
     uvicorn.run(app_macro, host="127.0.0.1", port=8080)
+    # uvicorn.run(app_macro, host="10.21.56.118", port=11452) #QG
 
 
 # 启动微观图应用的函数
 def start_micro():
     uvicorn.run(app_micro, host="127.0.0.1", port=8081)
+    # uvicorn.run(app_micro, host="10.21.56.118", port=11453) #QG
 
 
 # # 获得微观图路口数量
