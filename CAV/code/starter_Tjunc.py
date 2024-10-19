@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from V2_Tjunc_2 import run
+from CAV.code.V2_Tjunc_2 import run
 
 
 def method(i, single, round, stay, car_n ):
@@ -60,14 +60,14 @@ def read(split, single, round, stay, car_n):
     return ret_list, posV_list1, posV_list2
 
 
-def t_main():
+def t_main(car_num):
     round = 1
     stay = []
-    car_n = [6, 7, 6]
+    car_n = car_num
     # stage1
-    # split = [1, 2]
-    # single = ['L', 'R']
-    # list1, posV11, posV12 = read(split, single, round, stay, car_n)
+    split = [1, 2]
+    single = ['L', 'R']
+    list1, posV11, posV12 = read(split, single, round, stay, car_n)
 
     # stage2
     split = [2]
@@ -79,17 +79,17 @@ def t_main():
     single = ['L']
     list3, posV31, posV32 = read(split, single, round, stay, car_n)
 
-    # # right_turn
-    # split = [ 1, 3 ]
-    # single = [ 'R', 'R' ]
-    # list0, posV01, posV02 = read( split, single, round, stay )
+    # right_turn
+    split = [ 1, 3 ]
+    single = [ 'R', 'R' ]
+    list0, posV01, posV02 = read(split, single, round, stay, car_n)
     ####################################################################################
     round = 2
 
     # stage1
-    # split = [1, 2]
-    # single = ['L', 'R']
-    # nlist1, posV11n, posV12n = read(split, single, round, list1, car_n)
+    split = [1, 2]
+    single = ['L', 'R']
+    nlist1, posV11n, posV12n = read(split, single, round, list1, car_n)
     #
     # stage2
     split = [2]
@@ -101,7 +101,12 @@ def t_main():
     single = ['L']
     nlist3, posV31n, posV32n = read(split, single, round, list3, car_n)
 
-    # return [posV11, posV12, posV21, posV31, posV11n, posV12n, posV21n, posV31n]
+    # right_turn
+    split = [1, 3]
+    single = ['R', 'R']
+    nlist0, posV01n, posV02n = read(split, single, round, list0, car_n)
+
+    return [posV11, posV12, posV21, posV31, posV01, posV02, posV11n, posV12n, posV21n, posV31n, posV01n, posV02n]
 
 
 if __name__ == '__main__':

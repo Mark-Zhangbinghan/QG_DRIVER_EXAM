@@ -1,6 +1,6 @@
 import numpy as np
-from MAS_Function import Algorithm_1
-from MAS_Function import Algorithm_2
+from CAV.code.MAS_Function import Algorithm_1
+from CAV.code.MAS_Function import Algorithm_2
 import random
 
 
@@ -141,8 +141,8 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
     threshold = 0.5
     light = 1
     if stage != 0:
-        target_time_s = 10000 * (stage - 1)
-        target_time_e = 10000 * stage
+        target_time_s = 15000 * (stage - 1)
+        target_time_e = 15000 * stage
     # print( target_time_s, target_time_e )
     for ts in range(t):
         status = str(status)
@@ -195,7 +195,7 @@ def update_data(k, n, xL, x, vL, v, b, g, a, t, A, r, rL, turn, r_turn, side, st
                 dot_v[i] -= k[i] * (s + g * (vp[i] - vL))  # 与智能体相关联时，与领导者之间的关系参与调整考虑
 
 
-        if reach == 1 and light == 1 and keep == 0 and right_turn == 0:
+        if reach == 1 and light == 1 and keep == 0:
             if direction == 'ver':
                 mask = (xp[:, 1] < stop if hypen == '<' else xp[:, 1] > stop) & (np.abs(xp[:, 0] - road) <= 0.2)
             else:
@@ -265,7 +265,7 @@ def three(car_num, num):
         else:
             # 随机分配剩余车辆
             remaining_cars = car_num - 2
-            L = random.randint(2, remaining_cars + 2)  # L 组至少有 2 辆车，最多有剩余车辆数 + 2 辆车
+            L = random.randint(2, remaining_cars)  # L 组至少有 2 辆车，最多有剩余车辆数 + 2 辆车
             R = car_num - L
         r_road = [36.0, 8.75]
         l_road = [36.0, 6.25]
@@ -277,7 +277,7 @@ def three(car_num, num):
         else:
             # 随机分配剩余车辆
             remaining_cars = car_num - 2
-            R = random.randint(2, remaining_cars + 2)  # R 组至少有 2 辆车，最多有剩余车辆数 + 2 辆车
+            R = random.randint(2, remaining_cars)  # R 组至少有 2 辆车，最多有剩余车辆数 + 2 辆车
             L = car_num - R
         width = -8
         m_road = []
@@ -289,7 +289,7 @@ def three(car_num, num):
             L, R = 2, 2  # 至少保证 L 和 R 组有 2 辆车
         else:
             # 随机分配剩余车辆
-            remaining_cars = car_num - 4
+            remaining_cars = car_num - 2
             L = random.randint(2, remaining_cars)  # L 组至少有 2 辆车，最多有剩余车辆数 + 2 辆车
             R = car_num - L
         pos = 1
@@ -505,9 +505,9 @@ def run( side, car_n, info, i, single, round, stay, s ):
         '1L': 1,
         '2L': 2,
         '3L': 3,
-        '1R': 0,
+        '1R': 4,
         '2R': 1,
-        '3R': 0
+        '3R': 4
     }
     if starting_direction == 'ver':
         rL = rL.copy()

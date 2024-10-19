@@ -1,5 +1,6 @@
 from CAV.code.lanes_switch2 import run_three2two
 from CAV.code.starter import main
+from CAV.code.starter_Tjunc import t_main
 
 
 def get_data(json_data):
@@ -8,7 +9,8 @@ def get_data(json_data):
     data = json_data
     pathnum = data['PathNum']
     car_num = data['Car_Num']
-
+    car_num[1] = car_num[0] / 2
+    car_num[0] = car_num[0] - car_num[1]
     if pathnum == 2:
 
         data1 = {'PathNum': 3, 'Car_Num': car_num[0]}
@@ -21,6 +23,10 @@ def get_data(json_data):
         L2, M2, R2, LposV2, MposV2, RposV2, xLe2, xMe2, xRe2 = run_three2two(data2, 2, right2left[0], right2left[1],
                                                                    right2left[2], right2left[3])
         return [LposV, MposV, RposV, LposV2, MposV2, RposV2]
+
+    if pathnum == 3:
+        path_list = t_main(car_num)
+        return path_list
 
     elif pathnum == 4:
         path_list = main(car_num)

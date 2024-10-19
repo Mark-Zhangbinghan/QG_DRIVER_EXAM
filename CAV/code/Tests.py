@@ -197,10 +197,10 @@ def two_steady(car_num, num):
         car_num = 6
     # 处理两条路径的逻辑
     r = 0
-    rr = 5
+    rr = 8
     rL = []
     pos = 0     # 要修改的坐标索引(0:x, 1:z)
-    width = 8   # 车辆间距
+    width = 10   # 车辆间距
 
     # 确保每个方向最后至少有两辆车
     L, M, R = 2, 2, 2
@@ -320,7 +320,7 @@ def random_road2(car_num, L, M, R, l_road, m_road, r_road, pos, width, num):
 
 def three(car_num, num):
     # 处理三条路径的逻辑
-    rr = 5
+    rr = 8
     r = 0
     rL = []
     pos = 0  # 要修改的坐标索引(0:x, 1:z)
@@ -379,7 +379,7 @@ def three(car_num, num):
 
 def four(car_num, num):
     # 处理四条路径的逻辑
-    rr = 5
+    rr = 8
     r = -5
     rL = []
     pos = 0  # 要修改的坐标索引(0:x, 1:z)
