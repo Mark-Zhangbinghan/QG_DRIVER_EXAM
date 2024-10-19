@@ -39,8 +39,6 @@ async def put_car(get_params: Request):  # 要在url中写参数而不是请求�
         share.cars, share.weights = run_simulation(G=G, total_cars=car_num, round_num=5, speed=0.5)  # 直接计算path然后存成字典列表
         # 存成文件方便检查
         cars_to_file(share.cars)
-        for weight in share.weights:
-            print(weight)
         return {"put succeed"}
 
 
